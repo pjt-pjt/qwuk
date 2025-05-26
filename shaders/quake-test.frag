@@ -13,9 +13,9 @@ uniform sampler2D   tex;
 
 void main()
 {
-    if (testMode == 2/*Surfaces*/) {
-        fragColor = vec4(color, 1.0) * 2.5;
+    if (testMode == 1/*Surfaces*/) {
+        fragColor = vec4(color, 1.0);
     } else {
-        fragColor = texture(tex, uv);
+        fragColor = texture(tex, uv) * 1.5;
     }
 }

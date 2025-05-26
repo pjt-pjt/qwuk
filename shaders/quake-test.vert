@@ -17,7 +17,7 @@ uniform vec3 faceColor;
 void main()
 {
     uv = aUV;
-    if (testMode == 2/*Surfaces*/) {
+    if (testMode == 1/*Surfaces*/) {
         color = faceColor;
     } else {
         color = aColor;

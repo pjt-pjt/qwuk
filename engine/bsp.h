@@ -41,7 +41,7 @@ struct Stats
 struct Test
 {
     bool        testModeOn = false;
-    enum TestMode { FullBright, Lightmaps, Surfaces };
+    enum TestMode { FullBright, Surfaces };
     TestMode    testMode = FullBright;
 };
 

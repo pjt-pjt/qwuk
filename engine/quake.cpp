@@ -254,10 +254,10 @@ void    Quake::GUI()
         }
         {
             ImGui::BeginDisabled(!bsp.test.testModeOn);
-            const char* testValues[] = {"Full Bright", "Lightmaps", "Surfaces"};
+            const char* testValues[] = {"Full Bright", "Surfaces"};
             ImGui::Text("Debug: %s", testValues[bsp.test.testMode]);
             int testMode = bsp.test.testMode;
-            ImGui::SliderInt("##Debug Value", &testMode, 0, 2);
+            ImGui::SliderInt("##Debug Value", &testMode, 0, 1);
             bsp.test.testMode = Test::TestMode(testMode);
             ImGui::EndDisabled();
         }
