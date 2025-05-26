@@ -1,4 +1,3 @@
-#include "version.h"
 #include "quake.h"
 #include "application.h"
 #include "graphics.h"
@@ -260,7 +259,7 @@ void    Quake::GUI()
             bsp.test.testMode = Test::TestMode(testMode);
             ImGui::EndDisabled();
         }
-        ImGui::Text("v%s", APP_VERSION);
+        ImGui::Text("v%s", Application::VersionStr());
     ImGui::End();
 
     ImGui::Begin("Stats");

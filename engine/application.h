@@ -17,6 +17,8 @@ public:
     bool Run(const std::string& map);
     void Quit();
 
+    static const char* VersionStr();
+
 private:
     bool InitGraphics();
     bool InitGui();

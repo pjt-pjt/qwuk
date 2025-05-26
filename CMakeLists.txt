@@ -17,8 +17,8 @@ set(ENGINE_DIR engine)
 set(BACKEND_DIR opengl)
 set(GAME_DIR game)
 
-set(QUAKE_SRC main.cpp  application.cpp quake.cpp bsp.cpp bspfile.cpp filebuffer.cpp gameinterface.cpp
-                        application.h quake.h bsp.h bspfile.h filebuffer.h gameinterface.h vertex.h plane.h math.h)
+set(QUAKE_SRC application.cpp quake.cpp bsp.cpp bspfile.cpp filebuffer.cpp gameinterface.cpp
+              application.h quake.h bsp.h bspfile.h filebuffer.h gameinterface.h vertex.h plane.h math.h)
 list(TRANSFORM QUAKE_SRC PREPEND "${ENGINE_DIR}/")
 
 set(BACKEND_SRC pipeline.cpp program.cpp graphics.cpp application_opengl.cpp)
@@ -30,7 +30,7 @@ include_directories(SYSTEM ${SYTEM_INCLUDE_ROOT})
 include_directories($ENV{IMGUI_HOME})
 include_directories($ENV{IMGUI_HOME}/backends)
 
-add_executable(${APP_NAME} ${QUAKE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} version.h)
+add_executable(${APP_NAME} ${QUAKE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} main.cpp version.h)
 target_include_directories(${APP_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${ENGINE_DIR} ${BACKEND_DIR} ${GAME_DIR})
 target_link_libraries(${APP_NAME} PUBLIC ${IMGUI_LIB} mingw32 ltdl SDL2main SDL2 glew32 freeglut glu32 opengl32 comdlg32 ole32)
 

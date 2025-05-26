@@ -3,7 +3,6 @@
 #include <vector>
 #include "SDL2/SDL.h"
 #include "application.h"
-#include "version.h"
 
 
 #if defined(DEBUG)
@@ -50,7 +49,7 @@ int main (int argc, char **argv)
     }
 
     if (debugMode || help) {
-        printf ("%s%s\n", APP_NAME " by PJT v", APP_VERSION);
+        printf ("%s%s\n", APP_NAME " by PJT v", Application::VersionStr());
     }
 
     if (help) {

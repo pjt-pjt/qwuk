@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "quake.h"
+#include "version.h"
 
 
 bool    Application::Init()
@@ -84,6 +85,11 @@ bool    Application::Run(const std::string& map)
 void    Application::Quit()
 {
     quit = true;
+}
+
+const char* Application::VersionStr()
+{
+    return APP_VERSION;
 }
 
 bool    Application::HandleEvents(void)
