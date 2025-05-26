@@ -1,0 +1,6 @@
+build
+version.h
+qwuk.exe
+libgame.dll
+*temp*
+imgui.ini

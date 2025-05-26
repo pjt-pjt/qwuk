@@ -1,0 +1,14 @@
+{
+    "C_Cpp.default.compilerPath": "${env:MINGW64_HOME}/bin/gcc",
+    "files.associations": {
+        "*.json": "jsonc",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "span": "cpp",
+        "sstream": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp",
+        "cstdlib": "c"
+    }
+}

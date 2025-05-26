@@ -1,0 +1,14 @@
+#!/bin/sh
+# To enable this hook, rename this file to "pre-commit".
+
+initial_version="0.1.1"
+
+version=$(cat version.txt)
+
+if [ -z "$version" ]; then
+    echo "$initial_version" >> version.txt
+else
+    echo "${version%.*}.$((${version##*.}+1))" > version.txt
+fi
+
+git add version.txt

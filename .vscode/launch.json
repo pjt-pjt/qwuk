@@ -1,0 +1,66 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/qwuk.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [{"name":"_NO_DEBUG_HEAP", "value": "1"}],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "${env:MINGW64_HOME}/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch map",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/qwuk.exe",
+            "args": [ "--map", "${input:mapName}"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [{"name":"_NO_DEBUG_HEAP", "value": "1"}],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "${env:MINGW64_HOME}/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "mapName",
+            "type": "pickString",
+            "description": "Choose scene",
+            "options": [
+                "",
+                "maps/start.bsp",
+                "maps/e1m1.bsp",
+                "maps/start-r.bsp",
+                "maps/e1m1-r.bsp",
+                "maps/first.bsp",
+                "maps/collision.bsp",
+                "maps/nolight.bsp"
+            ],
+            "default": ""
+        }
+    ]
+}

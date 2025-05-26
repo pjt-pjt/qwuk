@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:MINGW64_HOME}/include/SDL2/",
+                "${env:MINGW64_HOME}/include/GL/",
+                "${env:IMGUI_HOME}/",
+                "${env:IMGUI_HOME}/backends"
+            ],
+            "defines": [
+                "DEBUG"
+            ],
+            "compilerPath": "${env:MINGW64_HOME}/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
