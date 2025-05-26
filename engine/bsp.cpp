@@ -11,8 +11,7 @@ void    QVertexBuffer::AddAtributes()
     uint32_t    stride = sizeof(Vertex);
     AddAtribute(0, 0, 3, stride);
     AddAtribute(1, 3, 2, stride);
-    AddAtribute(2, 5, 2, stride);
-    AddAtribute(3, 7, 3, stride);
+    AddAtribute(3, 5, 3, stride);
 }
 
 void    MainPipeline::AddShaders()
@@ -83,7 +82,6 @@ bool    BSP::Load(const char* path)
 void    BSP::Close()
 {
     if (loaded) {
-        graphics.DeleteTextures(lightmaps.size(), lightmaps.data());
         graphics.DeleteTextures(textureIds.size(), textureIds.data());
 
         entities.clear();
@@ -118,7 +116,6 @@ void    BSP::BeginDraw(const glm::mat4& view, const glm::mat4& proj)
         program.SetUniform("view", view);
         program.SetUniform("proj", proj);
         program.SetUniformInt("tex", 0);
-        program.SetUniformInt("lightmap", 1);
         CheckOK();
     };
     graphics.BeginDraw();
@@ -399,22 +396,6 @@ void    BSP::CreatePlanes()
 void    BSP::CreateFaces()
 {
     faces.reserve(bspFile.numFaces);
-    lightmaps.resize(bspFile.numFaces + 2);
-    graphics.GenTextures(bspFile.numFaces + 2, lightmaps.data());
-    // Default lightmap
-    u_char              lightmap = 255;
-    Graphics::Texture   tex;
-    tex.width = 1;
-    tex.height = 1;
-    tex.components = 1;
-    tex.data = &lightmap;
-    graphics.CreateTexture(lightmaps[0], tex, Graphics::Linear, Graphics::Linear, Graphics::MipLinear);
-    lightmap = 0;
-    graphics.CreateTexture(lightmaps[1], tex, Graphics::Linear, Graphics::Linear, Graphics::MipLinear);
-    uint32_t    defaultLightmap = 0;
-    if (bspFile.lightmapsSize == 0) {
-        defaultLightmap = 1;
-    }
 
     for (uint32_t fi = 0; fi < bspFile.numFaces; ++fi) {
         face_t& bface = bspFile.faces[fi];
@@ -430,14 +411,6 @@ void    BSP::CreateFaces()
         u_char light = 0xff - bface.baselight;
         Color color(light, light, light);
 
-        // Face extents
-        int		bmins[2];
-        int     bmaxs[2];
-        float   mins[2];
-        float   maxs[2];
-        mins[0] = mins[1] = FLT_MAX;
-        maxs[0] = maxs[1] = -FLT_MAX;
-    
         int offs = face.numVertices;
         for (int32_t lei = bface.ledge_id; lei < bface.ledge_id + bface.ledge_num; ++lei) {
             int ei = bspFile.edgeList[lei];
@@ -455,77 +428,8 @@ void    BSP::CreateFaces()
             }
             float s = glm::dot(vertex.pos, glm::vec3(texInfo.vectorS.x, texInfo.vectorS.y, texInfo.vectorS.z)) + texInfo.distS;    
             float t = glm::dot(vertex.pos, glm::vec3(texInfo.vectorT.x, texInfo.vectorT.y, texInfo.vectorT.z)) + texInfo.distT;
-
-            if (s < mins[0]) {
-                mins[0] = s;
-            }
-            if (t < mins[1]) {
-                mins[1] = t;
-            }
-            if (s > maxs[0]) {
-                maxs[0] = s;
-            }
-            if (t > maxs[1]) {
-                maxs[1] = t;
-            }
-
             vertex.uv = {s / texture.width, t / texture.height};            
-            vertex.uv2 = {s, t};
             vertex.color = color;
-        }
-
-        auto ToPow2 = [](uint32_t size) -> uint32_t {
-            if (size <= 64) {
-                return 64;
-            } else if (size <= 128) {
-                return 128;
-            } else {
-                return 256;
-            }
-        };
-
-        if (bface.lightmap != -1) {
-            short texturemins[2];
-            short extents[2];
-            for (uint32_t i = 0; i < 2; i++) {	
-                bmins[i] = floor(mins[i] / 16);
-                bmaxs[i] = ceil(maxs[i] / 16);
-        
-                texturemins[i] = bmins[i] * 16;
-                extents[i] = (bmaxs[i] - bmins[i]) * 16;
-            }
-            u_char*     lightmap = bspFile.lightmaps + bface.lightmap;
-            uint32_t    width = (extents[0] / 16) + 1;
-            uint32_t    height = (extents[1] / 16) + 1;
-            uint32_t    txWidth = ToPow2(width);
-            uint32_t    txHeight = ToPow2(height);
-
-            std::vector<u_char> texture(txWidth * txHeight);
-            u_char* txPtr = texture.data();
-            for (uint32_t i = 0; i < height; ++i) {
-                u_char* linePtr = txPtr;
-                for (uint32_t j = 0; j < width; ++j) {
-                    *linePtr++ = 0xff - *lightmap++;
-                }
-                txPtr += txWidth;
-            }
-            Graphics::Texture   tex;
-            tex.width = txWidth;
-            tex.height = txHeight;
-            tex.components = 1;
-            tex.data = texture.data();
-            graphics.CreateTexture(lightmaps[fi + 2], tex, Graphics::Linear, Graphics::Linear, Graphics::MipOff);
-
-            for (auto vi = face.vertexIdx; vi < face.vertexIdx + face.numVertices; ++vi) {
-                vertices[vi].uv2 = { (vertices[vi].uv2.x - texturemins[0] + 8) / txWidth / 16, (vertices[vi].uv2.y - texturemins[1] + 8) / txHeight / 16 };
-            }
-            face.lightmap = fi + 2;
-            assert(CheckOK());
-        } else {
-            for (auto vi = face.vertexIdx; vi < face.vertexIdx + face.numVertices; ++vi) {
-                vertices[vi].uv2 = { vertices[vi].uv2.x / texture.width, vertices[vi].uv2.y / texture.height };
-            }
-            face.lightmap = (texInfo.animated) ? 1 : defaultLightmap;
         }
         faces.push_back(face);
     }
@@ -634,9 +538,6 @@ void    BSP::Draw(Leaf* leaf)
         }
 
         graphics.BindTexture(0, textureIds[face.texture]);
-        if (!test.testModeOn || test.testMode == Test::Lightmaps) {
-            graphics.BindTexture(1, lightmaps[face.lightmap]);
-        }
         graphics.DrawTrangles(Graphics::TrinangleFan, face.vertexIdx, face.numVertices);
         ++stats.primitives;
     }

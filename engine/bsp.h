@@ -85,7 +85,6 @@ struct Face
     int     numVertices;
     int     planeIdx;
     int     texture;
-    int     lightmap = 0;
 };
 
 
@@ -187,7 +186,6 @@ public:
     std::vector<Model>      models;
 
     std::vector<uint32_t>   textureIds;
-    std::vector<uint32_t>   lightmaps;
 
     Config&                 config;
     Stats&                  stats;
