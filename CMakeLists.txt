@@ -13,13 +13,13 @@ set(APP_NAME qwuk)
 set(IMGUI_LIB imgui)
 
 set(SYTEM_INCLUDE_ROOT $ENV{MINGW64_HOME}/include)
-set(SOURCE_DIR source)
+set(ENGINE_DIR engine)
 set(BACKEND_DIR opengl)
 set(GAME_DIR game)
 
 set(QUAKE_SRC main.cpp  application.cpp quake.cpp bsp.cpp bspfile.cpp filebuffer.cpp gameinterface.cpp
                         application.h quake.h bsp.h bspfile.h filebuffer.h gameinterface.h vertex.h plane.h math.h)
-list(TRANSFORM QUAKE_SRC PREPEND "${SOURCE_DIR}/")
+list(TRANSFORM QUAKE_SRC PREPEND "${ENGINE_DIR}/")
 
 set(BACKEND_SRC pipeline.cpp program.cpp graphics.cpp application_opengl.cpp)
 set(BACKEND_HDR program.h graphics.h)
@@ -31,7 +31,7 @@ include_directories($ENV{IMGUI_HOME})
 include_directories($ENV{IMGUI_HOME}/backends)
 
 add_executable(${APP_NAME} ${QUAKE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} version.h)
-target_include_directories(${APP_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${SOURCE_DIR} ${BACKEND_DIR} ${GAME_DIR})
+target_include_directories(${APP_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${ENGINE_DIR} ${BACKEND_DIR} ${GAME_DIR})
 target_link_libraries(${APP_NAME} PUBLIC ${IMGUI_LIB} mingw32 ltdl SDL2main SDL2 glew32 freeglut glu32 opengl32 comdlg32 ole32)
 
 target_compile_features(${APP_NAME} PUBLIC cxx_std_17)
