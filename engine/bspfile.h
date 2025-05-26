@@ -211,6 +211,7 @@ class BSPFile
 {
 public:
     char*           entities     = nullptr;
+    u_long          entitiesSize = 0;
     vertex_t*       vertices     = nullptr;
     u_long          numVertices  = 0;
     node_t*         nodes        = nullptr;
@@ -232,6 +233,7 @@ public:
     clipnode_t*     clipnodes    = nullptr;
     u_long          numClipnodes = 0;
     mipheader_t*    textures     = nullptr;
+    u_long          texturesSize = 0;
     surface_t*      texInfos     = nullptr;
     u_long          numTexinfos  = 0;
     u_char*         lightmaps    = nullptr;
@@ -245,7 +247,7 @@ public:
 private:
     bool    LoadLumps();
     template<typename T>
-    T*      GetEntry(const dentry_t& entry);
+    T*      GetBlob(const dentry_t& entry, u_long& size);
     template<typename T>
     void    LoadOneLump(const dentry_t& entry, T*& data, u_long& num);
 

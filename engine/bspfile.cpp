@@ -17,7 +17,7 @@ bool    BSPFile::LoadLumps()
     }
 
     try {
-        entities = GetEntry<char>(header->entities);
+        entities = GetBlob<char>(header->entities, entitiesSize);
         LoadOneLump<vertex_t>(header->vertices, vertices, numVertices);
         LoadOneLump<node_t>(header->nodes, nodes, numNodes);
         LoadOneLump<dleaf_t>(header->leaves, leaves, numLeaves);
@@ -28,10 +28,9 @@ bool    BSPFile::LoadLumps()
         LoadOneLump<model_t>(header->models, models, numModels); 
         LoadOneLump<plane_t>(header->planes, planes, numPlanes);
         LoadOneLump<clipnode_t>(header->clipnodes, clipnodes, numClipnodes);
-        textures = GetEntry<mipheader_t>(header->miptex);
+        textures = GetBlob<mipheader_t>(header->miptex, texturesSize);
         LoadOneLump<surface_t>(header->texinfo, texInfos, numTexinfos);
-        lightmapsSize = header->lightmaps.size;
-        lightmaps = GetEntry<u_char>(header->lightmaps);
+        lightmaps = GetBlob<u_char>(header->lightmaps, lightmapsSize);
     } catch(...) {
         return false;
     }
@@ -39,7 +38,7 @@ bool    BSPFile::LoadLumps()
 }
 
 template<typename T>
-T*  BSPFile::GetEntry(const dentry_t& entry)
+T*  BSPFile::GetBlob(const dentry_t& entry, u_long& size)
 {
     if (entry.size == 0) {
         return nullptr;
@@ -47,6 +46,7 @@ T*  BSPFile::GetEntry(const dentry_t& entry)
     if (entry.offset + entry.size > buffer.Size()) {
         throw;
     }
+    size = entry.size;
     return buffer.Get<T>(entry.offset);
 }
 
