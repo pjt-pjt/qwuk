@@ -51,6 +51,9 @@ bool    BSP::Load(const char* path)
     bool ok = bspFile.Init(path);
     if (ok) {
         ok = CreateEntities();
+#if 0
+        printf("Entities:\n%s", bspFile.entities);
+#endif
     }
     if (ok) {
         // LoadPalette
