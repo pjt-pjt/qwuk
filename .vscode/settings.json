@@ -9,6 +9,7 @@
         "sstream": "cpp",
         "iosfwd": "cpp",
         "fstream": "cpp",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "optional": "cpp"
     }
 }

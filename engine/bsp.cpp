@@ -25,6 +25,27 @@ void    TestPipeline::AddShaders()
 }
 
 
+bool    Entity::HasKey(const std::string& key) const
+{
+    for (const auto& pair : pairs) {
+        if (pair.key == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::optional<const std::string*> Entity::GetValue(const std::string& key) const
+{
+    for (const auto& pair : pairs) {
+        if (pair.key == key) {
+            return &pair.value;
+        }
+    }
+    return {};
+}
+
+
 bool    BSP::Init()
 {
     bool ok = vertexBuffer.Init();
@@ -71,6 +92,7 @@ bool    BSP::Load(const char* path)
         CreateBSP();
         CreateClipNodes();
         CreateModels();
+        CreateLights();
     }
     if (ok) {
         vertexBuffer.Use();
@@ -96,6 +118,7 @@ void    BSP::Close()
         faceList.clear();
         clipNodes.clear();
         models.clear();
+        lights.clear();
     }
     loaded = false;
 }
@@ -494,6 +517,28 @@ void    BSP::CreateModels()
         model.firstNode = bmodel.node_id0;
         model.clipNode = bmodel.node_id1;
         models.push_back(model);
+    }
+}
+
+void    BSP::CreateLights()
+{
+    lights.reserve(100);
+    for (const auto& entity : entities) {
+        Light   light;
+        light.origin = entity.origin;
+        light.intensity = 2.0;
+        light.range = 200;
+        if (entity.className == "light") {
+            light.style = 0;
+        } else {
+            continue;
+        }
+        Entity::Result result = entity.GetValue("light");
+        if (result) {
+            light.range = std::stof(**result);
+            light.intensity = light.range / 100.0f;
+        }
+        lights.push_back(light);
     }
 }
 

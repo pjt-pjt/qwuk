@@ -7,6 +7,7 @@
 #include "plane.h"
 #include <vector>
 #include <string>
+#include <optional>
 
 
 class BSPFile;
@@ -100,6 +101,19 @@ struct Entity
     float       angle = 0;
     uint32_t    model = 0;
     std::vector<Pair>   pairs;
+
+    using Result = std::optional<const std::string*>;
+    bool    HasKey(const std::string& key) const;
+    Result  GetValue(const std::string& key) const;
+};
+
+
+struct Light
+{
+    glm::vec3   origin;
+    float       intensity;
+    float       range;
+    int         style;
 };
 
 
@@ -184,6 +198,7 @@ public:
     std::vector<int>        faceList;
     std::vector<ClipNode>   clipNodes;
     std::vector<Model>      models;
+    std::vector<Light>      lights;
 
     std::vector<uint32_t>   textureIds;
 
@@ -207,6 +222,7 @@ private:
     void CreateBSP();
     void CreateClipNodes();
     void CreateModels();
+    void CreateLights();
 
     void Draw(Node* node, const glm::vec3& camera);
     void Draw(Leaf* node);
