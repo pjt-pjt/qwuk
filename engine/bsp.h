@@ -175,7 +175,7 @@ public:
     };
     struct Leaf
     {
-        int         fistFace = 0;
+        int         firstFace = 0;
         int         numFaces = 0;
         LeafType    type;
     };

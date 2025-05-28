@@ -488,9 +488,9 @@ void    BSP::CreateBSP()
     for (uint32_t li = 0; li < bspFile.numLeaves; ++li) {
         dleaf_t& dleaf = bspFile.leaves[li];
         Leaf& leaf = leaves[li];
-        leaf.fistFace = dleaf.lface_id;
-        leaf.numFaces = dleaf.lface_num;
-        leaf.type     = LeafType(dleaf.type);
+        leaf.firstFace = dleaf.lface_id;
+        leaf.numFaces  = dleaf.lface_num;
+        leaf.type      = LeafType(dleaf.type);
     }
     for (uint32_t fi = 0; fi < bspFile.numFaceList; ++fi) {
         faceList[fi] = bspFile.faceList[fi];
@@ -573,7 +573,7 @@ void    BSP::Draw(Leaf* leaf)
     if (leaf == nullptr || leaf->type == SOLID) {
         return;
     }
-    for (int32_t fi = leaf->fistFace; fi < leaf->fistFace + leaf->numFaces; ++fi) {
+    for (int32_t fi = leaf->firstFace; fi < leaf->firstFace + leaf->numFaces; ++fi) {
         Face& face = faces[faceList[fi]];
         //if (test.textModeOn)
         if (test.testModeOn && test.testMode == Test::Surfaces) {
