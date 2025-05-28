@@ -72,6 +72,16 @@ void    Graphics::BindVBO(int vbo/*  = 0 */)
     CheckOK();
 }
 
+void    Graphics::BindSSBO(int ssbo/*  = 0 */)
+{
+    if (currentSSBO != ssbo) {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+        ++bindsCount;
+        currentSSBO = ssbo;
+    }
+    CheckOK();
+}
+
 void    Graphics::DrawTrangles(DrawMode mode, uint32_t first, uint32_t count)
 {
     glDrawArrays(mode == TrinangleFan ? GL_TRIANGLE_FAN : GL_TRIANGLES, first, count);

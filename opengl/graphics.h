@@ -25,6 +25,7 @@ public:
     void UseProgram(int program = 0);
     void BindVAO(int vao = 0);
     void BindVBO(int vbo = 0);
+    void BindSSBO(int ssbo = 0);
 
     enum DrawMode { Triangles, TrinangleFan };
     void DrawTrangles(DrawMode mode, uint32_t first, uint32_t count);
@@ -53,6 +54,7 @@ private:
     int         currentProgram = 0;
     int         currentVAO = 0;
     int         currentVBO = 0;
+    int         currentSSBO = 0;
     int         currentTextureUnit = -1;
     std::array<int,MAX_EXTURE_UNITS>  currentTextures;
 

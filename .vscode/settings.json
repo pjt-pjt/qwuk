@@ -10,6 +10,7 @@
         "iosfwd": "cpp",
         "fstream": "cpp",
         "cstdlib": "c",
-        "optional": "cpp"
+        "optional": "cpp",
+        "cstdio": "cpp"
     }
 }

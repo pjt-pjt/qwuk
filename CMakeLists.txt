@@ -21,8 +21,8 @@ set(QUAKE_SRC application.cpp quake.cpp bsp.cpp bspfile.cpp filebuffer.cpp gamei
               application.h quake.h bsp.h bspfile.h filebuffer.h gameinterface.h vertex.h plane.h math.h)
 list(TRANSFORM QUAKE_SRC PREPEND "${ENGINE_DIR}/")
 
-set(BACKEND_SRC pipeline.cpp program.cpp graphics.cpp application_opengl.cpp)
-set(BACKEND_HDR program.h graphics.h)
+set(BACKEND_SRC pipeline.cpp program.cpp storagebuffer.cpp graphics.cpp application_opengl.cpp)
+set(BACKEND_HDR pipeline.h program.h storagebuffer.h graphics.h )
 list(TRANSFORM  BACKEND_SRC PREPEND "${BACKEND_DIR}/")
 list(TRANSFORM  BACKEND_HDR PREPEND "${BACKEND_DIR}/")
 
