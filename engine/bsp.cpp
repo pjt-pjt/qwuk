@@ -11,7 +11,8 @@ void    QVertexBuffer::AddAtributes()
     uint32_t    stride = sizeof(Vertex);
     AddAtribute(0, 0, 3, stride);
     AddAtribute(1, 3, 2, stride);
-    AddAtribute(3, 5, 3, stride);
+    AddAtribute(2, 5, 3, stride);
+    AddAtribute(3, 8, 3, stride);
 }
 
 void    MainPipeline::AddShaders()
