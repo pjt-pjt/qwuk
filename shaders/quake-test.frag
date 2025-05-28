@@ -4,6 +4,7 @@ out vec4 fragColor;
 
 
 in vec2 uv;
+in vec3 normal;
 in vec3 color;
 
 

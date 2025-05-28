@@ -54,8 +54,6 @@ bool    BSP::Init()
     ok = ok && pipeline.Init(vertexBuffer);
     ok = ok && testPipeline.Init(vertexBuffer);
 
-    test.testModeOn = true; //TODO Temporary
-
     return ok;
 }
 

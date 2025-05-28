@@ -248,9 +248,7 @@ void    Quake::GUI()
 
         ImGui::Separator();
         {
-            ImGui::BeginDisabled(); //TODO Temporary
             ImGui::Checkbox("Test on", &bsp.test.testModeOn);
-            ImGui::EndDisabled();
         }
         {
             ImGui::BeginDisabled(!bsp.test.testModeOn);
