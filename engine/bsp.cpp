@@ -49,6 +49,7 @@ std::optional<const std::string*> Entity::GetValue(const std::string& key) const
 bool    BSP::Init()
 {
     bool ok = vertexBuffer.Init();
+    ok = ok && lightsBuffer.Init();
     ok = ok && pipeline.Init(vertexBuffer);
     ok = ok && testPipeline.Init(vertexBuffer);
 
@@ -62,6 +63,7 @@ void    BSP::Destroy()
     Close();
     pipeline.Destroy();
     testPipeline.Destroy();
+    lightsBuffer.Destroy();
     vertexBuffer.Destroy();
     CheckOK();
 }
@@ -540,6 +542,7 @@ void    BSP::CreateLights()
         }
         lights.push_back(light);
     }
+    lightsBuffer.SetData<Light>(lights);
 }
 
 void    BSP::Draw(Node* node, const glm::vec3& camera)

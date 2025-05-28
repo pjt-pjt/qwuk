@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vertex.h"
+#include "storagebuffer.h"
 #include "pipeline.h"
 #include "bspfile.h"
 #include "filebuffer.h"
@@ -209,6 +210,7 @@ public:
     FileBuffer              palette;
 
     QVertexBuffer           vertexBuffer;
+    StorageBuffer           lightsBuffer;
     MainPipeline            pipeline;
     TestPipeline            testPipeline;
 

@@ -16,7 +16,7 @@ bool    StorageBuffer::Init()
 
 void    StorageBuffer::Use(uint32_t layout)
 {
-    graphics.BindVBO(ssbo);
+    graphics.BindSSBO(ssbo);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, layout, ssbo);
 }
 
@@ -28,11 +28,14 @@ void    StorageBuffer::Destroy()
 
 void    StorageBuffer::Unuse()
 {
-    graphics.BindVBO();
+    graphics.BindSSBO();
 }
 
 void    StorageBuffer::SetData(const void* data, uint32_t size)
 {
+    graphics.BindSSBO(ssbo);
     glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_STATIC_DRAW);
+    graphics.BindSSBO();
+    CheckOK();
 }
 
