@@ -1,12 +1,12 @@
-#version 330 core
+#version 430 core
 
 out vec4 fragColor;
 
 
-in vec2 uv;
-in vec3 normal;
-in vec3 color;
-
+layout (location = 0) in vec2 uv;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec3 color;
+layout (location = 3) in vec3 fragPos;
 
 uniform sampler2D   tex;
 
