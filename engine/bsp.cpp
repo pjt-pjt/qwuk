@@ -464,7 +464,7 @@ void    BSP::CreateFaces()
             glm::vec3& v0 = vertices[face.vertexIdx + vi].pos;
             glm::vec3& v1 = vertices[face.vertexIdx + vi + 1].pos;
             glm::vec3& v2 = vertices[face.vertexIdx + (vi + 2) % face.numVertices].pos;
-            normal = cross(v0 - v1, v2 - v1);
+            normal = cross(v1 - v0, v2 - v1);
         }
         for (int32_t vi = 0; vi < face.numVertices; ++vi) {
             vertices[face.vertexIdx + vi].normal = normal;

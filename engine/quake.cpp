@@ -273,6 +273,7 @@ void    Quake::GUI()
         ImGui::Text("Primitives     %5u", stats.primitives);
         ImGui::Separator();
         ImGui::Text("Node: %s", inSolid ? "Solid" : "Empty");
+        ImGui::Text("Player: %6.2f %6.2f %6.2f", player.Position().x, player.Position().y, player.Position().z);
     ImGui::End();
 
     if (paused) {
