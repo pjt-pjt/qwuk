@@ -463,10 +463,9 @@ void    BSP::CreateFaces()
         for (int32_t vi = 0; vi < face.numVertices - 2 && glm::length(normal) < SMALL_EPS; ++vi) {
             glm::vec3& v0 = vertices[face.vertexIdx + vi].pos;
             glm::vec3& v1 = vertices[face.vertexIdx + vi + 1].pos;
-            glm::vec3& v2 = vertices[face.vertexIdx + vi + 2].pos;
+            glm::vec3& v2 = vertices[face.vertexIdx + (vi + 2) % face.numVertices].pos;
             normal = cross(v0 - v1, v2 - v1);
         }
-        assert(glm::length(normal) > SMALL_EPS);
         for (int32_t vi = 0; vi < face.numVertices; ++vi) {
             vertices[face.vertexIdx + vi].normal = normal;
         }
