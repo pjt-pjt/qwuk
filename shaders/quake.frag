@@ -10,7 +10,22 @@ layout (location = 3) in vec3 fragPos;
 
 uniform sampler2D   tex;
 
-int  numLights = 1;
+struct Light
+{
+    vec3        origin;
+    float       intensity;
+    float       range;
+    int         style;
+    float       padding[2];
+};
+
+uniform int     numLights;
+layout (std430, binding = 1) buffer Lights
+{
+    Light   lights[];
+} lbuffer;
+
+
 vec3 lightPos = vec3(512, 1132, 372);
 
 vec3 CalculateBlinnPhong(vec3 color, vec3 normal, vec3 lightDir, vec3 lightColor, float intensity)
@@ -24,17 +39,10 @@ vec3 CalculateBlinnPhong(vec3 color, vec3 normal, vec3 lightDir, vec3 lightColor
     return color * (lightValue * intensity /* + lightColor * intensity * spec * .8 */);
 }
 
-float CalculateAttenuation(float range, float distance)
-{
-    float distanceSq = distance * distance;
-    float rangeQ = range * range * range * range;
-    return max(min(1.0 - ((distanceSq * distanceSq) / rangeQ), 1), 0) / distanceSq;
-}
-
 void main()
 {
     vec3 color = texture(tex, uv).rgb;
-    vec3 ambient = color * 0.4;
+    vec3 ambient = color * 0.2;
 
     vec3 Lo = vec3(0.0);
     for (int i = 0; i < numLights; ++i) {
@@ -45,10 +53,13 @@ void main()
         // if (distance > light.range) {
         //     continue;
         // }
-        float distance = length(lightPos - fragPos);
-        vec3 L = normalize(lightPos - fragPos);
-        float attenuation = CalculateAttenuation(1024, distance);
-        Lo += CalculateBlinnPhong(color, normal, L, vec3(1, 1, 1)/* vec3(light.color) */, 3 * attenuation);
+        float distance = length(lbuffer.lights[i].origin - fragPos);
+        if (distance > lbuffer.lights[i].range) {
+            continue;
+        }
+        vec3 L = normalize(lbuffer.lights[i].origin - fragPos);
+        //float attenuation = CalculateAttenuation(lbuffer.lights[i].range, distance);
+        Lo += CalculateBlinnPhong(color, normalize(normal), L, vec3(1, 0.8, 1)/* vec3(light.color) */, lbuffer.lights[i].intensity - (distance / 200) );
     }   
 
     fragColor = vec4(ambient + Lo, 1.0);

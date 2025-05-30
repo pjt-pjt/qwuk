@@ -115,6 +115,7 @@ struct Light
     float       intensity;
     float       range;
     int         style;
+    float       padding[2];
 };
 
 

@@ -98,11 +98,12 @@ bool    BSP::Load(const char* path)
     if (ok) {
         vertexBuffer.Use();
         vertexBuffer.SetData<Vertex>(vertices);
+        lightsBuffer.Use(1);
         vertexBuffer.Unuse();
     }
     loaded = ok;
 
-    return ok;
+    return ok && CheckOK();
 }
 
 void    BSP::Close()
@@ -154,6 +155,8 @@ void    BSP::BeginDraw(const glm::mat4& view, const glm::mat4& proj)
     } else {
         pipeline.Use();
         SetUniforms(pipeline);
+        Program& program = pipeline.GetProgram();
+        program.SetUniformInt("numLights", lights.size());
     }
 }
 
@@ -458,14 +461,10 @@ void    BSP::CreateFaces()
             vertex.uv = {s / texture.width, t / texture.height};            
             vertex.color = color;
         }
-        // Calculate normal
-        glm::vec3  normal(0);
-        for (int32_t vi = 0; vi < face.numVertices - 2 && glm::length(normal) < SMALL_EPS; ++vi) {
-            glm::vec3& v0 = vertices[face.vertexIdx + vi].pos;
-            glm::vec3& v1 = vertices[face.vertexIdx + vi + 1].pos;
-            glm::vec3& v2 = vertices[face.vertexIdx + (vi + 2) % face.numVertices].pos;
-            normal = cross(v1 - v0, v2 - v1);
-        }
+
+        // // Get plane normal
+        const BSPPlane& plane = planes[bface.plane_id];
+        glm::vec3       normal = (bface.side == 0) ? plane.Normal() : -plane.Normal();
         for (int32_t vi = 0; vi < face.numVertices; ++vi) {
             vertices[face.vertexIdx + vi].normal = normal;
         }
@@ -548,11 +547,12 @@ void    BSP::CreateLights()
         Entity::Result result = entity.GetValue("light");
         if (result) {
             light.range = std::stof(**result);
-            light.intensity = light.range / 100.0f;
+            light.intensity = light.range / 200.0f;
         }
         lights.push_back(light);
     }
     lightsBuffer.SetData<Light>(lights);
+    CheckOK();
 }
 
 void    BSP::Draw(Node* node, const glm::vec3& camera)
