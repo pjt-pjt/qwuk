@@ -54,12 +54,12 @@ void main()
         //     continue;
         // }
         float distance = length(lbuffer.lights[i].origin - fragPos);
-        if (distance > lbuffer.lights[i].range) {
+        if (distance > lbuffer.lights[i].range * 2) {
             continue;
         }
         vec3 L = normalize(lbuffer.lights[i].origin - fragPos);
         //float attenuation = CalculateAttenuation(lbuffer.lights[i].range, distance);
-        Lo += CalculateBlinnPhong(color, normalize(normal), L, vec3(1, 0.8, 1)/* vec3(light.color) */, lbuffer.lights[i].intensity - (distance / 200) );
+        Lo += CalculateBlinnPhong(color, normalize(normal), L, vec3(1, 0.8, 1)/* vec3(light.color) */, max(0, lbuffer.lights[i].intensity - (distance / 150)));
     }   
 
     fragColor = vec4(ambient + Lo, 1.0);
