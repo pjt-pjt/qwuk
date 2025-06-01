@@ -566,6 +566,13 @@ void    BSP::CreateLights()
     }
     lightsBuffer.SetData<Light>(lights);
     CheckOK();
+#if 0
+    // Dump lights
+    for (uint32_t li = 0; li < lights.size(); ++li) {
+        auto& light = lights[li];
+        printf("#%3d: intensity %4.2f, range %4.0f\n", li, light.intensity, light.range);
+    }
+#endif
 }
 
 void    BSP::Draw(Node* node, const glm::vec3& camera)
