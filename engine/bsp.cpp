@@ -542,7 +542,18 @@ void    BSP::CreateLights()
         light.range = 200;
         if (entity.className == "light") {
             light.color = {1.0f, 1.0f, 0.8f};
-            light.style = 0;
+        } else if (entity.className == "light_flame_large_yellow") {
+            light.color = {1.0f, 1.0f, 0.6f};
+        } else if (entity.className == "light_flame_small_yellow") {
+            light.color = {1.0f, 1.0f, 0.6f};
+        } else if (entity.className == "light_flame_small_white") {
+            light.color = {1.0f, 1.0f, 1.0f};
+        } else if (entity.className == "light_fluoro" || entity.className == "light_fluorospark") {
+            light.color = {1.0f, 1.0f, 1.0f};
+        } else if (entity.className == "light_torch_small_walltorch") {
+            light.color = {1.0f, 1.0f, 0.6f};
+            light.range = 150;
+            light.intensity = light.range / 200.0f;
         } else {
             continue;
         }
