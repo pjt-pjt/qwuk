@@ -137,7 +137,7 @@ void    BSP::SetTextureMode(bool smooth)
     }
 }
 
-void    BSP::BeginDraw(const glm::mat4& view, const glm::mat4& proj)
+void    BSP::BeginDraw(const glm::vec3& camera, const glm::mat4& view, const glm::mat4& proj)
 {
     auto SetUniforms = [&view, &proj] (Pipeline& pipeline) {
         Program& program = pipeline.GetProgram();
@@ -157,6 +157,7 @@ void    BSP::BeginDraw(const glm::mat4& view, const glm::mat4& proj)
         SetUniforms(pipeline);
         Program& program = pipeline.GetProgram();
         program.SetUniformInt("numLights", lights.size());
+        program.SetUniform("viewPos", camera);
     }
 }
 
@@ -540,6 +541,7 @@ void    BSP::CreateLights()
         light.intensity = 2.0;
         light.range = 200;
         if (entity.className == "light") {
+            light.color = {1.0f, 1.0f, 0.8f};
             light.style = 0;
         } else {
             continue;

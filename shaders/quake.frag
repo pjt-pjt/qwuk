@@ -14,9 +14,10 @@ struct Light
 {
     vec3        origin;
     float       intensity;
+    vec3        color;
     float       range;
     int         style;
-    float       padding[2];
+    float       padding[3];
 };
 
 uniform int     numLights;
@@ -26,17 +27,18 @@ layout (std430, binding = 1) buffer Lights
 } lbuffer;
 
 
-vec3 lightPos = vec3(512, 1132, 372);
+uniform vec3    viewPos;
+
 
 vec3 CalculateBlinnPhong(vec3 color, vec3 normal, vec3 lightDir, vec3 lightColor, float intensity)
 {
-    //vec3 viewDir    = normalize(vec3(sceneData.viewPos) - inFragPos);
-    //vec3 halfwayDir = normalize(lightDir + viewDir);
-    //float spec = pow(max(dot(normal, halfwayDir), 0.0), 16.0);
+    vec3 viewDir    = normalize(vec3(viewPos) - fragPos);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 8.0);
 
 	float lightValue = max(dot(normal, lightDir), 0.0f);
 
-    return color * (lightValue * intensity /* + lightColor * intensity * spec * .8 */);
+    return color * (lightValue * intensity + lightColor * intensity * spec);
 }
 
 void main()
@@ -53,13 +55,13 @@ void main()
         // if (distance > light.range) {
         //     continue;
         // }
-        float distance = length(lbuffer.lights[i].origin - fragPos);
-        if (distance > lbuffer.lights[i].range * 2) {
+        const Light light = lbuffer.lights[i];
+        float distance = length(light.origin - fragPos);
+        if (distance > light.range * 2) {
             continue;
         }
-        vec3 L = normalize(lbuffer.lights[i].origin - fragPos);
-        //float attenuation = CalculateAttenuation(lbuffer.lights[i].range, distance);
-        Lo += CalculateBlinnPhong(color, normalize(normal), L, vec3(1, 0.8, 1)/* vec3(light.color) */, max(0, lbuffer.lights[i].intensity - (distance / 150)));
+        vec3 L = normalize(light.origin - fragPos);
+        Lo += CalculateBlinnPhong(color, normalize(normal), L, light.color, max(0, light.intensity - (distance / 125)));
     }   
 
     fragColor = vec4(ambient + Lo, 1.0);

@@ -113,9 +113,10 @@ struct Light
 {
     glm::vec3   origin;
     float       intensity;
+    glm::vec3   color;
     float       range;
     int         style;
-    float       padding[2];
+    float       padding[3];
 };
 
 
@@ -149,7 +150,7 @@ public:
     void Close();
     void SetTextureMode(bool smooth);
 
-    void BeginDraw(const glm::mat4& view, const glm::mat4& proj);
+    void BeginDraw(const glm::vec3& camera, const glm::mat4& view, const glm::mat4& proj);
     void Draw(const glm::vec3& camera);
     void EndDraw();
 

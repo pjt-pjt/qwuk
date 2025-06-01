@@ -166,7 +166,7 @@ void    Quake::Render()
         glm::vec3 pos = player.EyePosition();
         glm::vec3 center = pos + player.Direction();
         view = glm::lookAt(pos, center, glm::vec3(0,0,1));
-        bsp.BeginDraw(view, proj);
+        bsp.BeginDraw(pos, view, proj);
         bsp.Draw(pos);
         bsp.EndDraw();
     }
