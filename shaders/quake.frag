@@ -31,6 +31,8 @@ uniform vec3    viewPos;
 
 float intensityBase = 300;
 float brightnessMultiplier = 0.75;
+float gamma = 1.2;
+
 
 vec3 CalculateBlinnPhong(vec3 color, vec3 normal, vec3 lightDir, vec3 lightColor, float intensity)
 {
@@ -60,4 +62,5 @@ void main()
     }   
 
     fragColor = vec4(ambient + Lo, 1.0);
+    fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
 }
