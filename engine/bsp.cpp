@@ -538,8 +538,8 @@ void    BSP::CreateLights()
     for (const auto& entity : entities) {
         Light   light;
         light.origin = entity.origin;
-        light.intensity = 2.0;
-        light.range = 200;
+        light.intensity = 300;
+        light.range = 300;
         if (entity.className == "light") {
             light.color = {1.0f, 1.0f, 0.8f};
         } else if (entity.className == "light_flame_large_yellow") {
@@ -552,15 +552,15 @@ void    BSP::CreateLights()
             light.color = {1.0f, 1.0f, 1.0f};
         } else if (entity.className == "light_torch_small_walltorch") {
             light.color = {1.0f, 1.0f, 0.6f};
-            light.range = 150;
-            light.intensity = light.range / 200.0f;
+            light.range = 200;
+            light.intensity = 200;
         } else {
             continue;
         }
         Entity::Result result = entity.GetValue("light");
         if (result) {
             light.range = std::stof(**result);
-            light.intensity = light.range / 200.0f;
+            light.intensity = light.range;
         }
         lights.push_back(light);
     }
