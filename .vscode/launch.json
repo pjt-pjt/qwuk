@@ -54,6 +54,9 @@
                 "",
                 "maps/start.bsp",
                 "maps/e1m1.bsp",
+                "maps/e2m1.bsp",
+                "maps/e3m1.bsp",
+                "maps/e4m1.bsp",
                 "maps/first.bsp",
                 "maps/collision.bsp",
                 "maps/nolight.bsp"
