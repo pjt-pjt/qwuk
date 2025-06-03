@@ -100,6 +100,7 @@ bool    BSP::Load(const char* path)
         vertexBuffer.SetData<Vertex>(vertices);
         lightsBuffer.Use(1);
         vertexBuffer.Unuse();
+        facesToDraw.resize(faces.size(), 0);
     }
     loaded = ok;
 
@@ -159,6 +160,7 @@ void    BSP::BeginDraw(const glm::vec3& camera, const glm::mat4& view, const glm
         program.SetUniformInt("numLights", lights.size());
         program.SetUniform("viewPos", camera);
     }
+    ++actFrame;
 }
 
 
@@ -603,8 +605,14 @@ void    BSP::Draw(Leaf* leaf)
     if (leaf == nullptr || leaf->type == SOLID) {
         return;
     }
-    for (int32_t fi = leaf->firstFace; fi < leaf->firstFace + leaf->numFaces; ++fi) {
-        Face& face = faces[faceList[fi]];
+    for (int32_t fli = leaf->firstFace; fli < leaf->firstFace + leaf->numFaces; ++fli) {
+        int32_t fi = faceList[fli];
+        if (facesToDraw[fi] == actFrame) {
+            continue;
+        }
+        facesToDraw[fi] = actFrame;
+
+        Face& face = faces[fi];
         //if (test.textModeOn)
         if (test.testModeOn && test.testMode == Test::Surfaces) {
             Color fcolor(color);

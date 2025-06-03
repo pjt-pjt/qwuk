@@ -238,5 +238,8 @@ private:
     MainPipeline            pipeline;
     TestPipeline            testPipeline;
 
+    std::vector<uint32_t>   facesToDraw;
+    uint32_t                actFrame = 0;
+
     bool                    loaded = false;
 };
