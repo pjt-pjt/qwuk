@@ -105,6 +105,7 @@ private:
 
 private:
     Config          config;
+    Test            test;
     BSP             bsp;
     bool            loaded = false;
     bool            paused = true;

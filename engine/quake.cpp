@@ -57,7 +57,7 @@ glm::vec3   Camera::Direction() const
 
 
 Quake::Quake() :
-    bsp(config, stats),
+    bsp(config, stats, test),
     velocity(0),
     game(*this)
 {
@@ -248,15 +248,15 @@ void    Quake::GUI()
 
         ImGui::Separator();
         {
-            ImGui::Checkbox("Test on", &bsp.test.testModeOn);
+            ImGui::Checkbox("Test on", &test.testModeOn);
         }
         {
-            ImGui::BeginDisabled(!bsp.test.testModeOn);
+            ImGui::BeginDisabled(!test.testModeOn);
             const char* testValues[] = {"Full Bright", "Surfaces"};
-            ImGui::Text("Debug: %s", testValues[bsp.test.testMode]);
-            int testMode = bsp.test.testMode;
+            ImGui::Text("Debug: %s", testValues[test.testMode]);
+            int testMode = test.testMode;
             ImGui::SliderInt("##Debug Value", &testMode, 0, 1);
-            bsp.test.testMode = Test::TestMode(testMode);
+            test.testMode = Test::TestMode(testMode);
             ImGui::EndDisabled();
         }
         ImGui::Text("v%s", Application::VersionStr());
@@ -368,7 +368,7 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
             if (cmd.cmd == Command::ChangeMap) {
                 loaded = bsp.Load(cmd.strParam1.c_str());
                 if (loaded) {
-                    for (const auto& entity : bsp.entities) {
+                    for (const auto& entity : bsp.Entities()) {
                         if (entity.className == "info_player_start") {
                             player.SetPosition(entity.origin);
                             player.SetYaw(entity.angle);

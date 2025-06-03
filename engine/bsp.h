@@ -142,7 +142,7 @@ public:
 class BSP
 {
 public:
-    BSP(Config& config, Stats& stats) : config(config), stats(stats)
+    BSP(Config& config, Stats& stats, Test& test) : config(config), stats(stats), test(test)
     {}
     bool Init();
     void Destroy();
@@ -156,6 +156,11 @@ public:
 
     bool TracePoint(const glm::vec3& point);
     bool TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
+
+    const std::vector<Entity>&  Entities() const
+    {
+        return entities;
+    }
 
     struct Leaf;
     struct Node
@@ -192,32 +197,6 @@ public:
         uint32_t    clipNode;
     };
 
-    std::vector<Entity>     entities;
-    std::vector<Vertex>     vertices;
-    std::vector<Face>       faces;
-    std::vector<BSPPlane>   planes;
-    std::vector<Node>       nodes;
-    std::vector<Leaf>       leaves;
-    std::vector<int>        faceList;
-    std::vector<ClipNode>   clipNodes;
-    std::vector<Model>      models;
-    std::vector<Light>      lights;
-
-    std::vector<uint32_t>   textureIds;
-
-    Config&                 config;
-    Stats&                  stats;
-    Test                    test;
-    BSPFile                 bspFile;
-    FileBuffer              palette;
-
-    QVertexBuffer           vertexBuffer;
-    StorageBuffer           lightsBuffer;
-    MainPipeline            pipeline;
-    TestPipeline            testPipeline;
-
-    bool                    loaded = false;
-
 private:
     bool CreateEntities();
     void CreateTextures();
@@ -233,4 +212,31 @@ private:
 
     bool TracePoint(short node, const glm::vec3& point);
     bool TraceLine(short node, const glm::vec3& start, const glm::vec3& end, Trace& trace);
+
+private:
+    std::vector<Entity>     entities;
+    std::vector<Vertex>     vertices;
+    std::vector<Face>       faces;
+    std::vector<BSPPlane>   planes;
+    std::vector<Node>       nodes;
+    std::vector<Leaf>       leaves;
+    std::vector<int>        faceList;
+    std::vector<ClipNode>   clipNodes;
+    std::vector<Model>      models;
+    std::vector<Light>      lights;
+
+    std::vector<uint32_t>   textureIds;
+
+    Config&                 config;
+    Stats&                  stats;
+    Test&                   test;
+    BSPFile                 bspFile;
+    FileBuffer              palette;
+
+    QVertexBuffer           vertexBuffer;
+    StorageBuffer           lightsBuffer;
+    MainPipeline            pipeline;
+    TestPipeline            testPipeline;
+
+    bool                    loaded = false;
 };
