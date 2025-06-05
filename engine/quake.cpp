@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "imgui.h"
 #include "game.h"
+#include "bsp.h"
 #include <filesystem>
 #include <ltdl.h>
 
@@ -53,6 +54,16 @@ glm::vec3   Camera::Direction() const
     float y = yaw * glm::pi<float>() / 180.0;
     float xzLen = cos(p);
     return glm::vec3(cos(y) * xzLen, sin(y) * xzLen, sin(p));
+}
+
+
+void    Actor::Init(const Entity& entity)
+{
+    if (entity.className == "info_player_start") {
+        SetPosition(entity.origin);
+        SetYaw(entity.angle);
+        SetEyeHeight(22);
+    }
 }
 
 
@@ -370,9 +381,7 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
                 if (loaded) {
                     for (const auto& entity : bsp.Entities()) {
                         if (entity.className == "info_player_start") {
-                            player.SetPosition(entity.origin);
-                            player.SetYaw(entity.angle);
-                            player.SetPitch(0);
+                            player.Init(entity);
                         }
                     }
                     //Close menu

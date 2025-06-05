@@ -9,19 +9,24 @@
 
 
 struct ImFont;
+class  Entity;
 
 
 class Camera
 {
 public:
-    Camera(float eyeHeight = 0) :
+    Camera() :
         position(0, 0, 0),
         eyePosition(0, 0, eyeHeight),
-        eyeHeight(eyeHeight)
+        eyeHeight(0)
     {}
     void        SetPosition(const glm::vec3& pos);
     void        SetYaw(float yaw);
     void        SetPitch(float pitch);
+    void        SetEyeHeight(float height)
+    {
+        eyeHeight = height;
+    }
 
     const glm::vec3&   Position() const
     {
@@ -50,11 +55,10 @@ private:
     float       eyeHeight = 0;
 };
 
-class Player : public Camera
+class Actor : public Camera
 {
 public:
-    Player() : Camera(22)
-    {}
+    void Init(const Entity& entity);
     
 private:
     glm::vec3   mins = {-16, -16, -24};
@@ -116,7 +120,7 @@ private:
     ImFont*         quakeFontSmall;
     ImFont*         quakeFontLarge;
 
-    Player          player;
+    Actor           player;
     bool            keyMatrix[256];
     SDL_Scancode    lastKey = SDL_SCANCODE_UNKNOWN;
     float           yawDelta = 0;
