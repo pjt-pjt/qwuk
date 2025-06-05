@@ -95,7 +95,6 @@ bool    Quake::Init(const std::string& map)
     ok = ok && InitGame(map);
 
     test.testModeOn = testMode;
-    player.flying = true;
 
     return ok;
 }
@@ -171,6 +170,8 @@ void    Quake::NextFrame(uint64_t elapsed)
     if (lastKey != SDL_SCANCODE_UNKNOWN) {
         if (lastKey == SDL_SCANCODE_F11) {
             config.noclip = !config.noclip;
+        } else if (lastKey == SDL_SCANCODE_F) {
+            player.flying = !player.flying;
         }
         lastKey = SDL_SCANCODE_UNKNOWN;
     }
@@ -239,6 +240,8 @@ void    Quake::GUI()
         if (ImGui::Checkbox("Smooth Textures", &config.smoothTextures)) {
             bsp.SetTextureMode(config.smoothTextures);
         }
+        ImGui::Checkbox("Fly mode", &player.flying);
+        ImGui::SameLine();
         ImGui::Checkbox("Noclip", &config.noclip);
 
         ImGui::Separator();
@@ -292,8 +295,9 @@ void    Quake::GUI()
         ImGui::Text("Binds          %5u", stats.binds);
         ImGui::Text("Primitives     %5u", stats.primitives);
         ImGui::Separator();
-        ImGui::Text("Node: %s", inSolid ? "Solid" : "Empty");
         ImGui::Text("Player: %6.2f %6.2f %6.2f", player.Position().x, player.Position().y, player.Position().z);
+        ImGui::Text("Node: %s", inSolid ? "Solid" : "Empty");
+        ImGui::Text("%s", player.onGround ? "On ground" : "In air");
     ImGui::End();
 
     if (paused) {
@@ -349,16 +353,37 @@ void    Quake::MovePlayer(uint64_t elapsed)
     player.SetPitch(player.Pitch() + pitchDelta);
     pitchDelta = yawDelta = 0;
 
-    if (glm::length(velocity) > SMALL_EPS) {
-        Trace trace;
-        glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-        trace.start = player.Position();
-        trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
-        trace.fraction = 1;
-
-        if (player.flying || config.noclip) {
+    bool toMove = glm::length(velocity) > SMALL_EPS;
+    if (player.flying || config.noclip) {
+        if (toMove) {
+            Trace trace;
+            glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+            trace.start = player.Position();
+            trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
+            trace.fraction = 1;
             PlayerFly(trace);
         }
+    } else {
+        // check on ground
+        Trace trace;
+        trace.start = player.Position();
+        trace.end = player.Position() + glm::vec3(0, 0, -1);
+        trace.fraction = 1;
+        if (!bsp.TraceLine(trace.start, trace.end, trace)) {
+            player.onGround = true;
+        } else {
+            player.onGround = false;
+        }
+        //
+        if (toMove) {
+            Trace trace;
+            glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+            trace.start = player.Position();
+            trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
+            trace.fraction = 1;
+            PlayerFly(trace);
+        }
+        //
     }
 }
 
