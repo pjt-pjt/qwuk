@@ -365,14 +365,26 @@ void    Quake::MovePlayer(uint64_t elapsed)
         }
     } else {
         // check on ground
-        Trace trace;
-        trace.start = player.Position();
-        trace.end = player.Position() + glm::vec3(0, 0, -1);
-        trace.fraction = 1;
-        if (!bsp.TraceLine(trace.start, trace.end, trace)) {
+        Trace traceGravity;
+        traceGravity.start = player.Position();
+        traceGravity.end = player.Position() + glm::vec3(0, 0, -1);
+        traceGravity.fraction = 1;
+        if (!bsp.TraceLine(traceGravity.start, traceGravity.end, traceGravity)) {
             player.onGround = true;
         } else {
             player.onGround = false;
+            // Can we step down?
+            Trace stepTrace;
+            stepTrace.start = player.Position();
+            stepTrace.end = player.Position() + glm::vec3(0, 0, -19);
+            stepTrace.fraction = 1;
+            if (!bsp.TraceLine(stepTrace.start, stepTrace.end, stepTrace)) {
+                if (stepTrace.fraction > SMALL_EPS) {
+                    stepTrace.end = traceGravity.start + traceGravity.fraction * (traceGravity.end - traceGravity.start);
+                    player.onGround = true;
+                }
+            }
+            player.SetPosition(stepTrace.end);
         }
         //
         if (toMove) {
