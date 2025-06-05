@@ -23,10 +23,7 @@ public:
     void        SetPosition(const glm::vec3& pos);
     void        SetYaw(float yaw);
     void        SetPitch(float pitch);
-    void        SetEyeHeight(float height)
-    {
-        eyeHeight = height;
-    }
+    void        SetEyeHeight(float height);
 
     const glm::vec3&   Position() const
     {
@@ -60,9 +57,14 @@ class Actor : public Camera
 public:
     void Init(const Entity& entity);
     
-private:
-    glm::vec3   mins = {-16, -16, -24};
-    glm::vec3   maxs = { 16,  16,  32};
+public:
+    //glm::vec3   mins = {-16, -16, -24};
+    //glm::vec3   maxs = { 16,  16,  32};
+    bool        flying = false;
+    bool        onGround = false;
+    glm::vec3   direction = { 0, 0, 0 };
+    float       speed = 0;
+    float       verticalSpeed = 0;
 };
 
 

@@ -12,7 +12,7 @@
 void    Camera::SetPosition(const glm::vec3& pos)
 {
     position = pos;
-    eyePosition = position + glm::vec3(0, 0, eyeHeight);
+    SetEyeHeight(eyeHeight);
 }
 
 void    Camera::SetYaw(float yaw_)
@@ -46,6 +46,12 @@ void    Camera::SetPitch(float pitch_)
     };
     pitch = pitch_;
     FixPitch(pitch);
+}
+
+void    Camera::SetEyeHeight(float height)
+{
+    eyeHeight = height;
+    eyePosition = position + glm::vec3(0, 0, eyeHeight);
 }
 
 glm::vec3   Camera::Direction() const
@@ -89,6 +95,7 @@ bool    Quake::Init(const std::string& map)
     ok = ok && InitGame(map);
 
     test.testModeOn = testMode;
+    player.flying = true;
 
     return ok;
 }
@@ -349,8 +356,9 @@ void    Quake::MovePlayer(uint64_t elapsed)
         trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
         trace.fraction = 1;
 
-        //if fly or noclip
-        PlayerFly(trace);
+        if (player.flying || config.noclip) {
+            PlayerFly(trace);
+        }
     }
 }
 
