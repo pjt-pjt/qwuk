@@ -88,6 +88,8 @@ bool    Quake::Init(const std::string& map)
 
     ok = ok && InitGame(map);
 
+    test.testModeOn = testMode;
+
     return ok;
 }
 

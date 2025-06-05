@@ -32,6 +32,8 @@ int main (int argc, char **argv)
             }
         } else if (*arg == "-d" || *arg == "--debug") {
             debugMode = true;
+        } else if (*arg == "-t" || *arg == "--test") {
+            testMode = true;
         } else if (*arg == "-h" || *arg == "--help") {
             help = true;
             break;

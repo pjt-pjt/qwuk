@@ -43,6 +43,26 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "(gdb) Launch map in Test Mode",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/qwuk.exe",
+            "args": [ "--test", "--map", "${input:mapName}"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [{"name":"_NO_DEBUG_HEAP", "value": "1"}],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "${env:MINGW64_HOME}/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ],
     "inputs": [

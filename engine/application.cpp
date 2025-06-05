@@ -7,6 +7,9 @@
 #include "version.h"
 
 
+bool testMode = false;
+
+
 bool    Application::Init()
 {
     bool ok = InitGraphics();

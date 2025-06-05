@@ -45,4 +45,5 @@ private:
 
 
 extern bool         debugMode;
+extern bool         testMode;
 extern Application* app;
