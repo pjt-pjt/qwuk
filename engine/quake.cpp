@@ -381,7 +381,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
             trace.start = player.Position();
             trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
             trace.fraction = 1;
-            PlayerFly(trace);
+            PlayerGroundMove(trace);
         }
         //
     }
@@ -390,6 +390,29 @@ void    Quake::MovePlayer(uint64_t elapsed)
 void    Quake::PlayerFly(Trace& trace)
 {
     if (config.noclip || bsp.TraceLine(trace.start, trace.end, trace) || trace.fraction > SMALL_EPS) {
+        glm::vec3   newPos;
+        if (trace.fraction < 1) {
+            newPos = trace.start + trace.fraction * (trace.end - trace.start);
+        } else {
+            newPos = trace.end;
+        }
+        player.SetPosition(newPos);
+    }
+}
+
+void    Quake::PlayerGroundMove(Trace& trace)
+{
+    if (bsp.TraceLine(trace.start, trace.end, trace) || trace.fraction > SMALL_EPS) {
+        float oldFraction = trace.fraction;
+        if (trace.fraction < 1 && trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
+            // Did wew hit a stair
+            Trace   stepTrace = trace;
+            stepTrace.start.z += 18;
+            stepTrace.end.z += 18;
+            if (bsp.TraceLine(stepTrace.start, stepTrace.end, stepTrace) || stepTrace.fraction > oldFraction) {
+                trace = stepTrace;
+            }
+        }
         glm::vec3   newPos;
         if (trace.fraction < 1) {
             newPos = trace.start + trace.fraction * (trace.end - trace.start);
