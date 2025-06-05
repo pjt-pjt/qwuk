@@ -211,7 +211,7 @@ private:
     void Draw(Leaf* node);
 
     bool TracePoint(short node, const glm::vec3& point);
-    bool TraceLine(short node, const glm::vec3& start, const glm::vec3& end, Trace& trace);
+    bool TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
     std::vector<Entity>     entities;

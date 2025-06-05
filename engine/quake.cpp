@@ -389,8 +389,14 @@ void    Quake::MovePlayer(uint64_t elapsed)
 
 void    Quake::PlayerFly(Trace& trace)
 {
-    if (config.noclip || bsp.TraceLine(trace.start, trace.end, trace)) {
-        player.SetPosition(trace.end);
+    if (config.noclip || bsp.TraceLine(trace.start, trace.end, trace) || trace.fraction > SMALL_EPS) {
+        glm::vec3   newPos;
+        if (trace.fraction < 1) {
+            newPos = trace.start + trace.fraction * (trace.end - trace.start);
+        } else {
+            newPos = trace.end;
+        }
+        player.SetPosition(newPos);
     }
 }
 

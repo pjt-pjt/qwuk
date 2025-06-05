@@ -251,7 +251,7 @@ bool    BSP::TracePoint(const glm::vec3& point)
 bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
     const Model& model = models[0];
-    bool empty = TraceLine(model.clipNode, start, end, trace);
+    bool empty = TraceLine(model.clipNode, start, end, 0, 1, trace);
     // Draw models for entities, except for triggers
     for (const auto& entity : entities) {
         if (!empty) {
@@ -275,7 +275,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
                     continue;
                 }
             }
-            empty = TraceLine(models[entity.model].clipNode, start, end, trace);
+            empty = TraceLine(models[entity.model].clipNode, start, end, 0, 1, trace);
         }
     }
 
@@ -649,7 +649,7 @@ bool    BSP::TracePoint(short node, const glm::vec3& point)
     }
 }
 
-bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end, Trace& trace)
+bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)
 {
     static constexpr float DIST_EPSILON = 0.03125;
 
@@ -658,9 +658,9 @@ bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end,
         float t1 = cnode.plane->SignedDistance(start);
         float t2 = cnode.plane->SignedDistance(end);
         if (t1 >= 0 && t2 >= 0) {
-            return TraceLine(cnode.front, start, end, trace);
-        } else if (t1 <= 0 && t2 <= 0) {
-            return TraceLine(cnode.back, start, end, trace);
+            return TraceLine(cnode.front, start, end, fstart, fend, trace);
+        } else if (t1 < 0 && t2 < 0) {
+            return TraceLine(cnode.back, start, end, fstart, fend, trace);
         }
 
         float frac;
@@ -676,18 +676,18 @@ bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end,
             frac = 1;
         }
 
-        float       midf = frac;
+        float       fmid = fstart + frac * (fend - fstart);
         glm::vec3   mid;
-        mid = start + frac * (end - start);
+        mid = start + fmid * (end - start);
 
         short front = (t1 >= 0) ? cnode.front : cnode.back;
         short back = (t1 >= 0) ? cnode.back : cnode.front;
-        if (!TraceLine(front, start, mid, trace)) {
+        if (!TraceLine(front, start, mid, fstart, fmid, trace)) {
             return false;
         }
 
         if (TracePoint(back, mid)) {
-            return TraceLine(back, mid, end, trace);
+            return TraceLine(back, mid, end, fmid, fend, trace);
         }
 
         if (t1 >= 0) {
@@ -696,7 +696,7 @@ bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end,
             trace.plane = BSPPlane(-cnode.plane->Normal(), -cnode.plane->Distance(), cnode.plane->GetOrientation());
         }
 
-        trace.fraction = midf;
+        trace.fraction = fmid;
     }
     return node == EMPTY;
 }
