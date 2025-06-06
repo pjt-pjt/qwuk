@@ -416,13 +416,26 @@ void    Quake::PlayerGroundMove(Trace& trace)
 {
     if (bsp.TraceLine(trace.start, trace.end, trace) || trace.fraction > SMALL_EPS) {
         float oldFraction = trace.fraction;
-        if (trace.fraction < 1 && trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
-            // Did wew hit a stair
-            Trace   stepTrace = trace;
-            stepTrace.start.z += 18;
-            stepTrace.end.z += 18;
-            if (bsp.TraceLine(stepTrace.start, stepTrace.end, stepTrace) || stepTrace.fraction > oldFraction) {
-                trace = stepTrace;
+        if (trace.fraction < 1) {
+            if (trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
+                // Did wew hit a stair
+                Trace   stepTrace = trace;
+                stepTrace.start.z += 19;
+                stepTrace.end.z += 19;
+                if (bsp.TraceLine(stepTrace.start, stepTrace.end, stepTrace) || stepTrace.fraction > oldFraction) {
+                    trace = stepTrace;
+                }
+            } else if (trace.plane.GetOrientation() == BSPPlane::TowardZ) {
+                glm::vec3   dir = trace.end - trace.start;
+                glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
+                dir = dir - projected;
+
+                Trace   slopeTrace = trace;
+                slopeTrace.start = trace.start;
+                slopeTrace.end = trace.start + dir;
+                if (bsp.TraceLine(slopeTrace.start, slopeTrace.end, slopeTrace) || slopeTrace.fraction > oldFraction) {
+                    trace = slopeTrace;
+                }
             }
         }
         glm::vec3   newPos;
