@@ -104,8 +104,8 @@ private:
     void GUI();
 
     void MovePlayer(uint64_t elapsed);
-    void PlayerFly(Trace& trace);
-    void PlayerGroundMove(Trace& trace);
+    void PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& trace);
+    void PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
     void AddCommand(const Command& cmd);
     void DoCommands(uint64_t elapsed);

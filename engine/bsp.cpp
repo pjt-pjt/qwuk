@@ -251,6 +251,7 @@ bool    BSP::TracePoint(const glm::vec3& point)
 bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
     const Model& model = models[0];
+    trace.end = end;
     trace.fraction = 1;
     bool empty = TraceLine(model.clipNode, start, end, 0, 1, trace);
     // Draw models for entities, except for triggers
@@ -698,6 +699,7 @@ bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end,
         }
 
         trace.fraction = fmid;
+        trace.end = mid;
     }
     return node == EMPTY;
 }

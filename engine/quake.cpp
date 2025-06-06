@@ -356,95 +356,82 @@ void    Quake::MovePlayer(uint64_t elapsed)
     bool toMove = glm::length(velocity) > SMALL_EPS;
     if (player.flying || config.noclip) {
         if (toMove) {
-            Trace trace;
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-            trace.start = player.Position();
-            trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
-            trace.fraction = 1;
-            PlayerFly(trace);
+            glm::vec3 start = player.Position();
+            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
+            Trace trace;
+            PlayerFly(start, end, trace);
         }
     } else {
         // check on ground
+        glm::vec3 gravityStart = player.Position();
+        glm::vec3 gravityEnd = player.Position() + glm::vec3(0, 0, -1);
         Trace traceGravity;
-        traceGravity.start = player.Position();
-        traceGravity.end = player.Position() + glm::vec3(0, 0, -1);
-        traceGravity.fraction = 1;
-        if (!bsp.TraceLine(traceGravity.start, traceGravity.end, traceGravity)) {
+        if (!bsp.TraceLine(gravityStart, gravityEnd, traceGravity)) {
             player.onGround = true;
         } else {
             player.onGround = false;
             // Can we step down?
+            glm::vec3 stepStart = player.Position();
+            glm::vec3 stepEnd = player.Position() + glm::vec3(0, 0, -18 - 1);
             Trace stepTrace;
-            stepTrace.start = player.Position();
-            stepTrace.end = player.Position() + glm::vec3(0, 0, -19);
-            stepTrace.fraction = 1;
-            if (!bsp.TraceLine(stepTrace.start, stepTrace.end, stepTrace)) {
+            if (!bsp.TraceLine(stepStart, stepEnd, stepTrace)) {
                 if (stepTrace.fraction > SMALL_EPS) {
-                    stepTrace.end = traceGravity.start + traceGravity.fraction * (traceGravity.end - traceGravity.start);
                     player.onGround = true;
                 }
+            } else {
+                traceGravity = stepTrace;    //TODO The bugs that make it work
             }
-            player.SetPosition(stepTrace.end);
+            player.SetPosition(/* stepTrace.end */traceGravity.end);    //TODO The bugs that make it work
         }
         //
         if (toMove) {
-            Trace trace;
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-            trace.start = player.Position();
-            trace.end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
-            trace.fraction = 1;
-            PlayerGroundMove(trace);
+            glm::vec3 start = player.Position();
+            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
+            Trace trace;
+            PlayerGroundMove(start, end, trace);
         }
         //
     }
 }
 
-void    Quake::PlayerFly(Trace& trace)
+void    Quake::PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
-    if (config.noclip || bsp.TraceLine(trace.start, trace.end, trace) || trace.fraction > SMALL_EPS) {
-        glm::vec3   newPos;
-        if (trace.fraction < 1) {
-            newPos = trace.start + trace.fraction * (trace.end - trace.start);
-        } else {
-            newPos = trace.end;
-        }
-        player.SetPosition(newPos);
+    if (config.noclip || bsp.TraceLine(start, end, trace) || trace.fraction > SMALL_EPS) {
+        player.SetPosition(config.noclip ? end : trace.end);
     }
 }
 
-void    Quake::PlayerGroundMove(Trace& trace)
+void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
-    if (bsp.TraceLine(trace.start, trace.end, trace) || trace.fraction > SMALL_EPS) {
+    if (bsp.TraceLine(start, end, trace) || trace.fraction > SMALL_EPS) {
         float oldFraction = trace.fraction;
         if (trace.fraction < 1) {
             if (trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
                 // Did wew hit a stair
-                Trace   stepTrace = trace;
-                stepTrace.start.z += 19;
-                stepTrace.end.z += 19;
-                if (bsp.TraceLine(stepTrace.start, stepTrace.end, stepTrace) || stepTrace.fraction > oldFraction) {
+                Trace   stepTrace;
+                glm::vec3 stepStart = start;
+                stepStart.z += 18 + 1;
+                glm::vec3 stepEnd = end;
+                stepEnd.z += 19;
+                if (bsp.TraceLine(stepStart, stepEnd, stepTrace) || stepTrace.fraction > oldFraction) {
                     trace = stepTrace;
                 }
             } else if (trace.plane.GetOrientation() == BSPPlane::TowardZ) {
-                glm::vec3   dir = trace.end - trace.start;
+                glm::vec3   dir = end - start;
                 glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
                 dir = dir - projected;
 
-                Trace   slopeTrace = trace;
-                slopeTrace.start = trace.start;
-                slopeTrace.end = trace.start + dir;
-                if (bsp.TraceLine(slopeTrace.start, slopeTrace.end, slopeTrace) || slopeTrace.fraction > oldFraction) {
+                Trace   slopeTrace;
+                glm::vec3 slopeStart = start;
+                glm::vec3 slopeEnd = slopeStart + dir;
+                if (bsp.TraceLine(slopeStart, slopeEnd, slopeTrace) || slopeTrace.fraction > oldFraction) {
                     trace = slopeTrace;
                 }
             }
         }
-        glm::vec3   newPos;
-        if (trace.fraction < 1) {
-            newPos = trace.start + trace.fraction * (trace.end - trace.start);
-        } else {
-            newPos = trace.end;
-        }
-        player.SetPosition(newPos);
+        player.SetPosition(trace.end);
     }
 }
 

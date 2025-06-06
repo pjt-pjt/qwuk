@@ -75,9 +75,8 @@ private:
 
 struct Trace {
     BSPPlane    plane;
-    glm::vec3   start;
-    glm::vec3   end;
     float       fraction = 1.0;   
+    glm::vec3   end;
 };
 
 
