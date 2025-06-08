@@ -327,6 +327,8 @@ void    Quake::MovePlayer(uint64_t elapsed)
     }
     float secondsElapsed = float(elapsed) / 1000.0f;
     float speed = 256 * secondsElapsed;
+    float runSpeed = 320 * secondsElapsed;
+    float fallSpeed = 2 * runSpeed;
     if (keyMatrix[SDL_SCANCODE_W]) {
         velocity.x =  speed;
     } else if (keyMatrix[SDL_SCANCODE_S]) {
@@ -375,16 +377,12 @@ void    Quake::MovePlayer(uint64_t elapsed)
             player.onGround = false;
             // Can we step down?
             glm::vec3 stepStart = player.Position();
-            glm::vec3 stepEnd = player.Position() + glm::vec3(0, 0, -18 - 1);
+            glm::vec3 stepEnd = player.Position() + glm::vec3(0, 0, -fallSpeed);
             Trace stepTrace;
             if (!bsp.TraceLine(stepStart, stepEnd, stepTrace)) {
-                if (stepTrace.fraction > SMALL_EPS) {
-                    player.onGround = true;
-                }
-            } else {
-                traceGravity = stepTrace;    //TODO The bugs that make it work
+                player.onGround = true;
             }
-            player.SetPosition(/* stepTrace.end */traceGravity.end);    //TODO The bugs that make it work
+            player.SetPosition(stepTrace.end);
         }
         //
         if (toMove) {
