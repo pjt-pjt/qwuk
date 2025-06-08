@@ -405,32 +405,33 @@ void    Quake::PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& tr
 
 void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
-    if (bsp.TraceLine(start, end, trace) || trace.fraction > SMALL_EPS) {
+    bsp.TraceLine(start, end, trace);
+    if (trace.fraction < 1) {
         float oldFraction = trace.fraction;
-        if (trace.fraction < 1) {
-            if (trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
-                // Did wew hit a stair
-                Trace   stepTrace;
-                glm::vec3 stepStart = start;
-                stepStart.z += 18 + 1;
-                glm::vec3 stepEnd = end;
-                stepEnd.z += 19;
-                if (bsp.TraceLine(stepStart, stepEnd, stepTrace) || stepTrace.fraction > oldFraction) {
-                    trace = stepTrace;
-                }
-            } else if (trace.plane.GetOrientation() == BSPPlane::TowardZ) {
-                glm::vec3   dir = end - start;
-                glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
-                dir = dir - projected;
+        if (trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
+            // Did wew hit a stair
+            Trace   stepTrace;
+            glm::vec3 stepStart = start;
+            stepStart.z += 18 + 1;
+            glm::vec3 stepEnd = end;
+            stepEnd.z += 19;
+            if (bsp.TraceLine(stepStart, stepEnd, stepTrace) || stepTrace.fraction > oldFraction) {
+                trace = stepTrace;
+            }
+        } else if (trace.plane.GetOrientation() == BSPPlane::TowardZ) {
+            glm::vec3   dir = end - start;
+            glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
+            dir = dir - projected;
 
-                Trace   slopeTrace;
-                glm::vec3 slopeStart = start;
-                glm::vec3 slopeEnd = slopeStart + dir;
-                if (bsp.TraceLine(slopeStart, slopeEnd, slopeTrace) || slopeTrace.fraction > oldFraction) {
-                    trace = slopeTrace;
-                }
+            Trace   slopeTrace;
+            glm::vec3 slopeStart = start;
+            glm::vec3 slopeEnd = slopeStart + dir;
+            if (bsp.TraceLine(slopeStart, slopeEnd, slopeTrace) || slopeTrace.fraction > oldFraction) {
+                trace = slopeTrace;
             }
         }
+    }
+    if (trace.fraction > SMALL_EPS) {
         player.SetPosition(trace.end);
     }
 }
