@@ -232,6 +232,7 @@ void    Quake::GUI()
         ImGui::BeginDisabled(config.showAll);
         ImGui::Checkbox("Show triggers", &config.showTriggers);
         ImGui::Checkbox("Show Func Doors", &config.showFuncDoors);
+        ImGui::Checkbox("Show Func Plats", &config.showFuncPlats);
         ImGui::Checkbox("Show Func Walls", &config.showFuncWalls);
         ImGui::Checkbox("Show Episode Gates", &config.showFuncEpisodeGate);
         ImGui::Checkbox("Show Boss Gate", &config.showFuncBossGate);
@@ -342,9 +343,10 @@ void    Quake::MovePlayer(uint64_t elapsed)
         velocity.y =  0;
     }
 
-    if (keyMatrix[SDL_SCANCODE_Q]) {
+    bool flyMode = player.flying || config.noclip;
+    if (flyMode && keyMatrix[SDL_SCANCODE_Q]) {
         velocity.z =  speed;
-    } else if (keyMatrix[SDL_SCANCODE_X]) {
+    } else if (flyMode && keyMatrix[SDL_SCANCODE_X]) {
         velocity.z = -speed;
     } else {
         velocity.z =  0;

@@ -20,6 +20,7 @@ struct Config
     bool    showAll = false;
     bool    showTriggers = false;
     bool    showFuncDoors = true;
+    bool    showFuncPlats = true;
     bool    showFuncWalls = false;
     bool    showFuncEpisodeGate = false;
     bool    showFuncBossGate = true;

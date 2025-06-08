@@ -188,6 +188,9 @@ void    BSP::Draw(const glm::vec3& camera)
                 if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
                     continue;
                 }
+                if (!config.showFuncPlats && entity.className.find("func_plat") != std::string::npos) {
+                    continue;
+                }
                 if (!config.showFuncWalls && entity.className.find("func_wall") != std::string::npos) {
                     continue;
                 }
@@ -231,6 +234,9 @@ bool    BSP::TracePoint(const glm::vec3& point)
                 if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
                     continue;
                 }
+                if (!config.showFuncPlats && entity.className.find("func_plat") != std::string::npos) {
+                    continue;
+                }
                 if (!config.showFuncWalls && entity.className.find("func_wall") != std::string::npos) {
                     continue;
                 }
@@ -265,6 +271,9 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             }
             if (!config.showAll) {
                 if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
+                    continue;
+                }
+                if (!config.showFuncPlats && entity.className.find("func_plat") != std::string::npos) {
                     continue;
                 }
                 if (!config.showFuncWalls && entity.className.find("func_wall") != std::string::npos) {
