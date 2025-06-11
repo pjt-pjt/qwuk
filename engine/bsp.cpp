@@ -217,13 +217,13 @@ void    BSP::EndDraw()
     stats.binds = graphics.GetBindsCount();
 }
 
-bool    BSP::TracePoint(const glm::vec3& point)
+LeafType    BSP::TracePoint(const glm::vec3& point)
 {
     const Model& model = models[0];
-    bool empty = TracePoint(model.clipNode, point);
+    LeafType content = TracePoint(model.clipNode, point);
     // Draw models for entities, except for triggers
     for (const auto& entity : entities) {
-        if (!empty) {
+        if (content != EMPTY) {
             break;
         }
         if (entity.model != 0) {
@@ -247,11 +247,11 @@ bool    BSP::TracePoint(const glm::vec3& point)
                     continue;
                 }
             }
-            empty = TracePoint(models[entity.model].clipNode, point);
+            content = TracePoint(models[entity.model].clipNode, point);
         }
     }
 
-    return empty;
+    return content;
 }
 
 bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
@@ -288,6 +288,11 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             }
             empty = TraceLine(models[entity.model].clipNode, start, end, 0, 1, trace);
         }
+    }
+    if (empty) {
+        trace.endContent = EMPTY;
+    } else {
+        trace.endContent = TracePoint(trace.end);
     }
 
     return empty;
@@ -643,7 +648,7 @@ void    BSP::Draw(Leaf* leaf)
     }
 }
 
-bool    BSP::TracePoint(short node, const glm::vec3& point)
+LeafType    BSP::TracePoint(short node, const glm::vec3& point)
 {
     while (node >= 0) {
         const ClipNode& cnode = clipNodes[node];
@@ -653,11 +658,7 @@ bool    BSP::TracePoint(short node, const glm::vec3& point)
             node = cnode.back;
         }
     }
-    if (LeafType(node) == EMPTY) {
-        return true;
-    } else {
-        return false;
-    }
+    return LeafType(node);
 }
 
 bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)

@@ -405,6 +405,7 @@ void    Quake::PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& tr
 
 void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
+    trace.startContent = bsp.TracePoint(start);
     bsp.TraceLine(start, end, trace);
     if (trace.fraction < 1) {
         float oldFraction = trace.fraction;

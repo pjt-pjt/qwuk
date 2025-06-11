@@ -73,11 +73,21 @@ private:
     Orientation     orientation;
 };
 
+enum LeafType {
+    EMPTY   = -1,
+    SOLID   = -2,
+    WATER   = -3,
+    SLIME   = -4,
+    LAVA    = -5,
+    SKY     = -6
+};
 
 struct Trace {
     BSPPlane    plane;
     float       fraction = 1.0;   
     glm::vec3   end;
+    LeafType    startContent = SOLID;
+    LeafType    endContent = SOLID;
 };
 
 
@@ -144,18 +154,18 @@ class BSP
 public:
     BSP(Config& config, Stats& stats, Test& test) : config(config), stats(stats), test(test)
     {}
-    bool Init();
-    void Destroy();
-    bool Load(const char* path);
-    void Close();
-    void SetTextureMode(bool smooth);
+    bool        Init();
+    void        Destroy();
+    bool        Load(const char* path);
+    void        Close();
+    void        SetTextureMode(bool smooth);
 
-    void BeginDraw(const glm::vec3& camera, const glm::mat4& view, const glm::mat4& proj);
-    void Draw(const glm::vec3& camera);
-    void EndDraw();
+    void        BeginDraw(const glm::vec3& camera, const glm::mat4& view, const glm::mat4& proj);
+    void        Draw(const glm::vec3& camera);
+    void        EndDraw();
 
-    bool TracePoint(const glm::vec3& point);
-    bool TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
+    LeafType    TracePoint(const glm::vec3& point);
+    bool        TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
     const std::vector<Entity>&  Entities() const
     {
@@ -171,47 +181,41 @@ public:
         Leaf*       frontLeaf = nullptr;
         Leaf*       backLeaf = nullptr;
     };
-
-    enum LeafType {
-        EMPTY   = -1,
-        SOLID   = -2,
-        WATER   = -3,
-        SLIME   = -4,
-        LAVA    = -5,
-        SKY     = -6
-    };
     struct Leaf
     {
         int         firstFace = 0;
         int         numFaces = 0;
         LeafType    type;
     };
+
     struct ClipNode
     {
         BSPPlane*   plane = nullptr;
         short       front;    
         short       back;
     };
-    struct Model{
+
+    struct Model
+    {
         uint32_t    firstNode;
         uint32_t    clipNode;
     };
 
 private:
-    bool CreateEntities();
-    void CreateTextures();
-    void CreatePlanes();
-    void CreateFaces();
-    void CreateBSP();
-    void CreateClipNodes();
-    void CreateModels();
-    void CreateLights();
+    bool        CreateEntities();
+    void        CreateTextures();
+    void        CreatePlanes();
+    void        CreateFaces();
+    void        CreateBSP();
+    void        CreateClipNodes();
+    void        CreateModels();
+    void        CreateLights();
 
-    void Draw(Node* node, const glm::vec3& camera);
-    void Draw(Leaf* node);
+    void        Draw(Node* node, const glm::vec3& camera);
+    void        Draw(Leaf* node);
 
-    bool TracePoint(short node, const glm::vec3& point);
-    bool TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
+    LeafType    TracePoint(short node, const glm::vec3& point);
+    bool        TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
     std::vector<Entity>     entities;
