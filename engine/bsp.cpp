@@ -698,7 +698,7 @@ bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end,
             return false;
         }
 
-        if (TracePoint(back, mid)) {
+        if (TracePoint(back, mid) == EMPTY) {
             return TraceLine(back, mid, end, fmid, fend, trace);
         }
 
