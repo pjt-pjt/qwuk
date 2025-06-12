@@ -6,7 +6,6 @@
 #include "game.h"
 #include "bsp.h"
 #include <filesystem>
-#include <ltdl.h>
 
 
 void    Camera::SetPosition(const glm::vec3& pos)
@@ -76,7 +75,7 @@ void    Actor::Init(const Entity& entity)
 Quake::Quake() :
     bsp(config, stats, test),
     velocity(0),
-    game(*this)
+    interface(*this)
 {
     for (auto& key : keyMatrix) {
         key = false;
@@ -85,8 +84,6 @@ Quake::Quake() :
 
 bool    Quake::Init(const std::string& map)
 {
-    lt_dlinit();
-
     bool ok = bsp.Init();
     ImGui::GetIO().Fonts->AddFontDefault();
     quakeFontSmall = ImGui::GetIO().Fonts->AddFontFromFileTTF("resources/dpquake_.ttf", 18.0);
@@ -102,8 +99,7 @@ bool    Quake::Init(const std::string& map)
 void    Quake::Destroy()
 {
     bsp.Destroy();
-    lt_dlclose(handle);
-    lt_dlexit();
+    game.Destroy();
 }
 
 void    Quake::SetViewPort(int w, int h)
@@ -195,25 +191,9 @@ void    Quake::Render()
 
 bool    Quake::InitGame(const std::string& map)
 {
-    handle = lt_dlopen("libgame.dll");
-    bool ok = (handle != NULL);
+    bool ok = game.Init("libgame.dll", interface);
     if (ok) {
-        InitProc    GameInit;
-        GameInit = (InitProc)lt_dlsym(handle, "Init");
-        static Functions   functions;
-        game.Init(&functions);
-        if (GameInit == NULL || GameInit(&functions) != 0) {
-            ok = false;
-        }
-
-        if (ok) {
-            StartProc   GameStart;
-            GameStart = (StartProc)lt_dlsym(handle, "Start");
-            if (GameStart == NULL) {
-                ok = false;
-            }
-            GameStart(!map.empty() ? map.c_str() : nullptr);
-        }
+        game.Start(!map.empty() ? map.c_str() : nullptr);
     }
     return ok;
 }

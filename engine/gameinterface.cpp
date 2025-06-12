@@ -17,10 +17,9 @@ GameInterface::~GameInterface()
     game = nullptr;
 }
 
-bool    GameInterface::Init(Functions* functions)
+void    GameInterface::Init(Functions* functions)
 {
     functions->PostCommand = AddCommand;
-    return true;
 }
 
 void    GameInterface::AddCommand(int command, const char* strParam1, float /* fltParam1 */, int /* intParam1 */)

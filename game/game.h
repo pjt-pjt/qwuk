@@ -12,9 +12,12 @@ typedef struct Functions
 } Functions;
 
 
+#define INIT_OK 0
+
+
 typedef int     (*InitProc)(Functions* functions);
 typedef void    (*StartProc)(const char* startMap);
-typedef void    (*DestoryProc)(void);
+typedef void    (*DestroyProc)(void);
 
 
 #if defined(__cplusplus)

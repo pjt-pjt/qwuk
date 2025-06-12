@@ -2,10 +2,10 @@
 
 #include "bsp.h"
 #include "gameinterface.h"
+#include "gamemodule.h"
 #include "SDL2/SDL.h"
 #include <string>
 #include <queue>
-#include <ltdl.h>
 
 
 struct ImFont;
@@ -130,8 +130,8 @@ private:
     float           pitchDelta = 0;
     glm::vec3       velocity;
 
-    lt_dlhandle     handle = nullptr;
-    GameInterface   game;
+    GameModule      game;
+    GameInterface   interface;
     std::queue<Command> commands;
 
 public:

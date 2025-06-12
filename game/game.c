@@ -7,7 +7,7 @@ static Functions* gFunctions;
 int     Init(Functions* functions)
 {
     gFunctions = functions;
-    return 0;
+    return INIT_OK;
 }
 
 void    Start(char* startMap)
@@ -17,4 +17,8 @@ void    Start(char* startMap)
     } else {
         gFunctions->PostCommand(1, startMap, 0, 0);
     }
+}
+
+void    Destroy()
+{
 }
