@@ -431,8 +431,21 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
                 trace = slopeTrace;
             }
         }
+        if (trace.fraction < 1 && trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ) {
+            float       speed = glm::length(end - start) * (1 - trace.fraction);
+            glm::vec3   dir = glm::normalize(end - start);
+            glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
+            dir = dir - projected;
+
+            Trace   slideTrace;
+            glm::vec3 slideStart = trace.end;
+            glm::vec3 slideEnd = slideStart + dir * speed;
+            if (bsp.TraceLine(slideStart, slideEnd, slideTrace) || slideTrace.fraction > oldFraction) {
+                trace = slideTrace;
+            }
+        }
     }
-    if (trace.fraction > SMALL_EPS) {
+    if (trace.fraction > SMALL_EPS && trace.endContent != SOLID) {
         player.SetPosition(trace.end);
     }
 }
