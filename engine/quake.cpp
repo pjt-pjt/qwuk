@@ -405,44 +405,47 @@ void    Quake::PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& tr
 
 void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
-    trace.startContent = bsp.TracePoint(start);
-    bsp.TraceLine(start, end, trace);
-    if (trace.fraction < 1) {
+    glm::vec3   actStart = start;
+    glm::vec3   actEnd = end;
+
+    trace.startContent = bsp.TracePoint(actStart);
+    bsp.TraceLine(actStart, actEnd, trace);
+
+    uint32_t    bumps = 0;
+    while (trace.fraction < 1 && bumps < 2/*MAXBUMPS*/) {
         float oldFraction = trace.fraction;
         if (trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ)  {
             // Did wew hit a stair
             Trace   stepTrace;
-            glm::vec3 stepStart = start;
+            glm::vec3 stepStart = actStart;
             stepStart.z += 18 + 1;
-            glm::vec3 stepEnd = end;
+            glm::vec3 stepEnd = actEnd;
             stepEnd.z += 19;
             if (bsp.TraceLine(stepStart, stepEnd, stepTrace) || stepTrace.fraction > oldFraction) {
                 trace = stepTrace;
             }
         } else if (trace.plane.GetOrientation() == BSPPlane::TowardZ) {
-            glm::vec3   dir = end - start;
+            glm::vec3   dir = actEnd - actStart;
             glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
             dir = dir - projected;
 
             Trace   slopeTrace;
-            glm::vec3 slopeStart = start;
+            glm::vec3 slopeStart = actStart;
             glm::vec3 slopeEnd = slopeStart + dir;
             if (bsp.TraceLine(slopeStart, slopeEnd, slopeTrace) || slopeTrace.fraction > oldFraction) {
                 trace = slopeTrace;
             }
         }
         if (trace.fraction < 1 && trace.plane.GetOrientation() != BSPPlane::AxialZ && trace.plane.GetOrientation() != BSPPlane::TowardZ) {
-            float       speed = glm::length(end - start) * (1 - trace.fraction);
-            glm::vec3   dir = glm::normalize(end - start);
+            float       speed = glm::length(actEnd - actStart) * (1 - trace.fraction);
+            glm::vec3   dir = glm::normalize(actEnd - actStart);
             glm::vec3   projected = trace.plane.Normal() * glm::dot(dir, trace.plane.Normal());
             dir = dir - projected;
 
-            Trace   slideTrace;
-            glm::vec3 slideStart = trace.end;
-            glm::vec3 slideEnd = slideStart + dir * speed;
-            if (bsp.TraceLine(slideStart, slideEnd, slideTrace) || slideTrace.fraction > oldFraction) {
-                trace = slideTrace;
-            }
+            actStart = trace.end;
+            actEnd = actStart + dir * speed;
+            bsp.TraceLine(actStart, actEnd, trace);
+            ++bumps;
         }
     }
     if (trace.fraction > SMALL_EPS && trace.endContent != SOLID) {
