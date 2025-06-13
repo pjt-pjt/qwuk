@@ -404,7 +404,7 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
             stepStart.z += 18 + 1;
             glm::vec3 stepEnd = actEnd;
             stepEnd.z += 19;
-            if (bsp.TraceLine(stepStart, stepEnd, stepTrace) || stepTrace.fraction > oldFraction) {
+            if (bsp.TraceLine(stepStart, stepEnd, stepTrace) || (stepTrace.fraction > oldFraction && stepTrace.endContent != SOLID)) {
                 trace = stepTrace;
             }
         } else if (trace.plane.GetOrientation() == BSPPlane::TowardZ) {
@@ -415,7 +415,7 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
             Trace   slopeTrace;
             glm::vec3 slopeStart = actStart;
             glm::vec3 slopeEnd = slopeStart + dir;
-            if (bsp.TraceLine(slopeStart, slopeEnd, slopeTrace) || slopeTrace.fraction > oldFraction) {
+            if (bsp.TraceLine(slopeStart, slopeEnd, slopeTrace) || (slopeTrace.fraction > oldFraction && slopeTrace.endContent != SOLID)) {
                 trace = slopeTrace;
             }
         }
