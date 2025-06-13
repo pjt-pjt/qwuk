@@ -12,6 +12,7 @@
 
 
 class BSPFile;
+class Entity;
 
 
 struct Config
@@ -73,21 +74,31 @@ private:
     Orientation     orientation;
 };
 
-enum LeafType {
+enum LeafType
+{
     EMPTY   = -1,
     SOLID   = -2,
     WATER   = -3,
     SLIME   = -4,
     LAVA    = -5,
-    SKY     = -6
+    SKY     = -6,
+    TRIGGER = -1000
 };
 
-struct Trace {
+struct Trace
+{
     BSPPlane    plane;
+    Entity*     entity = nullptr;
     float       fraction = 1.0;   
     glm::vec3   end;
     LeafType    startContent = SOLID;
     LeafType    endContent = SOLID;
+};
+
+struct Content
+{
+    LeafType    content;
+    Entity*     entity = nullptr;
 };
 
 
@@ -164,7 +175,7 @@ public:
     void        Draw(const glm::vec3& camera);
     void        EndDraw();
 
-    LeafType    TracePoint(const glm::vec3& point);
+    Content     TracePoint(const glm::vec3& point);
     bool        TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
     const std::vector<Entity>&  Entities() const
@@ -214,7 +225,7 @@ private:
     void        Draw(Node* node, const glm::vec3& camera);
     void        Draw(Leaf* node);
 
-    LeafType    TracePoint(short node, const glm::vec3& point);
+    Content     TracePoint(short node, const glm::vec3& point);
     bool        TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:

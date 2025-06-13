@@ -371,6 +371,9 @@ void    Quake::MovePlayer(uint64_t elapsed)
             glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
             Trace trace;
             PlayerGroundMove(start, end, trace);
+            if (trace.entity != nullptr) {
+                Collision(player, *trace.entity);
+            }
         }
         //
     }
@@ -388,7 +391,7 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     glm::vec3   actStart = start;
     glm::vec3   actEnd = end;
 
-    trace.startContent = bsp.TracePoint(actStart);
+    trace.startContent = bsp.TracePoint(actStart).content;
     bsp.TraceLine(actStart, actEnd, trace);
 
     uint32_t    bumps = 0;
@@ -425,11 +428,39 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
             actStart = trace.end;
             actEnd = actStart + dir * speed;
             bsp.TraceLine(actStart, actEnd, trace);
-            ++bumps;
         }
+        ++bumps;
     }
     if (trace.fraction > SMALL_EPS && trace.endContent != SOLID) {
         player.SetPosition(trace.end);
+    }
+}
+
+void    Quake::Collision(Actor& actor, Entity& entity)
+{
+    if (entity.className == "trigger_teleport") {
+        Entity::Result target = entity.GetValue("target");
+        if (!target) {
+            return;
+        }
+        for (const auto& e : bsp.Entities()) {
+            if (e.className == "info_teleport_destination" && e.HasKey("targetname")) {
+                Entity::Result res = e.GetValue("targetname");
+                if (*res.value() == *target.value()) {
+                    // teleport
+                    glm::vec3   pos = e.origin;
+                    pos.z += 22; //-player.box.minz;
+                    actor.SetPosition(pos);
+                    Entity::Result angle = e.GetValue("angle");
+                    if (angle) {
+                        actor.SetYaw(std::stoi(*angle.value()));
+                    }
+                }
+            }
+        }
+    } else if (entity.className == "trigger_changelevel") {
+        Entity::Result  map = entity.GetValue("map");
+        AddCommand({Command::ChangeMap, 2, "maps/" + *map.value() + ".bsp"});
     }
 }
 
@@ -452,6 +483,9 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
         } else {
             if (cmd.cmd == Command::ChangeMap) {
                 loaded = bsp.Load(cmd.strParam1.c_str());
+                if (!loaded) {
+                    loaded = bsp.Load("maps/start.bsp");
+                }
                 if (loaded) {
                     for (const auto& entity : bsp.Entities()) {
                         if (entity.className == "info_player_start") {
