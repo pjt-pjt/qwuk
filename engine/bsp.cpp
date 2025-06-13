@@ -294,13 +294,9 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             empty = TraceLine(models[entity.model].clipNode, start, end, 0, 1, trace);
         }
     }
-    if (empty) {
-        trace.endContent = EMPTY;
-    } else {
-        Content content = TracePoint(trace.end);
-        trace.endContent = content.content;
-        trace.entity = content.entity;
-    }
+    Content content = TracePoint(trace.end);
+    trace.endContent = content.content;
+    trace.entity = content.entity;
 
     return empty;
 }
