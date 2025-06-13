@@ -68,6 +68,8 @@ void    Actor::Init(const Entity& entity)
         SetPosition(entity.origin);
         SetYaw(entity.angle);
         SetEyeHeight(22);
+        mins = {-16, -16, -24};
+        maxs = { 16,  16,  32};
     }
 }
 
@@ -449,7 +451,7 @@ void    Quake::Collision(Actor& actor, Entity& entity)
                 if (*res.value() == *target.value()) {
                     // teleport
                     glm::vec3   pos = e.origin;
-                    pos.z += 22; //-player.box.minz;
+                    pos.z -= player.mins.z;
                     actor.SetPosition(pos);
                     Entity::Result angle = e.GetValue("angle");
                     if (angle) {

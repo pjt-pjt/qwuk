@@ -58,8 +58,8 @@ public:
     void Init(const Entity& entity);
     
 public:
-    //glm::vec3   mins = {-16, -16, -24};
-    //glm::vec3   maxs = { 16,  16,  32};
+    glm::vec3   mins;
+    glm::vec3   maxs;
     bool        flying = false;
     bool        onGround = false;
     glm::vec3   direction = { 0, 0, 0 };
