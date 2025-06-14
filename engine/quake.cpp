@@ -438,34 +438,15 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     }
 }
 
-void    Quake::Collision(Actor& actor, int32_t entityIdx)
+void    Quake::Collision(Actor& /* actor */, int32_t entityIdx)
 {
     Entity& entity = bsp.Entities()[entityIdx];
-    if (entity.className == "trigger_teleport") {
-        Entity::Result target = entity.GetValue("target");
-        if (!target) {
-            return;
-        }
-        for (const auto& e : bsp.Entities()) {
-            if (e.className == "info_teleport_destination" && e.HasKey("targetname")) {
-                Entity::Result res = e.GetValue("targetname");
-                if (*res.value() == *target.value()) {
-                    // teleport
-                    glm::vec3   pos = e.origin;
-                    pos.z -= player.mins.z;
-                    actor.SetPosition(pos);
-                    Entity::Result angle = e.GetValue("angle");
-                    if (angle) {
-                        actor.SetYaw(std::stoi(*angle.value()));
-                    }
-                }
-            }
-        }
-    } else if (entity.className == "trigger_changelevel") {
+    if (entity.className == "trigger_changelevel") {
         Entity::Result  map = entity.GetValue("map");
         AddCommand({Command::ChangeMap, 2, "maps/" + *map.value() + ".bsp"});
+    } else {
+        game.Collision(entityIdx);
     }
-    game.Collision(entityIdx);
 }
 
 void    Quake::AddCommand(const Command& cmd)

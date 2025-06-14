@@ -1,8 +1,8 @@
 {
     "C_Cpp.default.compilerPath": "${env:MINGW64_HOME}/bin/gcc",
     "files.associations": {
-        "*.hdr": "code-text-binary",
         "*.json": "jsonc",
+        "*.hdr": "code-text-binary",
         "array": "cpp",
         "string": "cpp",
         "string_view": "cpp",
@@ -13,6 +13,7 @@
         "cstdlib": "c",
         "optional": "cpp",
         "cstdio": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "functional": "cpp"
     }
 }

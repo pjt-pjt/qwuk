@@ -1,5 +1,6 @@
 #include "game.h"
 #include <stdio.h>
+#include <string.h>
 
 
 static Functions* gFunctions;
@@ -21,7 +22,17 @@ void    Start(char* startMap)
 
 void    Collision(int entityIdx)
 {
-    entityIdx = entityIdx;
+    if (strcmp(gFunctions->EntityClass(entityIdx), "trigger_teleport") == 0) {
+        const char* target = gFunctions->EntityValueStr(entityIdx, "target");
+        int targetIdx = gFunctions->SearchEntity("info_teleport_destination", "targetname", target);
+        if (targetIdx != -1) {
+            float origin[3];
+            gFunctions->EntityValueVec3(targetIdx, "origin", origin);
+            float angle;
+            gFunctions->EntityValueFloat(targetIdx, "angle", &angle);
+            gFunctions->SetPlayer(origin, angle);
+        }
+    }
 }
 
 
