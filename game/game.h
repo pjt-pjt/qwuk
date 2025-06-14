@@ -17,6 +17,7 @@ typedef struct Functions
 
 typedef int     (*InitProc)(Functions* functions);
 typedef void    (*StartProc)(const char* startMap);
+typedef void    (*CollisionProc)(int entityIdx);
 typedef void    (*DestroyProc)(void);
 
 

@@ -29,10 +29,17 @@ void    GameModule::Destroy()
     lt_dlexit();
 }
 
+void    GameModule::Collision(int entityIdx)
+{
+    GameCollision(entityIdx);
+}
+
 bool    GameModule::SetFunctions()
 {
     GameInit = (InitProc)lt_dlsym(handle, "Init");
     GameStart = (StartProc)lt_dlsym(handle, "Start");
+    GameCollision = (CollisionProc)lt_dlsym(handle, "Collision");
     GameDestroy = (DestroyProc)lt_dlsym(handle, "Destroy");
-    return GameInit != nullptr && GameStart != nullptr && GameDestroy != nullptr;
+    return GameInit != nullptr && GameStart != nullptr &&
+           GameCollision != nullptr && GameDestroy != nullptr;
 }

@@ -19,6 +19,12 @@ void    Start(char* startMap)
     }
 }
 
+void    Collision(int entityIdx)
+{
+    entityIdx = entityIdx;
+}
+
+
 void    Destroy()
 {
 }

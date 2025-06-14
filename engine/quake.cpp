@@ -465,6 +465,7 @@ void    Quake::Collision(Actor& actor, int32_t entityIdx)
         Entity::Result  map = entity.GetValue("map");
         AddCommand({Command::ChangeMap, 2, "maps/" + *map.value() + ".bsp"});
     }
+    game.Collision(entityIdx);
 }
 
 void    Quake::AddCommand(const Command& cmd)
