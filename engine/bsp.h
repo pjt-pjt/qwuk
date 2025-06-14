@@ -88,7 +88,7 @@ enum LeafType
 struct Trace
 {
     BSPPlane    plane;
-    Entity*     entity = nullptr;
+    int32_t     entity = -1;
     float       fraction = 1.0;   
     glm::vec3   end;
     LeafType    startContent = SOLID;
@@ -98,7 +98,7 @@ struct Trace
 struct Content
 {
     LeafType    content;
-    Entity*     entity = nullptr;
+    int32_t     entity = -1;
 };
 
 
@@ -179,6 +179,10 @@ public:
     bool        TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
     const std::vector<Entity>&  Entities() const
+    {
+        return entities;
+    }
+    std::vector<Entity>&  Entities()
     {
         return entities;
     }

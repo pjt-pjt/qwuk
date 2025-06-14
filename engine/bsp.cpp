@@ -225,7 +225,8 @@ Content    BSP::TracePoint(const glm::vec3& point)
     if (content.content != EMPTY) {
         return content;
     }
-    for (auto& entity : entities) {
+    for (uint32_t ei = 0;  ei < entities.size(); ++ ei) {
+        auto& entity = entities[ei];
         if (entity.model != 0) {
             if (!config.showAll) {
                 if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
@@ -246,11 +247,11 @@ Content    BSP::TracePoint(const glm::vec3& point)
             }
             content = TracePoint(models[entity.model].clipNode, point);
             if (content.content != EMPTY) {
-                content.entity = &entity;
+                content.entity = ei;
             }
             if (entity.className.find("trigger") != std::string::npos && content.content == SOLID) {
                 content.content = TRIGGER;
-                content.entity = &entity;
+                content.entity = ei;
                 break;
             }
         }

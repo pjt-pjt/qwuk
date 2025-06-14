@@ -373,8 +373,8 @@ void    Quake::MovePlayer(uint64_t elapsed)
             glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
             Trace trace;
             PlayerGroundMove(start, end, trace);
-            if (trace.entity != nullptr) {
-                Collision(player, *trace.entity);
+            if (trace.entity != -1) {
+                Collision(player, trace.entity);
             }
         }
         //
@@ -438,8 +438,9 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     }
 }
 
-void    Quake::Collision(Actor& actor, Entity& entity)
+void    Quake::Collision(Actor& actor, int32_t entityIdx)
 {
+    Entity& entity = bsp.Entities()[entityIdx];
     if (entity.className == "trigger_teleport") {
         Entity::Result target = entity.GetValue("target");
         if (!target) {
