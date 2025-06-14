@@ -32,6 +32,13 @@ void    Collision(int entityIdx)
             gFunctions->EntityValueFloat(targetIdx, "angle", &angle);
             gFunctions->SetPlayer(origin, angle);
         }
+    } else if (strcmp(gFunctions->EntityClass(entityIdx), "trigger_changelevelw") == 0) {
+        const char* map = gFunctions->EntityValueStr(entityIdx, "map");
+        char path[1024] = "";
+        strcat(path, "maps/");
+        strcat(path, map);
+        strcat(path, ".bsp");
+        gFunctions->PostCommand(1, path, 0, 0);
     }
 }
 

@@ -440,13 +440,7 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
 
 void    Quake::Collision(Actor& /* actor */, int32_t entityIdx)
 {
-    Entity& entity = bsp.Entities()[entityIdx];
-    if (entity.className == "trigger_changelevel") {
-        Entity::Result  map = entity.GetValue("map");
-        AddCommand({Command::ChangeMap, 2, "maps/" + *map.value() + ".bsp"});
-    } else {
-        game.Collision(entityIdx);
-    }
+    game.Collision(entityIdx);
 }
 
 void    Quake::AddCommand(const Command& cmd)
