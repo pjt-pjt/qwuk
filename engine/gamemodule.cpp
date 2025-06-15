@@ -17,9 +17,9 @@ bool    GameModule::Init(const char* gamePath, GameInterface& interface)
     return ok;
 }
 
-void    GameModule::Start(const char* startMap)
+void    GameModule::Run(const char* startMap)
 {
-    GameStart(startMap);
+    GameRun(startMap);
 }
 
 void    GameModule::Destroy()
@@ -37,9 +37,9 @@ void    GameModule::Collision(int entityIdx)
 bool    GameModule::SetFunctions()
 {
     GameInit = (InitProc)lt_dlsym(handle, "Init");
-    GameStart = (StartProc)lt_dlsym(handle, "Start");
+    GameRun = (RunProc)lt_dlsym(handle, "Run");
     GameCollision = (CollisionProc)lt_dlsym(handle, "Collision");
     GameDestroy = (DestroyProc)lt_dlsym(handle, "Destroy");
-    return GameInit != nullptr && GameStart != nullptr &&
+    return GameInit != nullptr && GameRun != nullptr &&
            GameCollision != nullptr && GameDestroy != nullptr;
 }

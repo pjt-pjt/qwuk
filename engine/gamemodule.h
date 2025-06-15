@@ -12,7 +12,7 @@ class GameModule
 public:
     bool    Init(const char* gamePath, GameInterface& interface);
 
-    void    Start(const char* startMap);
+    void    Run(const char* startMap);
     void    Destroy(void);
 
     void    Collision(int entityIdx);
@@ -23,7 +23,7 @@ private:
 private:
     lt_dlhandle     handle = nullptr;
     InitProc        GameInit = nullptr;
-    StartProc       GameStart = nullptr;
+    RunProc         GameRun = nullptr;
     CollisionProc   GameCollision = nullptr;
     DestroyProc     GameDestroy = nullptr;
 };

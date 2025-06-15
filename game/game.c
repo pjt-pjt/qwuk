@@ -11,7 +11,7 @@ int     Init(Functions* functions)
     return INIT_OK;
 }
 
-void    Start(char* startMap)
+void    Run(char* startMap)
 {
     if (startMap == NULL) {
         gFunctions->PostCommand(1, "maps/start.bsp", 0, 0);
@@ -41,7 +41,6 @@ void    Collision(int entityIdx)
         gFunctions->PostCommand(1, path, 0, 0);
     }
 }
-
 
 void    Destroy()
 {

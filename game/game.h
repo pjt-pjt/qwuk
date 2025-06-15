@@ -16,7 +16,6 @@ typedef struct Functions
     int         (*SearchEntity)(const char* className, const char* key, const char* value);
     void        (*SetPlayer)(const float* origin, float angle);
     void        (*TeleportPlayer)(const float* origin, float angle);
-
 } Functions;
 
 
@@ -24,7 +23,7 @@ typedef struct Functions
 
 
 typedef int     (*InitProc)(Functions* functions);
-typedef void    (*StartProc)(const char* startMap);
+typedef void    (*RunProc)(const char* startMap);
 typedef void    (*CollisionProc)(int entityIdx);
 typedef void    (*DestroyProc)(void);
 

@@ -195,7 +195,7 @@ bool    Quake::InitGame(const std::string& map)
 {
     bool ok = game.Init("libgame.dll", interface);
     if (ok) {
-        game.Start(!map.empty() ? map.c_str() : nullptr);
+        game.Run(!map.empty() ? map.c_str() : nullptr);
     }
     return ok;
 }
