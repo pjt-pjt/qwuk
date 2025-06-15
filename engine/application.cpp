@@ -135,7 +135,7 @@ void    Application::HandleKeyEvent(const SDL_Event& e)
     altEnterDown = false;
 
     if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_ESCAPE) {
-        quake.Pause(!quake.Paused());
+        quake.ShowMenu(!quake.Paused());
     } else{
         quake.ProcessKeyboardEvent(e);
     }

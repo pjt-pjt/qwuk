@@ -90,13 +90,13 @@ public:
     void NextFrame(uint64_t elapsed);
 
     void Render();
-    void Pause(bool pause)
+    void ShowMenu(bool pause)
     {
-        paused = pause;
+        status = pause ? Menu : Running;
     }
     bool Paused() const
     {
-        return paused;
+        return status != Running;
     }
 
 private:
@@ -116,8 +116,8 @@ private:
     Config          config;
     Test            test;
     BSP             bsp;
-    bool            loaded = false;
-    bool            paused = true;
+    enum Status { Starting, Loading, Running, Paused_, Menu };
+    Status          status = Starting;
     int             width = 0;
     int             height = 0;
     glm::mat4       view;

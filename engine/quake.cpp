@@ -157,7 +157,7 @@ void    Quake::ProcessKeyboardEvent(const SDL_Event& event)
 
 void    Quake::ProcessMouseEvent(const SDL_Event& event)
 {
-    if (event.type == SDL_MOUSEMOTION && !paused) {
+    if (event.type == SDL_MOUSEMOTION && status == Running) {
         yawDelta -= (float)event.motion.xrel / 2.5f;
         pitchDelta -= (float)event.motion.yrel / 2.5f;
     }    
@@ -181,7 +181,7 @@ void    Quake::Render()
 {
     graphics.Clear();
     GUI();
-    if (loaded) {
+    if (status > Loading) {
         glm::vec3 pos = player.EyePosition();
         glm::vec3 center = pos + player.Direction();
         view = glm::lookAt(pos, center, glm::vec3(0,0,1));
@@ -283,7 +283,7 @@ void    Quake::GUI()
         ImGui::Text("%s", player.onGround ? "On ground" : "In air");
     ImGui::End();
 
-    if (paused) {
+    if (status == Menu) {
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
         ImGui::PushFont(quakeFontSmall);
@@ -291,7 +291,6 @@ void    Quake::GUI()
             ImGui::PushFont(quakeFontLarge);
             if (ImGui::Button("    Start   ")) {
                 AddCommand({Command::ChangeMap, 2, "maps/start.bsp"});
-                loaded = false;
             }
             if (ImGui::Button("    Quit    ")) {
                 app->Quit();
@@ -304,7 +303,7 @@ void    Quake::GUI()
 
 void    Quake::MovePlayer(uint64_t elapsed)
 {
-    if (paused) {
+    if (status != Running) {
         return;
     }
     float secondsElapsed = float(elapsed) / 1000.0f;
@@ -457,11 +456,14 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
         }
         working = true;
         Command& cmd = commands.front();
+        if (cmd.cmd == Command::ChangeMap) {
+            status = Loading;
+        }
         if (cmd.waitFrames > 0) {
             --cmd.waitFrames;
         } else {
             if (cmd.cmd == Command::ChangeMap) {
-                loaded = bsp.Load(cmd.strParam1.c_str());
+                bool loaded = bsp.Load(cmd.strParam1.c_str());
                 if (!loaded) {
                     loaded = bsp.Load("maps/start.bsp");
                 }
@@ -472,7 +474,7 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
                         }
                     }
                     //Close menu
-                    paused = false;   //TODO Run map
+                    status = Running;
                 }    
             }
             commands.pop();
