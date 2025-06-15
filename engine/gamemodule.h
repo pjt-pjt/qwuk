@@ -13,6 +13,7 @@ public:
     bool    Init(const char* gamePath, GameInterface& interface);
 
     void    Run(const char* startMap);
+    void    ChangeMap();
     void    Destroy(void);
 
     void    Collision(int entityIdx);
@@ -24,6 +25,7 @@ private:
     lt_dlhandle     handle = nullptr;
     InitProc        GameInit = nullptr;
     RunProc         GameRun = nullptr;
+    ChangeMapProc   GameChangeMap = nullptr;
     CollisionProc   GameCollision = nullptr;
     DestroyProc     GameDestroy = nullptr;
 };

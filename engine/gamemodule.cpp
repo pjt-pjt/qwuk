@@ -22,6 +22,11 @@ void    GameModule::Run(const char* startMap)
     GameRun(startMap);
 }
 
+void    GameModule::ChangeMap()
+{
+    GameChangeMap();
+}
+
 void    GameModule::Destroy()
 {
     GameDestroy();
@@ -38,8 +43,10 @@ bool    GameModule::SetFunctions()
 {
     GameInit = (InitProc)lt_dlsym(handle, "Init");
     GameRun = (RunProc)lt_dlsym(handle, "Run");
+    GameChangeMap = (ChangeMapProc)lt_dlsym(handle, "ChangeMap");
     GameCollision = (CollisionProc)lt_dlsym(handle, "Collision");
     GameDestroy = (DestroyProc)lt_dlsym(handle, "Destroy");
     return GameInit != nullptr && GameRun != nullptr &&
+           GameChangeMap != nullptr &&
            GameCollision != nullptr && GameDestroy != nullptr;
 }

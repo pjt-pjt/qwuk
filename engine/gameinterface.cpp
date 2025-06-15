@@ -26,7 +26,7 @@ void    GameInterface::Init(Functions* functions)
     functions->EntityValueFloat = EntityValueFloat;
     functions->EntityValueVec3 = EntityValueVec3;
     functions->SearchEntity = SearchEntity;
-    functions->SetPlayer = SetPlayer;
+    functions->SpawnPlayer = SpawnPlayer;
     functions->TeleportPlayer = TeleportPlayer;
 }
 
@@ -115,11 +115,10 @@ int     GameInterface::SearchEntity(const char* className, const char* key, cons
     return -1;
 }
 
-void    GameInterface::SetPlayer(const float* origin, float angle)
+void    GameInterface::SpawnPlayer(int entity)
 {
-    glm::vec3   pos(origin[0], origin[1], origin[2]);
-    game->quake.player.SetPosition(pos);
-    game->quake.player.SetYaw(angle);
+    const Entity& e = game->quake.bsp.Entities()[entity];
+    game->quake.player.Init(e);
 }
 
 void    GameInterface::TeleportPlayer(const float* origin, float angle)

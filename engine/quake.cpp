@@ -468,12 +468,7 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
                     loaded = bsp.Load("maps/start.bsp");
                 }
                 if (loaded) {
-                    for (const auto& entity : bsp.Entities()) {
-                        if (entity.className == "info_player_start") {
-                            player.Init(entity);
-                        }
-                    }
-                    //Close menu
+                    game.ChangeMap();
                     status = Running;
                 }    
             }

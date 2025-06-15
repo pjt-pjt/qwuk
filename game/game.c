@@ -20,6 +20,19 @@ void    Run(char* startMap)
     }
 }
 
+void    ChangeMap(void)
+{
+    const char* className;
+    int entity = 0;
+    while ((className = gFunctions->EntityClass(entity)) != NULL) {
+        if (strcmp(gFunctions->EntityClass(entity), "info_player_start") == 0) {
+            gFunctions->SpawnPlayer(entity);
+            break;  //TODO
+        }    
+        ++entity;
+    }
+}
+
 void    Collision(int entityIdx)
 {
     if (strcmp(gFunctions->EntityClass(entityIdx), "trigger_teleport") == 0) {
