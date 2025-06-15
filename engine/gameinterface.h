@@ -22,6 +22,7 @@ private:
     static int          SearchEntity(const char* className, const char* key, const char* value);
 
     static void         SetPlayer(const float* origin, float angle);
+    static void         TeleportPlayer(const float* origin, float angle);
 
 private:
     Quake&      quake;

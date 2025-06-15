@@ -27,6 +27,7 @@ void    GameInterface::Init(Functions* functions)
     functions->EntityValueVec3 = EntityValueVec3;
     functions->SearchEntity = SearchEntity;
     functions->SetPlayer = SetPlayer;
+    functions->TeleportPlayer = TeleportPlayer;
 }
 
 void    GameInterface::AddCommand(int command, const char* strParam1, float /* fltParam1 */, int /* intParam1 */)
@@ -115,6 +116,13 @@ int     GameInterface::SearchEntity(const char* className, const char* key, cons
 }
 
 void    GameInterface::SetPlayer(const float* origin, float angle)
+{
+    glm::vec3   pos(origin[0], origin[1], origin[2]);
+    game->quake.player.SetPosition(pos);
+    game->quake.player.SetYaw(angle);
+}
+
+void    GameInterface::TeleportPlayer(const float* origin, float angle)
 {
     glm::vec3   pos(origin[0], origin[1], origin[2]);
     pos.z -= game->quake.player.mins.z;

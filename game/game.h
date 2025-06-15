@@ -15,6 +15,7 @@ typedef struct Functions
     int         (*EntityValueVec3)(int entity, const char* key, float* value);
     int         (*SearchEntity)(const char* className, const char* key, const char* value);
     void        (*SetPlayer)(const float* origin, float angle);
+    void        (*TeleportPlayer)(const float* origin, float angle);
 
 } Functions;
 

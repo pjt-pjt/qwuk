@@ -30,7 +30,7 @@ include_directories(SYSTEM ${SYTEM_INCLUDE_ROOT})
 include_directories($ENV{IMGUI_HOME})
 include_directories($ENV{IMGUI_HOME}/backends)
 
-add_executable(${APP_NAME} ${QUAKE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} main.cpp version.h)
+add_executable(${APP_NAME} ${QUAKE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} ${GAME_DIR}/game.h main.cpp version.h)
 target_include_directories(${APP_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${ENGINE_DIR} ${BACKEND_DIR} ${GAME_DIR})
 target_link_libraries(${APP_NAME} PUBLIC ${IMGUI_LIB} mingw32 ltdl SDL2main SDL2 glew32 freeglut glu32 opengl32 comdlg32 ole32)
 

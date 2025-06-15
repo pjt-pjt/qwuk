@@ -30,9 +30,9 @@ void    Collision(int entityIdx)
             gFunctions->EntityValueVec3(targetIdx, "origin", origin);
             float angle;
             gFunctions->EntityValueFloat(targetIdx, "angle", &angle);
-            gFunctions->SetPlayer(origin, angle);
+            gFunctions->TeleportPlayer(origin, angle);
         }
-    } else if (strcmp(gFunctions->EntityClass(entityIdx), "trigger_changelevelw") == 0) {
+    } else if (strcmp(gFunctions->EntityClass(entityIdx), "trigger_changelevel") == 0) {
         const char* map = gFunctions->EntityValueStr(entityIdx, "map");
         char path[1024] = "";
         strcat(path, "maps/");
