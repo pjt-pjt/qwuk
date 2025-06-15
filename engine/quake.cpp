@@ -193,7 +193,7 @@ void    Quake::Render()
 
 bool    Quake::InitGame(const std::string& map)
 {
-    bool ok = game.Init("libgame.dll", interface);
+    bool ok = game.InitModule("libgame.dll", interface);
     if (ok) {
         game.Run(!map.empty() ? map.c_str() : nullptr);
     }

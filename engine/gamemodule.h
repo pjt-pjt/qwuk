@@ -10,22 +10,17 @@ class GameInterface;
 class GameModule
 {
 public:
-    bool    Init(const char* gamePath, GameInterface& interface);
+    bool    InitModule(const char* gamePath, GameInterface& interface);
 
-    void    Run(const char* startMap);
-    void    ChangeMap();
-    void    Destroy(void);
-
-    void    Collision(int entityIdx);
+    InitProc        Init = nullptr;
+    RunProc         Run = nullptr;
+    ChangeMapProc   ChangeMap = nullptr;
+    CollisionProc   Collision = nullptr;
+    DestroyProc     Destroy = nullptr;
 
 private:
     bool    SetFunctions();
 
 private:
     lt_dlhandle     handle = nullptr;
-    InitProc        GameInit = nullptr;
-    RunProc         GameRun = nullptr;
-    ChangeMapProc   GameChangeMap = nullptr;
-    CollisionProc   GameCollision = nullptr;
-    DestroyProc     GameDestroy = nullptr;
 };
