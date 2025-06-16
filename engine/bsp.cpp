@@ -26,22 +26,36 @@ void    TestPipeline::AddShaders()
 }
 
 
-bool    Entity::HasKey(const std::string& key) const
+uint32_t    Pairs::FindKey(const std::string& key, uint32_t from, uint32_t count) const
 {
-    for (const auto& pair : pairs) {
-        if (pair.key == key) {
-            return true;
+    for (uint32_t pi = 0; pi < count && from + pi < pairs.size(); ++pi) {
+        if (pairs[from + pi].key == key) {
+            return from + pi;
         }
     }
-    return false;
+    return NotFound;
 }
+
+const std::string&  Pairs::GetValue(uint32_t index) const
+{
+    if (index < pairs.size()) {
+        return pairs[index].value;
+    }
+    static std::string empty;
+    return empty;
+}
+
+void    Pairs::Append(const std::vector<Pair>& epairs)
+{
+    pairs.insert(pairs.end(), epairs.cbegin(), epairs.cend());
+}
+
 
 std::optional<const std::string*> Entity::GetValue(const std::string& key) const
 {
-    for (const auto& pair : pairs) {
-        if (pair.key == key) {
-            return &pair.value;
-        }
+    uint32_t index = pairs.FindKey(key, first, count);
+    if (index != Pairs::NotFound) {
+        return &pairs.GetValue(index);
     }
     return {};
 }
@@ -332,11 +346,11 @@ bool    BSP::CreateEntities()
         }
         return !iss.eof();
     };
-    auto PairsToEntity = [this] (const std::vector<Entity::Pair>& pairs) {
-        Entity  entity;
-        auto Search = [&pairs] (const std::string& key) -> int {
-            for (uint32_t i = 0; i < pairs.size(); ++i) {
-                if (pairs[i].key == key) {
+    auto PairsToEntity = [this] (const std::vector<Pairs::Pair>& epairs) {
+        Entity  entity(pairs);
+        auto Search = [&epairs] (const std::string& key) -> int {
+            for (uint32_t i = 0; i < epairs.size(); ++i) {
+                if (epairs[i].key == key) {
                     return i;
                 }
             }
@@ -346,22 +360,24 @@ bool    BSP::CreateEntities()
         if (idx == -1) {
             return;
         }
-        entity.className = pairs[idx].value;
+        entity.className = epairs[idx].value;
         idx = Search("origin");
         if (idx != -1) {
             float x, y, z;
-            std::sscanf(pairs[idx].value.c_str(), "%f %f %f", &x, &y, &z);
+            std::sscanf(epairs[idx].value.c_str(), "%f %f %f", &x, &y, &z);
             entity.origin = {x, y, z};
         }
         idx = Search("angle");
         if (idx != -1) {
-            std::sscanf(pairs[idx].value.c_str(), "%f", &entity.angle);
+            std::sscanf(epairs[idx].value.c_str(), "%f", &entity.angle);
         }
         idx = Search("model");
         if (idx != -1) {
-            std::sscanf(pairs[idx].value.c_str(), "*%u", &entity.model);
+            std::sscanf(epairs[idx].value.c_str(), "*%u", &entity.model);
         }
-        entity.pairs = pairs;
+        entity.first = pairs.pairs.size();
+        entity.count = epairs.size();
+        pairs.Append(epairs);
         entities.push_back(entity);
     };
 
@@ -369,21 +385,21 @@ bool    BSP::CreateEntities()
         if (!GetChar('{')) {
             break;
         }
-        std::vector<Entity::Pair>   pairs;
+        std::vector<Pairs::Pair>   epairs;
         do {
-            Entity::Pair    pair;
+            Pairs::Pair    pair;
             if (!GetString(pair.key)) {
                 break;
             }
             if (!GetString(pair.value)) {
                 return false;
             }
-            pairs.push_back(pair);
+            epairs.push_back(pair);
         } while (!iss.eof());
         if (iss.eof() || !GetChar('}')) {
             return false;
         }
-        PairsToEntity(pairs);
+        PairsToEntity(epairs);
     }
     return true;
 }

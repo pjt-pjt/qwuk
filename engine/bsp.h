@@ -111,21 +111,36 @@ struct Face
 };
 
 
-struct Entity
+struct Pairs
 {
     struct Pair
     {
         std::string key;
         std::string value;
     };
-    std::string className;
-    glm::vec3   origin = {0, 0, 0};
-    float       angle = 0;
-    uint32_t    model = 0;
     std::vector<Pair>   pairs;
 
+    static constexpr uint32_t NotFound = UINT32_MAX;
+    uint32_t            FindKey(const std::string& key, uint32_t from, uint32_t count) const;
+    const std::string&  GetValue(uint32_t index) const;
+
+    void Append(const std::vector<Pair>& epairs);
+};
+
+
+struct Entity
+{
+    std::string     className;
+    glm::vec3       origin = {0, 0, 0};
+    float           angle = 0;
+    uint32_t        model = 0;
+    const Pairs&    pairs;
+    uint32_t        first = 0;
+    uint32_t        count = 0;
+
+    Entity(const Pairs& pairs) : pairs(pairs) {}
+
     using Result = std::optional<const std::string*>;
-    bool    HasKey(const std::string& key) const;
     Result  GetValue(const std::string& key) const;
 };
 
@@ -233,7 +248,9 @@ private:
     bool        TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
+    Pairs                   pairs;
     std::vector<Entity>     entities;
+
     std::vector<Vertex>     vertices;
     std::vector<Face>       faces;
     std::vector<BSPPlane>   planes;
