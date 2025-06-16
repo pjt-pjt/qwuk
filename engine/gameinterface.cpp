@@ -52,12 +52,12 @@ const char*   GameInterface::EntityValueStr(int entity, const char* key)
     if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
         return nullptr;
     }
-    const Entity& ent = game->bsp.Entities()[entity];
-    Entity::Result  res = ent.GetValue(key);
-    if (!res) {
+    const Entity&   ent = game->bsp.Entities()[entity];
+    Entity::Value   val = ent.GetValue(key);
+    if (val.empty()) {
         return nullptr;
     }
-    return (*res)->c_str();
+    return val.c_str();
 }
 
 int     GameInterface::EntityValueFloat(int entity, const char* key, float* value)
@@ -73,11 +73,11 @@ int     GameInterface::EntityValueFloat(int entity, const char* key, float* valu
         return 1;
     }
 
-    Entity::Result  res = ent.GetValue(skey);
-    if (!res) {
+    Entity::Value   val = ent.GetValue(skey);
+    if (val.empty()) {
         return 0;
     }
-    *value = std::stof(**res);
+    *value = std::stof(val);
     return 1;
 }
 
@@ -94,11 +94,11 @@ int     GameInterface::EntityValueVec3(int entity, const char* key, float* value
         return 1;
     }
 
-    Entity::Result  res = ent.GetValue(skey);
-    if (!res) {
+    Entity::Value   val = ent.GetValue(skey);
+    if (val.empty()) {
         return 0;
     }
-    std::sscanf((*res)->c_str(), "%f %f %f", &value[0], &value[1], &value[2]);
+    std::sscanf(val.c_str(), "%f %f %f", &value[0], &value[1], &value[2]);
     return 1;
 }
 
@@ -107,8 +107,8 @@ int     GameInterface::SearchEntity(const char* className, const char* key, cons
     for (int ei = 0; ei < int(game->bsp.Entities().size()); ++ei) {
         const auto& entity = game->bsp.Entities()[ei];
         if (entity.className == className) {
-            Entity::Result  result = entity.GetValue(key);
-            if (result && **result == value) {
+            Entity::Value   val = entity.GetValue(key);
+            if (!val.empty() && val == value) {
                 return ei;
             }
         }

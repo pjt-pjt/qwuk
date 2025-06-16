@@ -140,8 +140,8 @@ struct Entity
 
     Entity(const Pairs& pairs) : pairs(pairs) {}
 
-    using Result = std::optional<const std::string*>;
-    Result  GetValue(const std::string& key) const;
+    using Value = const std::string&;
+    Value   GetValue(const std::string& key) const;
 };
 
 

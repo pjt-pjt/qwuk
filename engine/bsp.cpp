@@ -51,13 +51,9 @@ void    Pairs::Append(const std::vector<Pair>& epairs)
 }
 
 
-std::optional<const std::string*> Entity::GetValue(const std::string& key) const
+Entity::Value   Entity::GetValue(const std::string& key) const
 {
-    uint32_t index = pairs.FindKey(key, first, count);
-    if (index != Pairs::NotFound) {
-        return &pairs.GetValue(index);
-    }
-    return {};
+    return pairs.GetValue(pairs.FindKey(key, first, count));
 }
 
 
@@ -595,9 +591,9 @@ void    BSP::CreateLights()
         } else {
             continue;
         }
-        Entity::Result result = entity.GetValue("light");
-        if (result) {
-            light.range = std::stof(**result);
+        Entity::Value   value = entity.GetValue("light");
+        if (!value.empty()) {
+            light.range = std::stof(value);
             light.intensity = light.range;
         }
         lights.push_back(light);
