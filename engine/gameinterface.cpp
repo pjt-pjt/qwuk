@@ -8,7 +8,8 @@ GameInterface* game = nullptr;
 
 
 GameInterface::GameInterface(Quake& quake) :
-    quake(quake)
+    quake(quake),
+    bsp(quake.bsp)
 {
     game = this;
 }
@@ -40,18 +41,18 @@ void    GameInterface::AddCommand(int command, const char* strParam1, float /* f
 
 const char*   GameInterface::EntityClass(int entity)
 {
-    if (entity < 0 || entity >= int(game->quake.bsp.Entities().size())) {
+    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
         return nullptr;
     }
-    return game->quake.bsp.Entities()[entity].className.c_str();
+    return game->bsp.Entities()[entity].className.c_str();
 }
 
 const char*   GameInterface::EntityValueStr(int entity, const char* key)
 {
-    if (entity < 0 || entity >= int(game->quake.bsp.Entities().size())) {
+    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
         return nullptr;
     }
-    const Entity& ent = game->quake.bsp.Entities()[entity];
+    const Entity& ent = game->bsp.Entities()[entity];
     Entity::Result  res = ent.GetValue(key);
     if (!res) {
         return nullptr;
@@ -61,11 +62,11 @@ const char*   GameInterface::EntityValueStr(int entity, const char* key)
 
 int     GameInterface::EntityValueFloat(int entity, const char* key, float* value)
 {
-    if (entity < 0 || entity >= int(game->quake.bsp.Entities().size())) {
+    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
         return 0;
     }
 
-    const Entity& ent = game->quake.bsp.Entities()[entity];
+    const Entity& ent = game->bsp.Entities()[entity];
     std::string   skey = key;
     if (skey == "angle") {
         *value = ent.angle;
@@ -82,11 +83,11 @@ int     GameInterface::EntityValueFloat(int entity, const char* key, float* valu
 
 int     GameInterface::EntityValueVec3(int entity, const char* key, float* value)
 {
-    if (entity < 0 || entity >= int(game->quake.bsp.Entities().size())) {
+    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
         return 0;
     }
 
-    const Entity& ent = game->quake.bsp.Entities()[entity];
+    const Entity& ent = game->bsp.Entities()[entity];
     std::string   skey = key;
     if (skey == "origin") {
         memcpy_s(value, 3 * sizeof(float), glm::value_ptr(ent.origin), 3 * sizeof(float));
@@ -103,8 +104,8 @@ int     GameInterface::EntityValueVec3(int entity, const char* key, float* value
 
 int     GameInterface::SearchEntity(const char* className, const char* key, const char* value)
 {
-    for (int ei = 0; ei < int(game->quake.bsp.Entities().size()); ++ei) {
-        const auto& entity = game->quake.bsp.Entities()[ei];
+    for (int ei = 0; ei < int(game->bsp.Entities().size()); ++ei) {
+        const auto& entity = game->bsp.Entities()[ei];
         if (entity.className == className) {
             Entity::Result  result = entity.GetValue(key);
             if (result && **result == value) {
@@ -117,7 +118,7 @@ int     GameInterface::SearchEntity(const char* className, const char* key, cons
 
 void    GameInterface::SpawnPlayer(int entity)
 {
-    const Entity& e = game->quake.bsp.Entities()[entity];
+    const Entity& e = game->bsp.Entities()[entity];
     game->quake.player.Init(e);
 }
 

@@ -2,6 +2,7 @@
 
 
 class Quake;
+class BSP;
 struct Functions;
 
 class GameInterface
@@ -26,4 +27,5 @@ private:
 
 private:
     Quake&      quake;
+    BSP&        bsp;
 };
