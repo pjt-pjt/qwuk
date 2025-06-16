@@ -133,7 +133,8 @@ struct Entity
     std::string     className;
     glm::vec3       origin = {0, 0, 0};
     float           angle = 0;
-    uint32_t        model = 0;
+    static constexpr uint32_t NoModel = UINT32_MAX;
+    uint32_t        model = NoModel;
     const Pairs&    pairs;
     uint32_t        first = 0;
     uint32_t        count = 0;

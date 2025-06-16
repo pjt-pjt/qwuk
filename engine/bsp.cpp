@@ -186,11 +186,9 @@ void    BSP::Draw(const glm::vec3& camera)
 
     // Draw world
     color = 0x404040;
-    const Model& model = models[0];
-    Draw(&nodes[model.firstNode], camera);
     // Draw models for entities, except for triggers
     for (const auto& entity : entities) {
-        if (entity.model != 0) {
+        if (entity.model != Entity::NoModel) {
             if (!config.showAll) {
                 if (!config.showTriggers && entity.className.find("trigger") != std::string::npos) {
                     continue;
@@ -229,15 +227,10 @@ void    BSP::EndDraw()
 
 Content    BSP::TracePoint(const glm::vec3& point)
 {
-    const Model& model = models[0];
-    Content content = TracePoint(model.clipNode, point);
-    // Draw models for entities, except for triggers
-    if (content.content != EMPTY) {
-        return content;
-    }
+    Content content;
     for (uint32_t ei = 0;  ei < entities.size(); ++ ei) {
         auto& entity = entities[ei];
-        if (entity.model != 0) {
+        if (entity.model != Entity::NoModel) {
             if (!config.showAll) {
                 if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
                     continue;
@@ -272,16 +265,12 @@ Content    BSP::TracePoint(const glm::vec3& point)
 
 bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
-    const Model& model = models[0];
     trace.end = end;
     trace.fraction = 1;
-    bool empty = TraceLine(model.clipNode, start, end, 0, 1, trace);
+    bool empty;
     // Draw models for entities, except for triggers
     for (auto& entity : entities) {
-        if (!empty) {
-            break;
-        }
-        if (entity.model != 0) {
+        if (entity.model != Entity::NoModel) {
             if (entity.className.find("trigger") != std::string::npos) {
                 continue;
             }
@@ -303,6 +292,9 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
                 }
             }
             empty = TraceLine(models[entity.model].clipNode, start, end, 0, 1, trace);
+        }
+        if (!empty) {
+            break;
         }
     }
     Content content = TracePoint(trace.end);
@@ -370,6 +362,8 @@ bool    BSP::CreateEntities()
         idx = Search("model");
         if (idx != -1) {
             std::sscanf(epairs[idx].value.c_str(), "*%u", &entity.model);
+        } else if (entity.className == "worldspawn") {
+            entity.model = 0;
         }
         entity.first = pairs.pairs.size();
         entity.count = epairs.size();
