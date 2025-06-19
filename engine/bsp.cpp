@@ -81,8 +81,9 @@ bool    BSP::Load(const char* path)
 {
     Close();
     bool ok = bspFile.Init(path);
-    /* if (ok) {
-        ok =  */entities_.Init(bspFile.entities, bspFile.entitiesSize);
+    if (ok) {
+        ok = entities_.Init(bspFile.entities, bspFile.entitiesSize);
+    }
     if (ok) {
         ok = CreateEntities();
 #if 0
