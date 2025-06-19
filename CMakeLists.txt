@@ -17,8 +17,8 @@ set(ENGINE_DIR engine)
 set(BACKEND_DIR opengl)
 set(GAME_DIR game)
 
-set(QUAKE_SRC application.cpp quake.cpp bsp.cpp bspfile.cpp filebuffer.cpp gameinterface.cpp gamemodule.cpp
-              application.h quake.h bsp.h bspfile.h filebuffer.h gameinterface.h gamemodule.h vertex.h plane.h math.h)
+set(QUAKE_SRC application.cpp quake.cpp bsp.cpp bspfile.cpp entitystorage.cpp filebuffer.cpp gameinterface.cpp gamemodule.cpp
+              application.h quake.h bsp.h bspfile.h entitystorage.h filebuffer.h gameinterface.h gamemodule.h vertex.h plane.h math.h)
 list(TRANSFORM QUAKE_SRC PREPEND "${ENGINE_DIR}/")
 
 set(BACKEND_SRC pipeline.cpp program.cpp storagebuffer.cpp graphics.cpp application_opengl.cpp)

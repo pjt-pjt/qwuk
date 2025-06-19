@@ -12,7 +12,7 @@ struct Edict
 };
 
 
-struct Entity
+struct Entity_
 {
     const char*     className;
     float           origin[3] = {0, 0, 0};

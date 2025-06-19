@@ -5,6 +5,7 @@
 #include "pipeline.h"
 #include "bspfile.h"
 #include "filebuffer.h"
+#include "entitystorage.h"
 #include "plane.h"
 #include <vector>
 #include <string>
@@ -251,6 +252,7 @@ private:
 private:
     Pairs                   pairs;
     std::vector<Entity>     entities;
+    EntityStorage           entities_;
 
     std::vector<Vertex>     vertices;
     std::vector<Face>       faces;
