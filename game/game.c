@@ -3,54 +3,54 @@
 #include <string.h>
 
 
-static Functions* gFunctions;
+static Interface* gInterface;
 
-int     Init(Functions* functions)
+int     Init(Interface* interface)
 {
-    gFunctions = functions;
+    gInterface = interface;
     return INIT_OK;
 }
 
 void    Run(char* startMap)
 {
     if (startMap == NULL) {
-        gFunctions->PostCommand(1, "maps/start.bsp", 0, 0);
+        gInterface->PostCommand(1, "maps/start.bsp", 0, 0);
     } else {
-        gFunctions->PostCommand(1, startMap, 0, 0);
+        gInterface->PostCommand(1, startMap, 0, 0);
     }
 }
 
 void    ChangeMap(void)
 {
-    EntPtr entity = gFunctions->EnumerateEntites(NULL);
+    EntPtr entity = gInterface->EnumerateEntites(NULL);
     while (entity != NULL) {
-        if (strcmp(gFunctions->EntityClass(entity), "info_player_start") == 0) {
-            gFunctions->SpawnPlayer(entity);
+        if (strcmp(gInterface->EntityClass(entity), "info_player_start") == 0) {
+            gInterface->SpawnPlayer(entity);
             break;  //TODO
         }    
-        entity = gFunctions->EnumerateEntites(entity);
+        entity = gInterface->EnumerateEntites(entity);
     }
 }
 
 void    Collision(EntPtr entity)
 {
-    if (strcmp(gFunctions->EntityClass(entity), "trigger_teleport") == 0) {
-        const char* target = gFunctions->EntityValueStr(entity, "target");
-        EntPtr targetEnt = gFunctions->SearchEntity("info_teleport_destination", "targetname", target);
+    if (strcmp(gInterface->EntityClass(entity), "trigger_teleport") == 0) {
+        const char* target = gInterface->EntityValueStr(entity, "target");
+        EntPtr targetEnt = gInterface->SearchEntity("info_teleport_destination", "targetname", target);
         if (targetEnt != NULL) {
             float origin[3];
-            gFunctions->EntityValueVec3(targetEnt, "origin", origin);
+            gInterface->EntityValueVec3(targetEnt, "origin", origin);
             float angle;
-            gFunctions->EntityValueFloat(targetEnt, "angle", &angle);
-            gFunctions->TeleportPlayer(origin, angle);
+            gInterface->EntityValueFloat(targetEnt, "angle", &angle);
+            gInterface->TeleportPlayer(origin, angle);
         }
-    } else if (strcmp(gFunctions->EntityClass(entity), "trigger_changelevel") == 0) {
-        const char* map = gFunctions->EntityValueStr(entity, "map");
+    } else if (strcmp(gInterface->EntityClass(entity), "trigger_changelevel") == 0) {
+        const char* map = gInterface->EntityValueStr(entity, "map");
         char path[1024] = "";
         strcat(path, "maps/");
         strcat(path, map);
         strcat(path, ".bsp");
-        gFunctions->PostCommand(1, path, 0, 0);
+        gInterface->PostCommand(1, path, 0, 0);
     }
 }
 

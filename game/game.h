@@ -8,7 +8,7 @@
 
 typedef const void* EntPtr;
 
-typedef struct Functions
+typedef struct Interface
 {
     void        (*PostCommand)(int command, const char* strParam1, float fltParam1, int intParam1);
     EntPtr      (*EnumerateEntites)(EntPtr from);
@@ -19,12 +19,12 @@ typedef struct Functions
     EntPtr      (*SearchEntity)(const char* className, const char* key, const char* value);
     void        (*SpawnPlayer)(EntPtr entity);
     void        (*TeleportPlayer)(const float* origin, float angle);
-} Functions;
+} Interface;
 
 
 #define INIT_OK 0
 
-typedef int     (*InitProc)(Functions* functions);
+typedef int     (*InitProc)(Interface* interface);
 typedef void    (*RunProc)(const char* startMap);
 typedef void    (*ChangeMapProc)(void);
 typedef void    (*CollisionProc)(EntPtr entity);

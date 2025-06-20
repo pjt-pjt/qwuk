@@ -5,7 +5,7 @@
 
 class Quake;
 class BSP;
-struct Functions;
+struct Interface;
 
 class GameInterface
 {
@@ -13,7 +13,7 @@ public:
     GameInterface(Quake& quake);
     ~GameInterface();
 
-    void    Init(Functions* funcitons);
+    void    Init(Interface* interface);
 
 private:
     static void         AddCommand(int command, const char* strParam1, float fltParam1, int intParam1);

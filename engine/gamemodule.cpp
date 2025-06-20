@@ -2,17 +2,17 @@
 #include "gameinterface.h"
 
 
-static Functions   functions;
+static Interface   interface;
 
-bool    GameModule::InitModule(const char* gamePath, GameInterface& interface)
+bool    GameModule::InitModule(const char* gamePath, GameInterface& game)
 {
     lt_dlinit();
-    interface.Init(&functions);
+    game.Init(&interface);
 
     handle = lt_dlopen(gamePath);
     bool ok = (handle != NULL);
     ok = ok && SetFunctions();
-    ok = ok && (Init(&functions) == INIT_OK);
+    ok = ok && (Init(&interface) == INIT_OK);
     return ok;
 }
 

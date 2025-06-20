@@ -19,17 +19,17 @@ GameInterface::~GameInterface()
     game = nullptr;
 }
 
-void    GameInterface::Init(Functions* functions)
+void    GameInterface::Init(Interface* interface)
 {
-    functions->PostCommand = AddCommand;
-    functions->EnumerateEntites = EnumerateEntites;
-    functions->EntityClass = EntityClass;
-    functions->EntityValueStr = EntityValueStr;
-    functions->EntityValueFloat = EntityValueFloat;
-    functions->EntityValueVec3 = EntityValueVec3;
-    functions->SearchEntity = SearchEntity;
-    functions->SpawnPlayer = SpawnPlayer;
-    functions->TeleportPlayer = TeleportPlayer;
+    interface->PostCommand = AddCommand;
+    interface->EnumerateEntites = EnumerateEntites;
+    interface->EntityClass = EntityClass;
+    interface->EntityValueStr = EntityValueStr;
+    interface->EntityValueFloat = EntityValueFloat;
+    interface->EntityValueVec3 = EntityValueVec3;
+    interface->SearchEntity = SearchEntity;
+    interface->SpawnPlayer = SpawnPlayer;
+    interface->TeleportPlayer = TeleportPlayer;
 }
 
 void    GameInterface::AddCommand(int command, const char* strParam1, float /* fltParam1 */, int /* intParam1 */)
