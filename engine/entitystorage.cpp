@@ -62,7 +62,7 @@ bool    EntityStorage::Init(const char* entitiesStr, uint32_t entitiesSize)
         edict.value = next;
     };
     auto EdictsToEntity = [this] (const std::vector<Edict>& epairs) {
-        Entity_  entity;
+        Entity  entity;
         auto Search = [&epairs] (const char* key) -> int {
             for (uint32_t i = 0; i < epairs.size(); ++i) {
                 if (Equals(epairs[i].key, key)) {

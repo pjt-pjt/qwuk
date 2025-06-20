@@ -93,7 +93,7 @@ void    BSP::Close()
     if (loaded) {
         graphics.DeleteTextures(textureIds.size(), textureIds.data());
 
-        entities_.Destroy();
+        entities.Destroy();
         vertices.clear();
         faces.clear();
         planes.clear();
@@ -158,7 +158,7 @@ void    BSP::Draw(const glm::vec3& camera)
     // Draw world
     color = 0x404040;
     // Draw models for entities, except for triggers
-    for (const auto& entity : entities_.entities) {
+    for (const auto& entity : entities.entities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showTriggers && StartsWith(entity.className, "trigger")) {
@@ -199,7 +199,7 @@ void    BSP::EndDraw()
 Content    BSP::TracePoint(const glm::vec3& point)
 {
     Content content;
-    for (const auto& entity : entities_.entities) {
+    for (const auto& entity : entities.entities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
@@ -239,7 +239,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     trace.fraction = 1;
     bool empty;
     // Draw models for entities, except for triggers
-    for (auto& entity : entities_.entities) {
+    for (auto& entity : entities.entities) {
         if (entity.model != -1) {
             if (StartsWith(entity.className, "trigger")) {
                 continue;
@@ -277,7 +277,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
 
 bool    BSP::CreateEntities()
 {
-    return entities_.Init(bspFile.entities, bspFile.entitiesSize);;
+    return entities.Init(bspFile.entities, bspFile.entitiesSize);;
 }
 
 void    BSP::CreateTextures()
@@ -449,7 +449,7 @@ void    BSP::CreateModels()
 void    BSP::CreateLights()
 {
     lights.reserve(100);
-    for (const auto& entity : entities_.entities) {
+    for (const auto& entity : entities.entities) {
         Light   light;
         light.origin = {entity.origin[0], entity.origin[1], entity.origin[2]};
         light.intensity = 300;

@@ -207,7 +207,7 @@ private:
     bool        TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
-    EntityStorage           entities_;
+    EntityStorage           entities;
 
     std::vector<Vertex>     vertices;
     std::vector<Face>       faces;

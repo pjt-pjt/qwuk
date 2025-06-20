@@ -16,5 +16,5 @@ private:
     std::unique_ptr<char>   strings;
     std::vector<Edict>      edicts;
 public:
-    std::vector<Entity_>    entities;
+    std::vector<Entity>     entities;
 };

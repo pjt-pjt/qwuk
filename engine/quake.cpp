@@ -62,7 +62,7 @@ glm::vec3   Camera::Direction() const
 }
 
 
-void    Actor::Init(const Entity_& entity)
+void    Actor::Init(const Entity& entity)
 {
     if (Equals(entity.className,"info_player_start")) {
         SetPosition({entity.origin[0], entity.origin[1], entity.origin[2]});
