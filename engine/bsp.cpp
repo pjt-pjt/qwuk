@@ -472,9 +472,8 @@ void    BSP::CreateLights()
         } else {
             continue;
         }
-        const char* val = Entities::EntityValueStr(entity, "light");
-        if (val != nullptr) {
-            float   value = std::atof(val);
+        float   value;
+        if (Entities::EntityValueFloat(entity, "light", &value)) {
             light.range = value;
             light.intensity = light.range;
         }

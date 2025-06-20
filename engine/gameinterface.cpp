@@ -74,40 +74,28 @@ const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
 
 int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* value)
 {
+    if (entity == nullptr) {
+        return 0;
+    }
+    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
     if (Equals(key, "angle")) {
-        if (entity == nullptr) {
-            return 0;
-        }
-        const Entity& ent = *reinterpret_cast<const Entity*>(entity);
         *value = ent.angle;
         return 1;
     }
-
-    const char*   val = EntityValueStr(entity, key);
-    if (val == nullptr) {
-        return 0;
-    }
-    *value = std::atof(val);
-    return 1;
+    return Entities::EntityValueFloat(ent, key, value);
 }
 
 int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* value)
 {
-    if (Equals(key, "angle")) {
-        if (entity == nullptr) {
-            return 0;
-        }
-        const Entity& ent = *reinterpret_cast<const Entity*>(entity);
+    if (entity == nullptr) {
+        return 0;
+    }
+    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
+    if (Equals(key, "origin")) {
         memcpy_s(value, 3 * sizeof(float), ent.origin, 3 * sizeof(float));
         return 1;
     }
-
-    const char*   val = EntityValueStr(entity, key);
-    if (val == nullptr) {
-        return 0;
-    }
-    std::sscanf(val, "%f %f %f", &value[0], &value[1], &value[2]);
-    return 1;
+    return Entities::EntityValueVec3(ent, key, value);
 }
 
 EntPtr  GameInterface::SearchEntity(const char* className, const char* key, const char* value)

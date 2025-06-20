@@ -1,7 +1,8 @@
 #include "entities.h"
 #include "entity.h"
 #include <vector>
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
 
 
 bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
@@ -142,6 +143,26 @@ const char* Entities::EntityValueStr(const Entity& entity, const char* key)
         edict = edict->next;
     }
     return nullptr;
+}
+
+int     Entities::EntityValueFloat(const Entity& entity, const char* key, float* value)
+{
+    const char*   val = EntityValueStr(entity, key);
+    if (val == nullptr) {
+        return 0;
+    }
+    *value = std::atof(val);
+    return 1;
+}
+
+int     Entities::EntityValueVec3(const Entity& entity, const char* key, float* value)
+{
+    const char*   val = EntityValueStr(entity, key);
+    if (val == nullptr) {
+        return 0;
+    }
+    std::sscanf(val, "%f %f %f", &value[0], &value[1], &value[2]);
+    return 1;
 }
 
 
