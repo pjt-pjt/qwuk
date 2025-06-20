@@ -9,6 +9,7 @@ bool    EntityStorage::Init(const char* entitiesStr, uint32_t entitiesSize)
     strings.reset(new char[entitiesSize]);
     edicts.reserve(2048);   //TODO arbitrary number
     edicts.clear();
+    entities.clear();
 
     char*       buffPtr = strings.get();
     const char* inp = entitiesStr;
@@ -126,6 +127,10 @@ bool    EntityStorage::Init(const char* entitiesStr, uint32_t entitiesSize)
     return true;
 }
 
+void    EntityStorage::Destroy()
+{
+    strings.release();
+}
 
 
 bool Equals(const char* left, const char* right)

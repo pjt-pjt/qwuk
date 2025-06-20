@@ -62,17 +62,6 @@ glm::vec3   Camera::Direction() const
 }
 
 
-void    Actor::Init(const Entity& entity)
-{
-    if (entity.className == "info_player_start") {
-        SetPosition(entity.origin);
-        SetYaw(entity.angle);
-        SetEyeHeight(22);
-        mins = {-16, -16, -24};
-        maxs = { 16,  16,  32};
-    }
-}
-
 void    Actor::Init(const Entity_& entity)
 {
     if (Equals(entity.className,"info_player_start")) {
@@ -383,7 +372,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
             glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
             Trace trace;
             PlayerGroundMove(start, end, trace);
-            if (trace.entity != -1) {
+            if (trace.entity != nullptr) {
                 Collision(player, trace.entity);
             }
         }
@@ -448,9 +437,9 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     }
 }
 
-void    Quake::Collision(Actor& /* actor */, int32_t entityIdx)
+void    Quake::Collision(Actor& /* actor */, EntPtr entity)
 {
-    game.Collision(&bsp.entities_.entities[entityIdx]);
+    game.Collision(entity);
 }
 
 void    Quake::AddCommand(const Command& cmd)

@@ -55,7 +55,6 @@ private:
 class Actor : public Camera
 {
 public:
-    void Init(const Entity& entity);
     void Init(const Entity_& entity);
     
 public:
@@ -108,7 +107,7 @@ private:
     void PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& trace);
     void PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
-    void Collision(Actor& actor, int32_t entityIdx);
+    void Collision(Actor& actor, EntPtr entity);
 
     void AddCommand(const Command& cmd);
     void DoCommands(uint64_t elapsed);

@@ -107,11 +107,10 @@ int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* va
 
 EntPtr  GameInterface::SearchEntity(const char* className, const char* key, const char* value)
 {
-    for (int ei = 0; ei < int(game->bsp.Entities().size()); ++ei) {
-        const auto& entity = game->bsp.Entities()[ei];
-        if (entity.className == className) {
-            Entity::Value   val = entity.GetValue(key);
-            if (!val.empty() && val == value) {
+    for (const auto& entity : game->bsp.entities_.entities) {
+        if (Equals(entity.className, className)) {
+            const char*   val = EntityValueStr(&entity, key);
+            if (val != nullptr && Equals(val, value)) {
                 return &entity;
             }
         }

@@ -2,6 +2,8 @@
 #include "filebuffer.h"
 #include "graphics.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "game.h"
+#include "gamemodule.h"
 #include <memory>
 #include <sstream>
 
@@ -23,37 +25,6 @@ void    MainPipeline::AddShaders()
 void    TestPipeline::AddShaders()
 {
     program.Init("shaders/quake-test.vert", "shaders/quake-test.frag");
-}
-
-
-uint32_t    Pairs::FindKey(const std::string& key, uint32_t from, uint32_t count) const
-{
-    for (uint32_t pi = 0; pi < count && from + pi < pairs.size(); ++pi) {
-        if (pairs[from + pi].key == key) {
-            return from + pi;
-        }
-    }
-    return NotFound;
-}
-
-const std::string&  Pairs::GetValue(uint32_t index) const
-{
-    if (index < pairs.size()) {
-        return pairs[index].value;
-    }
-    static std::string empty;
-    return empty;
-}
-
-void    Pairs::Append(const std::vector<Pair>& epairs)
-{
-    pairs.insert(pairs.end(), epairs.cbegin(), epairs.cend());
-}
-
-
-Entity::Value   Entity::GetValue(const std::string& key) const
-{
-    return pairs.GetValue(pairs.FindKey(key, first, count));
 }
 
 
@@ -81,9 +52,6 @@ bool    BSP::Load(const char* path)
 {
     Close();
     bool ok = bspFile.Init(path);
-    if (ok) {
-        ok = entities_.Init(bspFile.entities, bspFile.entitiesSize);
-    }
     if (ok) {
         ok = CreateEntities();
 #if 0
@@ -125,7 +93,7 @@ void    BSP::Close()
     if (loaded) {
         graphics.DeleteTextures(textureIds.size(), textureIds.data());
 
-        entities.clear();
+        entities_.Destroy();
         vertices.clear();
         faces.clear();
         planes.clear();
@@ -190,25 +158,25 @@ void    BSP::Draw(const glm::vec3& camera)
     // Draw world
     color = 0x404040;
     // Draw models for entities, except for triggers
-    for (const auto& entity : entities) {
-        if (entity.model != Entity::NoModel) {
+    for (const auto& entity : entities_.entities) {
+        if (entity.model != -1) {
             if (!config.showAll) {
-                if (!config.showTriggers && entity.className.find("trigger") != std::string::npos) {
+                if (!config.showTriggers && StartsWith(entity.className, "trigger")) {
                     continue;
                 }
-                if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
+                if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
                     continue;
                 }
-                if (!config.showFuncPlats && entity.className.find("func_plat") != std::string::npos) {
+                if (!config.showFuncPlats && StartsWith(entity.className, "func_plat")) {
                     continue;
                 }
-                if (!config.showFuncWalls && entity.className.find("func_wall") != std::string::npos) {
+                if (!config.showFuncWalls && StartsWith(entity.className, "func_wall")) {
                     continue;
                 }
-                if (!config.showFuncEpisodeGate && entity.className.find("func_episodegate") != std::string::npos) {
+                if (!config.showFuncEpisodeGate && StartsWith(entity.className, "func_episodegate")) {
                     continue;
                 }
-                if (!config.showFuncBossGate && entity.className.find("func_bossgate") != std::string::npos) {
+                if (!config.showFuncBossGate && StartsWith(entity.className, "func_bossgate")) {
                     continue;
                 }
             }
@@ -231,33 +199,32 @@ void    BSP::EndDraw()
 Content    BSP::TracePoint(const glm::vec3& point)
 {
     Content content;
-    for (uint32_t ei = 0;  ei < entities.size(); ++ ei) {
-        auto& entity = entities[ei];
-        if (entity.model != Entity::NoModel) {
+    for (const auto& entity : entities_.entities) {
+        if (entity.model != -1) {
             if (!config.showAll) {
-                if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
+                if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
                     continue;
                 }
-                if (!config.showFuncPlats && entity.className.find("func_plat") != std::string::npos) {
+                if (!config.showFuncPlats && StartsWith(entity.className, "func_plat")) {
                     continue;
                 }
-                if (!config.showFuncWalls && entity.className.find("func_wall") != std::string::npos) {
+                if (!config.showFuncWalls && StartsWith(entity.className, "func_wall")) {
                     continue;
                 }
-                if (!config.showFuncEpisodeGate && entity.className.find("func_episodegate") != std::string::npos) {
+                if (!config.showFuncEpisodeGate && StartsWith(entity.className, "func_episodegate")) {
                     continue;
                 }
-                if (!config.showFuncBossGate && entity.className.find("func_bossgate") != std::string::npos) {
+                if (!config.showFuncBossGate && StartsWith(entity.className, "func_bossgate")) {
                     continue;
                 }
             }
             content = TracePoint(models[entity.model].clipNode, point);
             if (content.content != EMPTY) {
-                content.entity = ei;
+                content.entity = &entity;
             }
-            if (entity.className.find("trigger") != std::string::npos && content.content == SOLID) {
+            if (StartsWith(entity.className, "trigger") && content.content == SOLID) {
                 content.content = TRIGGER;
-                content.entity = ei;
+                content.entity = &entity;
                 break;
             }
         }
@@ -272,25 +239,25 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     trace.fraction = 1;
     bool empty;
     // Draw models for entities, except for triggers
-    for (auto& entity : entities) {
-        if (entity.model != Entity::NoModel) {
-            if (entity.className.find("trigger") != std::string::npos) {
+    for (auto& entity : entities_.entities) {
+        if (entity.model != -1) {
+            if (StartsWith(entity.className, "trigger")) {
                 continue;
             }
             if (!config.showAll) {
-                if (!config.showFuncDoors && entity.className.find("func_door") != std::string::npos) {
+                if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
                     continue;
                 }
-                if (!config.showFuncPlats && entity.className.find("func_plat") != std::string::npos) {
+                if (!config.showFuncPlats && StartsWith(entity.className, "func_plat")) {
                     continue;
                 }
-                if (!config.showFuncWalls && entity.className.find("func_wall") != std::string::npos) {
+                if (!config.showFuncWalls && StartsWith(entity.className, "func_wall")) {
                     continue;
                 }
-                if (!config.showFuncEpisodeGate && entity.className.find("func_episodegate") != std::string::npos) {
+                if (!config.showFuncEpisodeGate && StartsWith(entity.className, "func_episodegate")) {
                     continue;
                 }
-                if (!config.showFuncBossGate && entity.className.find("func_bossgate") != std::string::npos) {
+                if (!config.showFuncBossGate && StartsWith(entity.className, "func_bossgate")) {
                     continue;
                 }
             }
@@ -310,91 +277,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
 
 bool    BSP::CreateEntities()
 {
-    std::string entityStr = bspFile.entities;
-    std::basic_istringstream iss(entityStr);
-
-    auto GetChar = [&iss](char gc) -> bool {
-        char c;
-        iss.get(c);
-        while ((c == ' ' || c == '\n') && !iss.eof()) {
-            iss.get(c);
-        }
-        return !iss.eof() && (c == gc);
-    };
-    auto GetString = [&iss, &GetChar](std::string& string) -> bool {
-        if (!GetChar('\"')) {
-            iss.unget();
-            return false;
-        }
-        char c;
-        iss.get(c);
-        while (c != '\"' && !iss.eof()) {
-            string.append(1, c);
-            iss.get(c);
-        }
-        if (!iss.eof() && c != '\"') {
-            iss.unget();
-        }
-        return !iss.eof();
-    };
-    auto PairsToEntity = [this] (const std::vector<Pairs::Pair>& epairs) {
-        Entity  entity(pairs);
-        auto Search = [&epairs] (const std::string& key) -> int {
-            for (uint32_t i = 0; i < epairs.size(); ++i) {
-                if (epairs[i].key == key) {
-                    return i;
-                }
-            }
-            return -1;
-        };
-        int idx = Search("classname");
-        if (idx == -1) {
-            return;
-        }
-        entity.className = epairs[idx].value;
-        idx = Search("origin");
-        if (idx != -1) {
-            float x, y, z;
-            std::sscanf(epairs[idx].value.c_str(), "%f %f %f", &x, &y, &z);
-            entity.origin = {x, y, z};
-        }
-        idx = Search("angle");
-        if (idx != -1) {
-            std::sscanf(epairs[idx].value.c_str(), "%f", &entity.angle);
-        }
-        idx = Search("model");
-        if (idx != -1) {
-            std::sscanf(epairs[idx].value.c_str(), "*%u", &entity.model);
-        } else if (entity.className == "worldspawn") {
-            entity.model = 0;
-        }
-        entity.first = pairs.pairs.size();
-        entity.count = epairs.size();
-        pairs.Append(epairs);
-        entities.push_back(entity);
-    };
-
-    while (!iss.eof()) {
-        if (!GetChar('{')) {
-            break;
-        }
-        std::vector<Pairs::Pair>   epairs;
-        do {
-            Pairs::Pair    pair;
-            if (!GetString(pair.key)) {
-                break;
-            }
-            if (!GetString(pair.value)) {
-                return false;
-            }
-            epairs.push_back(pair);
-        } while (!iss.eof());
-        if (iss.eof() || !GetChar('}')) {
-            return false;
-        }
-        PairsToEntity(epairs);
-    }
-    return true;
+    return entities_.Init(bspFile.entities, bspFile.entitiesSize);;
 }
 
 void    BSP::CreateTextures()
@@ -566,31 +449,31 @@ void    BSP::CreateModels()
 void    BSP::CreateLights()
 {
     lights.reserve(100);
-    for (const auto& entity : entities) {
+    for (const auto& entity : entities_.entities) {
         Light   light;
-        light.origin = entity.origin;
+        light.origin = {entity.origin[0], entity.origin[1], entity.origin[2]};
         light.intensity = 300;
         light.range = 300;
-        if (entity.className == "light") {
+        if (Equals(entity.className, "light")) {
             light.color = {1.0f, 1.0f, 0.8f};
-        } else if (entity.className == "light_flame_large_yellow") {
+        } else if (Equals(entity.className, "light_flame_large_yellow")) {
             light.color = {1.0f, 1.0f, 0.6f};
-        } else if (entity.className == "light_flame_small_yellow") {
+        } else if (Equals(entity.className, "light_flame_small_yellow")) {
             light.color = {1.0f, 1.0f, 0.6f};
-        } else if (entity.className == "light_flame_small_white") {
+        } else if (Equals(entity.className, "light_flame_small_white")) {
             light.color = {1.0f, 1.0f, 1.0f};
-        } else if (entity.className == "light_fluoro" || entity.className == "light_fluorospark") {
+        } else if (Equals(entity.className, "light_fluoro") || Equals(entity.className, "light_fluorospark")) {
             light.color = {1.0f, 1.0f, 1.0f};
-        } else if (entity.className == "light_torch_small_walltorch") {
+        } else if (Equals(entity.className, "light_torch_small_walltorch")) {
             light.color = {1.0f, 1.0f, 0.6f};
             light.range = 200;
             light.intensity = 200;
         } else {
             continue;
         }
-        Entity::Value   value = entity.GetValue("light");
-        if (!value.empty()) {
-            light.range = std::stof(value);
+        float   value;
+        if (functions.EntityValueFloat(&entity, "light", &value)) {
+            light.range = value;
             light.intensity = light.range;
         }
         lights.push_back(light);

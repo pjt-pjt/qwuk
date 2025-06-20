@@ -10,6 +10,7 @@ class EntityStorage
 {
 public:
     bool    Init(const char* entities, uint32_t entitiesSize);
+    void    Destroy();
 
 private:
     std::unique_ptr<char>   strings;

@@ -24,7 +24,6 @@ typedef struct Functions
 
 #define INIT_OK 0
 
-
 typedef int     (*InitProc)(Functions* functions);
 typedef void    (*RunProc)(const char* startMap);
 typedef void    (*ChangeMapProc)(void);
