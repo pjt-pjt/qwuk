@@ -132,6 +132,18 @@ void    EntityStorage::Destroy()
     strings.release();
 }
 
+const char* EntityStorage::EntityValueStr(const Entity& entity, const char* key)
+{
+    const Edict*   edict = entity.first;
+    while (edict != nullptr) {
+        if (Equals(edict->key, key)) {
+            return edict->value;
+        }
+        edict = edict->next;
+    }
+    return nullptr;
+}
+
 
 bool Equals(const char* left, const char* right)
 {

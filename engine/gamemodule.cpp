@@ -2,7 +2,7 @@
 #include "gameinterface.h"
 
 
-Functions   functions;
+static Functions   functions;
 
 bool    GameModule::InitModule(const char* gamePath, GameInterface& interface)
 {

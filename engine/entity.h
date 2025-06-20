@@ -20,7 +20,3 @@ struct Entity
     int32_t         model = -1;
     const Edict*    first = NULL;
 };
-
-
-bool Equals(const char* left, const char* right);
-bool StartsWith(const char* str, const char* subStr);

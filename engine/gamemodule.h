@@ -24,5 +24,3 @@ private:
 private:
     lt_dlhandle     handle = nullptr;
 };
-
-extern Functions   functions;

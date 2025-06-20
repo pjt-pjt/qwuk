@@ -56,26 +56,28 @@ EntPtr  GameInterface::EnumerateEntites(EntPtr from)
 
 const char*   GameInterface::EntityClass(EntPtr entity)
 {
+    if (entity == nullptr) {
+        return 0;
+    }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
     return ent.className;
 }
 
 const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
 {
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    const Edict*   edict = ent.first;
-    while (edict != nullptr) {
-        if (Equals(edict->key, key)) {
-            return edict->value;
-        }
-        edict = edict->next;
+    if (entity == nullptr) {
+        return 0;
     }
-    return nullptr;
+    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
+    return EntityStorage::EntityValueStr(ent, key);
 }
 
 int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* value)
 {
     if (Equals(key, "angle")) {
+        if (entity == nullptr) {
+            return 0;
+        }
         const Entity& ent = *reinterpret_cast<const Entity*>(entity);
         *value = ent.angle;
         return 1;
@@ -92,6 +94,9 @@ int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* v
 int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* value)
 {
     if (Equals(key, "angle")) {
+        if (entity == nullptr) {
+            return 0;
+        }
         const Entity& ent = *reinterpret_cast<const Entity*>(entity);
         memcpy_s(value, 3 * sizeof(float), ent.origin, 3 * sizeof(float));
         return 1;
@@ -120,6 +125,9 @@ EntPtr  GameInterface::SearchEntity(const char* className, const char* key, cons
 
 void    GameInterface::SpawnPlayer(EntPtr entity)
 {
+    if (entity == nullptr) {
+        return;
+    }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
     game->quake.player.Init(ent);
 }
