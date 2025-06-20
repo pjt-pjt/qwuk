@@ -56,6 +56,7 @@ class Actor : public Camera
 {
 public:
     void Init(const Entity& entity);
+    void Init(const Entity_& entity);
     
 public:
     glm::vec3   mins;

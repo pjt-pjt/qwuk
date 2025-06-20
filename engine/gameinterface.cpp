@@ -22,6 +22,7 @@ GameInterface::~GameInterface()
 void    GameInterface::Init(Functions* functions)
 {
     functions->PostCommand = AddCommand;
+    functions->EnumerateEntites = EnumerateEntites;
     functions->EntityClass = EntityClass;
     functions->EntityValueStr = EntityValueStr;
     functions->EntityValueFloat = EntityValueFloat;
@@ -39,87 +40,89 @@ void    GameInterface::AddCommand(int command, const char* strParam1, float /* f
     game->quake.AddCommand({Command::Cmd(command), 2, strParam1});
 }
 
-const char*   GameInterface::EntityClass(int entity)
+EntPtr  GameInterface::EnumerateEntites(EntPtr from)
 {
-    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
-        return nullptr;
+    const Entity_*  begin = &game->bsp.entities_.entities[0];
+    if (from == nullptr) {
+        return begin;
     }
-    return game->bsp.Entities()[entity].className.c_str();
+    const Entity_*  end = begin + game->bsp.entities_.entities.size();
+    const Entity_*  efrom = reinterpret_cast<const Entity_*>(from);
+    if (efrom >= begin && efrom < end) {
+        return ++efrom;
+    }
+    return nullptr;
 }
 
-const char*   GameInterface::EntityValueStr(int entity, const char* key)
+const char*   GameInterface::EntityClass(EntPtr entity)
 {
-    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
-        return nullptr;
-    }
-    const Entity&   ent = game->bsp.Entities()[entity];
-    Entity::Value   val = ent.GetValue(key);
-    if (val.empty()) {
-        return nullptr;
-    }
-    return val.c_str();
+    const Entity_& ent = *reinterpret_cast<const Entity_*>(entity);
+    return ent.className;
 }
 
-int     GameInterface::EntityValueFloat(int entity, const char* key, float* value)
+const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
 {
-    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
-        return 0;
+    const Entity_& ent = *reinterpret_cast<const Entity_*>(entity);
+    const Edict*   edict = ent.first;
+    while (edict != nullptr) {
+        if (Equals(edict->key, key)) {
+            return edict->value;
+        }
+        edict = edict->next;
     }
+    return nullptr;
+}
 
-    const Entity& ent = game->bsp.Entities()[entity];
-    std::string   skey = key;
-    if (skey == "angle") {
+int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* value)
+{
+    if (Equals(key, "angle")) {
+        const Entity_& ent = *reinterpret_cast<const Entity_*>(entity);
         *value = ent.angle;
         return 1;
     }
 
-    Entity::Value   val = ent.GetValue(skey);
-    if (val.empty()) {
+    const char*   val = EntityValueStr(entity, key);
+    if (val == nullptr) {
         return 0;
     }
-    *value = std::stof(val);
+    *value = std::atof(val);
     return 1;
 }
 
-int     GameInterface::EntityValueVec3(int entity, const char* key, float* value)
+int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* value)
 {
-    if (entity < 0 || entity >= int(game->bsp.Entities().size())) {
-        return 0;
-    }
-
-    const Entity& ent = game->bsp.Entities()[entity];
-    std::string   skey = key;
-    if (skey == "origin") {
-        memcpy_s(value, 3 * sizeof(float), glm::value_ptr(ent.origin), 3 * sizeof(float));
+    if (Equals(key, "angle")) {
+        const Entity_& ent = *reinterpret_cast<const Entity_*>(entity);
+        memcpy_s(value, 3 * sizeof(float), ent.origin, 3 * sizeof(float));
         return 1;
     }
 
-    Entity::Value   val = ent.GetValue(skey);
-    if (val.empty()) {
+    const char*   val = EntityValueStr(entity, key);
+    if (val == nullptr) {
         return 0;
     }
-    std::sscanf(val.c_str(), "%f %f %f", &value[0], &value[1], &value[2]);
+    std::sscanf(val, "%f %f %f", &value[0], &value[1], &value[2]);
     return 1;
 }
 
-int     GameInterface::SearchEntity(const char* className, const char* key, const char* value)
+EntPtr  GameInterface::SearchEntity(const char* className, const char* key, const char* value)
 {
     for (int ei = 0; ei < int(game->bsp.Entities().size()); ++ei) {
         const auto& entity = game->bsp.Entities()[ei];
         if (entity.className == className) {
             Entity::Value   val = entity.GetValue(key);
             if (!val.empty() && val == value) {
-                return ei;
+                return &entity;
             }
         }
     }
-    return -1;
+    return NULL;
 }
 
-void    GameInterface::SpawnPlayer(int entity)
+void    GameInterface::SpawnPlayer(EntPtr entity)
 {
-    const Entity& e = game->bsp.Entities()[entity];
-    game->quake.player.Init(e);
+    const Entity_& ent = *reinterpret_cast<const Entity_*>(entity);
+    game->quake.player.Init(ent);
 }
 
 void    GameInterface::TeleportPlayer(const float* origin, float angle)

@@ -73,6 +73,17 @@ void    Actor::Init(const Entity& entity)
     }
 }
 
+void    Actor::Init(const Entity_& entity)
+{
+    if (Equals(entity.className,"info_player_start")) {
+        SetPosition({entity.origin[0], entity.origin[1], entity.origin[2]});
+        SetYaw(entity.angle);
+        SetEyeHeight(22);
+        mins = {-16, -16, -24};
+        maxs = { 16,  16,  32};
+    }
+}
+
 
 Quake::Quake() :
     bsp(config, stats, test),
@@ -439,7 +450,7 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
 
 void    Quake::Collision(Actor& /* actor */, int32_t entityIdx)
 {
-    game.Collision(entityIdx);
+    game.Collision(&bsp.entities_.entities[entityIdx]);
 }
 
 void    Quake::AddCommand(const Command& cmd)

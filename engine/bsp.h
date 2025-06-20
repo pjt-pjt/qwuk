@@ -281,4 +281,7 @@ private:
     uint32_t                actFrame = 0;
 
     bool                    loaded = false;
+
+    friend class Quake;
+    friend class GameInterface;
 };
