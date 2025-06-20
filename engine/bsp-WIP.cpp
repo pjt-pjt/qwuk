@@ -188,7 +188,7 @@ void    BSP::Draw(const glm::vec3& camera)
     // Draw world
     color = 0x404040;
     // Draw models for entities, except for triggers
-    for (const auto& entity : entities) {
+    for (const auto& entity : entities_.entities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showTriggers && StartsWith(entity.className, "trigger")) {
@@ -230,7 +230,7 @@ Content    BSP::TracePoint(const glm::vec3& point)
 {
     Content content;
     for (uint32_t ei = 0;  ei < entities.size(); ++ ei) {
-        auto& entity = entities[ei];
+        auto& entity = entities_.entities[ei];
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
@@ -270,9 +270,9 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     trace.fraction = 1;
     bool empty;
     // Draw models for entities, except for triggers
-    for (auto& entity : entities) {
+    for (auto& entity : entities_.entities) {
         if (entity.model != -1) {
-            if (entity.className.find("trigger") != std::string::npos) {
+            if (StartsWith(entity.className, "trigger")) {
                 continue;
             }
             if (!config.showAll) {
@@ -308,92 +308,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
 
 bool    BSP::CreateEntities()
 {
-    std::string entityStr = bspFile.entities;
-    std::basic_istringstream iss(entityStr);
-
-    auto GetChar = [&iss](char gc) -> bool {
-        char c;
-        iss.get(c);
-        while ((c == ' ' || c == '\n') && !iss.eof()) {
-            iss.get(c);
-        }
-        return !iss.eof() && (c == gc);
-    };
-    auto GetString = [&iss, &GetChar](std::string& string) -> bool {
-        if (!GetChar('\"')) {
-            iss.unget();
-            return false;
-        }
-        char c;
-        iss.get(c);
-        while (c != '\"' && !iss.eof()) {
-            string.append(1, c);
-            iss.get(c);
-        }
-        if (!iss.eof() && c != '\"') {
-            iss.unget();
-        }
-        return !iss.eof();
-    };
-    auto EdicssToEntity = [this] (const std::vector<Edict>& epairs) {
-        Entity  entity;
-        auto Search = [&epairs] (const char* key) -> int {
-            for (uint32_t i = 0; i < epairs.size(); ++i) {
-                if (Equals(epairs[i].key, key)) {
-                    return i;
-                }
-            }
-            return -1;
-        };
-        int idx = Search("classname");
-        if (idx == -1) {
-            return;
-        }
-        entity.className = epairs[idx].value;
-        idx = Search("origin");
-        if (idx != -1) {
-            std::sscanf(epairs[idx].value, "%f %f %f", &entity.origin[0], &entity.origin[1], &entity.origin[2]);
-        }
-        idx = Search("angle");
-        if (idx != -1) {
-            std::sscanf(epairs[idx].value, "%f", &entity.angle);
-        }
-        idx = Search("model");
-        if (idx != -1) {
-            std::sscanf(epairs[idx].value, "*%u", &entity.model);
-        } else if (entity.className == "worldspawn") {
-            entity.model = 0;
-        }
-        uint32_t first = epairs.size();
-        pairs.Append(epairs);
-        for (uint32_t pi = first; pi < pairs.pairs.size() - 1; ++pi) {
-
-        }
-        entity.first = pairs.pairs.size();
-        entities.push_back(entity);
-    };
-
-    while (!iss.eof()) {
-        if (!GetChar('{')) {
-            break;
-        }
-        std::vector<Pairs::Pair>   epairs;
-        do {
-            Pairs::Pair    pair;
-            if (!GetString(pair.key)) {
-                break;
-            }
-            if (!GetString(pair.value)) {
-                return false;
-            }
-            epairs.push_back(pair);
-        } while (!iss.eof());
-        if (iss.eof() || !GetChar('}')) {
-            return false;
-        }
-        EdicssToEntity(epairs);
-    }
-    return true;
+    return entities_.Init(bspFile.entities, bspFile.entitiesSize);;
 }
 
 void    BSP::CreateTextures()
