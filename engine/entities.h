@@ -6,7 +6,7 @@
 #include <vector>
 
 
-class EntityStorage
+class Entities
 {
 public:
     bool    Init(const char* entities, uint32_t entitiesSize);

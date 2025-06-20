@@ -4,7 +4,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "game.h"
 #include "gamemodule.h"
-#include "entitystorage.h"
+#include "entities.h"
 #include <memory>
 #include <sstream>
 
@@ -472,7 +472,7 @@ void    BSP::CreateLights()
         } else {
             continue;
         }
-        const char* val = EntityStorage::EntityValueStr(entity, "light");
+        const char* val = Entities::EntityValueStr(entity, "light");
         if (val != nullptr) {
             float   value = std::atof(val);
             light.range = value;

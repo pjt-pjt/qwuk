@@ -1,10 +1,10 @@
-#include "entitystorage.h"
+#include "entities.h"
 #include "entity.h"
 #include <vector>
 #include <stdio.h>
 
 
-bool    EntityStorage::Init(const char* entitiesStr, uint32_t entitiesSize)
+bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
 {
     strings.reset(new char[entitiesSize]);
     edicts.reserve(2048);   //TODO arbitrary number
@@ -127,12 +127,12 @@ bool    EntityStorage::Init(const char* entitiesStr, uint32_t entitiesSize)
     return true;
 }
 
-void    EntityStorage::Destroy()
+void    Entities::Destroy()
 {
     strings.release();
 }
 
-const char* EntityStorage::EntityValueStr(const Entity& entity, const char* key)
+const char* Entities::EntityValueStr(const Entity& entity, const char* key)
 {
     const Edict*   edict = entity.first;
     while (edict != nullptr) {

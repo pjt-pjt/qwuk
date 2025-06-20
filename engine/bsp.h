@@ -5,7 +5,7 @@
 #include "pipeline.h"
 #include "bspfile.h"
 #include "filebuffer.h"
-#include "entitystorage.h"
+#include "entities.h"
 #include "plane.h"
 #include "game.h"
 #include <vector>
@@ -207,7 +207,7 @@ private:
     bool        TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
-    EntityStorage           entities;
+    Entities                entities;
 
     std::vector<Vertex>     vertices;
     std::vector<Face>       faces;

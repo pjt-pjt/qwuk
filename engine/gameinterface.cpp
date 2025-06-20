@@ -69,7 +69,7 @@ const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
         return 0;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    return EntityStorage::EntityValueStr(ent, key);
+    return Entities::EntityValueStr(ent, key);
 }
 
 int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* value)
