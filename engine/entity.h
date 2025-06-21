@@ -11,11 +11,16 @@ struct Edict
 };
 
 
+typedef float Vec3[3];
+
 struct Entity
 {
     const char*     className;
-    float           origin[3] = {0, 0, 0};
+    const Edict*    first = nullptr;
+    Vec3            origin = {0, 0, 0};
     float           angle = 0;
     int32_t         model = -1;
-    const Edict*    first = nullptr;
+    float           eyePos = 0;
+    Vec3            mins = {0, 0, 0};
+    Vec3            maxs = {0, 0, 0};
 };

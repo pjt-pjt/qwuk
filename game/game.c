@@ -26,13 +26,20 @@ void    ChangeMap(void)
 {
     EntPtr entity = gInterface->EnumerateEntites(NULL);
     while (entity != NULL) {
-        if (Equals(gInterface->EntityClass(entity), "worldspawn")) {
+        if (StrEq(gInterface->EntityClass(entity), "worldspawn")) {
             gInterface->Spawn(entity);
-        } else if (Equals(gInterface->EntityClass(entity), "info_player_start")) {
-            gInterface->Spawn(entity);
-        } else if (StartsWith(gInterface->EntityClass(entity), "info_") ||
-                   StartsWith(gInterface->EntityClass(entity), "trigger_") ||
-                   StartsWith(gInterface->EntityClass(entity), "func_"))
+        } else if (StrEq(gInterface->EntityClass(entity), "info_player_start")) {
+            EntPtr ent = gInterface->Spawn(entity);
+            Vec3 mins, maxs;
+            SetVec3(mins, -16, -16, -24);
+            SetVec3(maxs,  16,  16,  32);
+            gInterface->SetEntityVec3(ent, "mins", mins);
+            gInterface->SetEntityVec3(ent, "maxs", maxs);
+            gInterface->SetEntityFloat(ent, "eyePos", 22);
+            gInterface->SpawnPlayer(ent);
+        } else if (StrPrefix(gInterface->EntityClass(entity), "info_") ||
+                   StrPrefix(gInterface->EntityClass(entity), "trigger_") ||
+                   StrPrefix(gInterface->EntityClass(entity), "func_"))
         {
             gInterface->Spawn(entity);
         }

@@ -14,7 +14,7 @@ public:
 
     static const char* EntityValueStr(const Entity& entity, const char* key);
     static int         EntityValueFloat(const Entity& entity, const char* key, float* value);
-    static int         EntityValueVec3(const Entity& entity, const char* key, float* value);
+    static int         EntityValueVec3(const Entity& entity, const char* key, Vec3 value);
 
 private:
     std::unique_ptr<char>   strings;

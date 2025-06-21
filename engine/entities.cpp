@@ -68,7 +68,7 @@ bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
         Entity  entity;
         auto Search = [&epairs] (const char* key) -> int {
             for (uint32_t i = 0; i < epairs.size(); ++i) {
-                if (Equals(epairs[i].key, key)) {
+                if (StrEq(epairs[i].key, key)) {
                     return i;
                 }
             }
@@ -90,7 +90,7 @@ bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
         idx = Search("model");
         if (idx != -1) {
             sscanf(epairs[idx].value, "*%d", &entity.model);
-        } else if (Equals(entity.className, "worldspawn")) {
+        } else if (StrEq(entity.className, "worldspawn")) {
             entity.model = 0;
         }
         uint32_t first = edicts.size();
@@ -139,7 +139,7 @@ const char* Entities::EntityValueStr(const Entity& entity, const char* key)
 {
     const Edict*   edict = entity.first;
     while (edict != nullptr) {
-        if (Equals(edict->key, key)) {
+        if (StrEq(edict->key, key)) {
             return edict->value;
         }
         edict = edict->next;
@@ -157,7 +157,7 @@ int     Entities::EntityValueFloat(const Entity& entity, const char* key, float*
     return 1;
 }
 
-int     Entities::EntityValueVec3(const Entity& entity, const char* key, float* value)
+int     Entities::EntityValueVec3(const Entity& entity, const char* key, Vec3 value)
 {
     const char*   val = EntityValueStr(entity, key);
     if (val == nullptr) {

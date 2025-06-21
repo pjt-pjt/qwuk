@@ -65,12 +65,12 @@ glm::vec3   Camera::Direction() const
 
 void    Actor::Init(const Entity& entity)
 {
-    if (Equals(entity.className,"info_player_start")) {
+    if (StrEq(entity.className,"info_player_start")) {
         SetPosition({entity.origin[0], entity.origin[1], entity.origin[2]});
         SetYaw(entity.angle);
-        SetEyeHeight(22);
-        mins = {-16, -16, -24};
-        maxs = { 16,  16,  32};
+        SetEyeHeight(entity.eyePos);
+        mins = {entity.mins[0], entity.mins[1], entity.mins[2]};
+        maxs = {entity.maxs[0], entity.maxs[1], entity.maxs[2]};
     }
 }
 

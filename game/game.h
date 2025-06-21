@@ -6,18 +6,25 @@
 #endif
 
 
-typedef const void* EntPtr;
+typedef void* EntPtr;
+typedef float Vec3[3];
 
 typedef struct Interface
 {
-    void        (*PostCommand)(int command, const char* strParam1, float fltParam1, int intParam1);
     EntPtr      (*EnumerateEntites)(EntPtr from);
+    EntPtr      (*SearchEntity)(const char* className, const char* key, const char* value);
+
     const char* (*EntityClass)(EntPtr entity);
     const char* (*EntityValueStr)(EntPtr entity, const char* key);
     int         (*EntityValueFloat)(EntPtr entity, const char* key, float* value);
-    int         (*EntityValueVec3)(EntPtr entity, const char* key, float* value);
-    EntPtr      (*SearchEntity)(const char* className, const char* key, const char* value);
+    int         (*EntityValueVec3)(EntPtr entity, const char* key, Vec3 value);
+
+    void        (*SetEntityFloat)(EntPtr entity, const char* member, float value);
+    void        (*SetEntityVec3)(EntPtr entity, const char* member, Vec3 vec3);
+
+    void        (*PostCommand)(int command, const char* strParam1, float fltParam1, int intParam1);
     EntPtr      (*Spawn)(EntPtr entity);
+    void        (*SpawnPlayer)(EntPtr entity);
     void        (*TeleportPlayer)(const float* origin, float angle);
 } Interface;
 

@@ -165,22 +165,22 @@ void    BSP::Draw(const glm::vec3& camera)
     for (const auto& entity : /* entities.entities */actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
-                if (!config.showTriggers && StartsWith(entity.className, "trigger")) {
+                if (!config.showTriggers && StrPrefix(entity.className, "trigger")) {
                     continue;
                 }
-                if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
+                if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
                     continue;
                 }
-                if (!config.showFuncPlats && StartsWith(entity.className, "func_plat")) {
+                if (!config.showFuncPlats && StrPrefix(entity.className, "func_plat")) {
                     continue;
                 }
-                if (!config.showFuncWalls && StartsWith(entity.className, "func_wall")) {
+                if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
                     continue;
                 }
-                if (!config.showFuncEpisodeGate && StartsWith(entity.className, "func_episodegate")) {
+                if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
                     continue;
                 }
-                if (!config.showFuncBossGate && StartsWith(entity.className, "func_bossgate")) {
+                if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
                     continue;
                 }
             }
@@ -203,22 +203,22 @@ void    BSP::EndDraw()
 Content    BSP::TracePoint(const glm::vec3& point)
 {
     Content content;
-    for (const auto& entity : /* entities.entities */actEntities) {
+    for (auto& entity : /* entities.entities */actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
-                if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
+                if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
                     continue;
                 }
-                if (!config.showFuncPlats && StartsWith(entity.className, "func_plat")) {
+                if (!config.showFuncPlats && StrPrefix(entity.className, "func_plat")) {
                     continue;
                 }
-                if (!config.showFuncWalls && StartsWith(entity.className, "func_wall")) {
+                if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
                     continue;
                 }
-                if (!config.showFuncEpisodeGate && StartsWith(entity.className, "func_episodegate")) {
+                if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
                     continue;
                 }
-                if (!config.showFuncBossGate && StartsWith(entity.className, "func_bossgate")) {
+                if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
                     continue;
                 }
             }
@@ -226,7 +226,7 @@ Content    BSP::TracePoint(const glm::vec3& point)
             if (content.content != EMPTY) {
                 content.entity = &entity;
             }
-            if (StartsWith(entity.className, "trigger") && content.content == SOLID) {
+            if (StrPrefix(entity.className, "trigger") && content.content == SOLID) {
                 content.content = TRIGGER;
                 content.entity = &entity;
                 break;
@@ -245,23 +245,23 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     // Draw models for entities, except for triggers
     for (auto& entity : /* entities.entities */actEntities) {
         if (entity.model != -1) {
-            if (StartsWith(entity.className, "trigger")) {
+            if (StrPrefix(entity.className, "trigger")) {
                 continue;
             }
             if (!config.showAll) {
-                if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
+                if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
                     continue;
                 }
-                if (!config.showFuncPlats && StartsWith(entity.className, "func_plat")) {
+                if (!config.showFuncPlats && StrPrefix(entity.className, "func_plat")) {
                     continue;
                 }
-                if (!config.showFuncWalls && StartsWith(entity.className, "func_wall")) {
+                if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
                     continue;
                 }
-                if (!config.showFuncEpisodeGate && StartsWith(entity.className, "func_episodegate")) {
+                if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
                     continue;
                 }
-                if (!config.showFuncBossGate && StartsWith(entity.className, "func_bossgate")) {
+                if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
                     continue;
                 }
             }
@@ -458,17 +458,17 @@ void    BSP::CreateLights()
         light.origin = {entity.origin[0], entity.origin[1], entity.origin[2]};
         light.intensity = 300;
         light.range = 300;
-        if (Equals(entity.className, "light")) {
+        if (StrEq(entity.className, "light")) {
             light.color = {1.0f, 1.0f, 0.8f};
-        } else if (Equals(entity.className, "light_flame_large_yellow")) {
+        } else if (StrEq(entity.className, "light_flame_large_yellow")) {
             light.color = {1.0f, 1.0f, 0.6f};
-        } else if (Equals(entity.className, "light_flame_small_yellow")) {
+        } else if (StrEq(entity.className, "light_flame_small_yellow")) {
             light.color = {1.0f, 1.0f, 0.6f};
-        } else if (Equals(entity.className, "light_flame_small_white")) {
+        } else if (StrEq(entity.className, "light_flame_small_white")) {
             light.color = {1.0f, 1.0f, 1.0f};
-        } else if (Equals(entity.className, "light_fluoro") || Equals(entity.className, "light_fluorospark")) {
+        } else if (StrEq(entity.className, "light_fluoro") || StrEq(entity.className, "light_fluorospark")) {
             light.color = {1.0f, 1.0f, 1.0f};
-        } else if (Equals(entity.className, "light_torch_small_walltorch")) {
+        } else if (StrEq(entity.className, "light_torch_small_walltorch")) {
             light.color = {1.0f, 1.0f, 0.6f};
             light.range = 200;
             light.intensity = 200;
