@@ -1,8 +1,8 @@
 #include "game.h"
 #include <stdio.h>
 
-#define STRINGTOOLS_IMPL
-#include "stringtools.h"
+#define TOOLS_IMPL
+#include "tools.h"
 
 
 static Interface* gInterface;

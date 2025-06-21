@@ -26,7 +26,7 @@ set(BACKEND_HDR pipeline.h program.h storagebuffer.h graphics.h )
 list(TRANSFORM  BACKEND_SRC PREPEND "${BACKEND_DIR}/")
 list(TRANSFORM  BACKEND_HDR PREPEND "${BACKEND_DIR}/")
 
-set(GAME_HDR game.h stringtools.h)
+set(GAME_HDR game.h tools.h)
 list(TRANSFORM GAME_HDR PREPEND "${GAME_DIR}/")
 
 include_directories(SYSTEM ${SYTEM_INCLUDE_ROOT})

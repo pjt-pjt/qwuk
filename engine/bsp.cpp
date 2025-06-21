@@ -5,7 +5,7 @@
 #include "game.h"
 #include "gamemodule.h"
 #include "entities.h"
-#include "stringtools.h"
+#include "tools.h"
 #include <memory>
 #include <sstream>
 

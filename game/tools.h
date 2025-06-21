@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(STRINGTOOLS_IMPL)
+#if defined(TOOLS_IMPL)
     #include <string.h>
 #endif
 
@@ -11,7 +11,7 @@ void    SetVec3(float* vec3, float x, float y, float z);
 void    CopyVec3(float* target, const float* source);
 
 
-#if defined(STRINGTOOLS_IMPL)
+#if defined(TOOLS_IMPL)
 
     int    StrEq(const char* left, const char* right)
     {

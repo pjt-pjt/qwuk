@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include "stringtools.h"
+#include "tools.h"
 
 
 bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)

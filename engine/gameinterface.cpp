@@ -3,8 +3,8 @@
 #include "game.h"
 #include "glm/gtc/type_ptr.hpp"
 
-#define STRINGTOOLS_IMPL
-#include "stringtools.h"
+#define TOOLS_IMPL
+#include "tools.h"
 
 
 GameInterface* game = nullptr;
