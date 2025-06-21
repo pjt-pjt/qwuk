@@ -27,7 +27,6 @@ void    GameInterface::Init(Interface* interface)
     interface->EnumerateEntites = EnumerateEntites;
     interface->SearchEntity = SearchEntity;
 
-    interface->EntityClass = EntityClass;
     interface->EntityValueStr = EntityValueStr;
     interface->EntityValueFloat = EntityValueFloat;
     interface->EntityValueVec3 = EntityValueVec3;
@@ -66,14 +65,6 @@ EntPtr  GameInterface::SearchEntity(const char* className, const char* key, cons
     return NULL;
 }
 
-
-const char*   GameInterface::EntityClass(EntPtr entity)
-{
-    if (entity == NULL) {
-        return 0;
-    }
-    return entity->className;
-}
 
 const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
 {

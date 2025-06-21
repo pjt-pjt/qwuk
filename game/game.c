@@ -12,7 +12,6 @@ int     Init(Interface* interface)
     i.EnumerateEntites = interface->EnumerateEntites;
     i.SearchEntity = interface->SearchEntity;
 
-    i.EntityClass = interface->EntityClass;
     i.EntityValueStr = interface->EntityValueStr;
     i.EntityValueFloat = interface->EntityValueFloat;
     i.EntityValueVec3 = interface->EntityValueVec3;
@@ -37,17 +36,17 @@ void    ChangeMap(void)
 {
     EntPtr entity = i.EnumerateEntites(NULL);
     while (entity != NULL) {
-        if (StrEq(i.EntityClass(entity), "worldspawn")) {
+        if (StrEq(entity->className, "worldspawn")) {
             i.Spawn(entity);
-        } else if (StrEq(i.EntityClass(entity), "info_player_start")) {
+        } else if (StrEq(entity->className, "info_player_start")) {
             EntPtr ent = i.Spawn(entity);
             SetVec3(ent->mins, -16, -16, -24);
             SetVec3(ent->maxs,  16,  16,  32);
             ent->eyePos = 22;
             i.SpawnPlayer(ent);
-        } else if (StrPrefix(i.EntityClass(entity), "info_") ||
-                   StrPrefix(i.EntityClass(entity), "trigger_") ||
-                   StrPrefix(i.EntityClass(entity), "func_"))
+        } else if (StrPrefix(entity->className, "info_") ||
+                   StrPrefix(entity->className, "trigger_") ||
+                   StrPrefix(entity->className, "func_"))
         {
             i.Spawn(entity);
         }
@@ -57,7 +56,7 @@ void    ChangeMap(void)
 
 void    Collision(EntPtr entity)
 {
-    if (strcmp(i.EntityClass(entity), "trigger_teleport") == 0) {
+    if (strcmp(entity->className, "trigger_teleport") == 0) {
         const char* target = i.EntityValueStr(entity, "target");
         EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
         if (targetEnt != NULL) {
@@ -70,7 +69,7 @@ void    Collision(EntPtr entity)
             origin[2] -= mins[2];
             i.SetPlayerPosAngle(origin, angle);
         }
-    } else if (strcmp(i.EntityClass(entity), "trigger_changelevel") == 0) {
+    } else if (strcmp(entity->className, "trigger_changelevel") == 0) {
         const char* map = i.EntityValueStr(entity, "map");
         char path[1024] = "";
         strcat(path, "maps/");

@@ -20,7 +20,6 @@ private:
     static EntPtr       EnumerateEntites(EntPtr from);
     static EntPtr       SearchEntity(const char* className, const char* key, const char* value);
 
-    static const char*  EntityClass(EntPtr entity);
     static const char*  EntityValueStr(EntPtr entity, const char* key);
     static int          EntityValueFloat(EntPtr entity, const char* key, float* value);
     static int          EntityValueVec3(EntPtr entity, const char* key, float* value);
