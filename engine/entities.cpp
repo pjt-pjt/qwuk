@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "stringtools.h"
 
 
 bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
@@ -164,17 +165,4 @@ int     Entities::EntityValueVec3(const Entity& entity, const char* key, float* 
     }
     std::sscanf(val, "%f %f %f", &value[0], &value[1], &value[2]);
     return 1;
-}
-
-
-bool Equals(const char* left, const char* right)
-{
-    return strcmp(left, right) == 0;
-}
-
-bool StartsWith(const char* str, const char* subStr)
-{
-    int len1 = strlen(str);
-    int len2 = strlen(subStr);
-    return (len2 <= len1 && strncmp(str, subStr, len2) == 0);
 }

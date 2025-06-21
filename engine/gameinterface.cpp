@@ -3,6 +3,9 @@
 #include "game.h"
 #include "glm/gtc/type_ptr.hpp"
 
+#define STRINGTOOLS_IMPL
+#include "stringtools.h"
+
 
 GameInterface* game = nullptr;
 
@@ -29,6 +32,7 @@ void    GameInterface::Init(Interface* interface)
     interface->EntityValueVec3 = EntityValueVec3;
     interface->SearchEntity = SearchEntity;
     interface->SpawnPlayer = SpawnPlayer;
+    interface->Spawn = Spawn;
     interface->TeleportPlayer = TeleportPlayer;
 }
 
@@ -48,8 +52,9 @@ EntPtr  GameInterface::EnumerateEntites(EntPtr from)
     }
     const Entity*  end = begin + game->bsp.entities.entities.size();
     const Entity*  efrom = reinterpret_cast<const Entity*>(from);
-    if (efrom >= begin && efrom < end) {
-        return ++efrom;
+    ++efrom;
+    if (efrom > begin && efrom < end) {
+        return efrom;
     }
     return NULL;
 }
@@ -100,7 +105,7 @@ int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* va
 
 EntPtr  GameInterface::SearchEntity(const char* className, const char* key, const char* value)
 {
-    for (const auto& entity : game->bsp.entities.entities) {
+    for (const auto& entity : game->bsp.actEntities /* entities.entities */) {
         if (Equals(entity.className, className)) {
             const char*   val = EntityValueStr(&entity, key);
             if (val != nullptr && Equals(val, value)) {
@@ -117,7 +122,18 @@ void    GameInterface::SpawnPlayer(EntPtr entity)
         return;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
+    game->bsp.actEntities.push_back(ent);
     game->quake.player.Init(ent);
+}
+
+EntPtr  GameInterface::Spawn(EntPtr entity)
+{
+    if (entity == NULL) {
+        return NULL;
+    }
+    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
+    game->bsp.actEntities.push_back(ent);
+    return &game->bsp.actEntities.back();
 }
 
 void    GameInterface::TeleportPlayer(const float* origin, float angle)

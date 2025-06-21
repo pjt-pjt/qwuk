@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "imgui.h"
 #include "game.h"
+#include "stringtools.h"
 #include "bsp.h"
 #include <filesystem>
 

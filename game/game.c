@@ -1,6 +1,8 @@
 #include "game.h"
 #include <stdio.h>
-#include <string.h>
+
+#define STRINGTOOLS_IMPL
+#include "stringtools.h"
 
 
 static Interface* gInterface;
@@ -24,10 +26,16 @@ void    ChangeMap(void)
 {
     EntPtr entity = gInterface->EnumerateEntites(NULL);
     while (entity != NULL) {
-        if (strcmp(gInterface->EntityClass(entity), "info_player_start") == 0) {
+        if (Equals(gInterface->EntityClass(entity), "worldspawn")) {
+            gInterface->Spawn(entity);
+        } else if (Equals(gInterface->EntityClass(entity), "info_player_start")) {
             gInterface->SpawnPlayer(entity);
-            break;  //TODO
-        }    
+        } else if (StartsWith(gInterface->EntityClass(entity), "info_") ||
+                   StartsWith(gInterface->EntityClass(entity), "trigger_") ||
+                   StartsWith(gInterface->EntityClass(entity), "func_"))
+        {
+            gInterface->Spawn(entity);
+        }
         entity = gInterface->EnumerateEntites(entity);
     }
 }

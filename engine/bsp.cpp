@@ -5,6 +5,7 @@
 #include "game.h"
 #include "gamemodule.h"
 #include "entities.h"
+#include "stringtools.h"
 #include <memory>
 #include <sstream>
 
@@ -35,6 +36,7 @@ bool    BSP::Init()
     ok = ok && lightsBuffer.Init();
     ok = ok && pipeline.Init(vertexBuffer);
     ok = ok && testPipeline.Init(vertexBuffer);
+    actEntities.reserve(2048);  //TODO
 
     return ok;
 }
@@ -95,6 +97,7 @@ void    BSP::Close()
         graphics.DeleteTextures(textureIds.size(), textureIds.data());
 
         entities.Destroy();
+        actEntities.clear();
         vertices.clear();
         faces.clear();
         planes.clear();
@@ -159,7 +162,7 @@ void    BSP::Draw(const glm::vec3& camera)
     // Draw world
     color = 0x404040;
     // Draw models for entities, except for triggers
-    for (const auto& entity : entities.entities) {
+    for (const auto& entity : /* entities.entities */actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showTriggers && StartsWith(entity.className, "trigger")) {
@@ -200,7 +203,7 @@ void    BSP::EndDraw()
 Content    BSP::TracePoint(const glm::vec3& point)
 {
     Content content;
-    for (const auto& entity : entities.entities) {
+    for (const auto& entity : /* entities.entities */actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showFuncDoors && StartsWith(entity.className, "func_door")) {
@@ -240,7 +243,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     trace.fraction = 1;
     bool empty;
     // Draw models for entities, except for triggers
-    for (auto& entity : entities.entities) {
+    for (auto& entity : /* entities.entities */actEntities) {
         if (entity.model != -1) {
             if (StartsWith(entity.className, "trigger")) {
                 continue;

@@ -208,6 +208,7 @@ private:
 
 private:
     Entities                entities;
+    std::vector<Entity>     actEntities;
 
     std::vector<Vertex>     vertices;
     std::vector<Face>       faces;

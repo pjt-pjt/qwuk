@@ -26,6 +26,7 @@ private:
     static EntPtr       SearchEntity(const char* className, const char* key, const char* value);
 
     static void         SpawnPlayer(EntPtr entity);
+    static EntPtr       Spawn(EntPtr entity);
     static void         TeleportPlayer(const float* origin, float angle);
 
 private:

@@ -23,6 +23,3 @@ public:
     std::vector<Entity>     entities;
 };
 
-
-bool        Equals(const char* left, const char* right);
-bool        StartsWith(const char* str, const char* subStr);
