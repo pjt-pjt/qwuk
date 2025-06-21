@@ -1,9 +1,9 @@
 #pragma once
 
-#include "entity.h"
 #include <memory>
 #include <cstdint>
 #include <vector>
+#include "entity.h"
 
 
 class Entities

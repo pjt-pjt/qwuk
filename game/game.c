@@ -17,9 +17,6 @@ int     Init(Interface* interface)
     i.EntityValueFloat = interface->EntityValueFloat;
     i.EntityValueVec3 = interface->EntityValueVec3;
 
-    i.SetEntityFloat = interface->SetEntityFloat;
-    i.SetEntityVec3 = interface->SetEntityVec3;
-
     i.PostCommand = interface->PostCommand;
     i.Spawn = interface->Spawn;
     i.SpawnPlayer = interface->SpawnPlayer;
@@ -44,12 +41,9 @@ void    ChangeMap(void)
             i.Spawn(entity);
         } else if (StrEq(i.EntityClass(entity), "info_player_start")) {
             EntPtr ent = i.Spawn(entity);
-            Vec3 mins, maxs;
-            SetVec3(mins, -16, -16, -24);
-            SetVec3(maxs,  16,  16,  32);
-            i.SetEntityVec3(ent, "mins", mins);
-            i.SetEntityVec3(ent, "maxs", maxs);
-            i.SetEntityFloat(ent, "eyePos", 22);
+            SetVec3(ent->mins, -16, -16, -24);
+            SetVec3(ent->maxs,  16,  16,  32);
+            ent->eyePos = 22;
             i.SpawnPlayer(ent);
         } else if (StrPrefix(i.EntityClass(entity), "info_") ||
                    StrPrefix(i.EntityClass(entity), "trigger_") ||

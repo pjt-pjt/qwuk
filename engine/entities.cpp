@@ -1,10 +1,16 @@
 #include "entities.h"
-#include "entity.h"
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include "tools.h"
+
+
+void InitEntity(Entity* entity)
+{
+    memset(entity, 0, sizeof(Entity));
+    entity->model = -1;
+}
 
 
 bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
@@ -66,6 +72,8 @@ bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
     };
     auto EdictsToEntity = [this] (const std::vector<Edict>& epairs) {
         Entity  entity;
+        InitEntity(&entity);
+
         auto Search = [&epairs] (const char* key) -> int {
             for (uint32_t i = 0; i < epairs.size(); ++i) {
                 if (StrEq(epairs[i].key, key)) {
@@ -119,6 +127,7 @@ bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
             }
             edict.key = string1;
             edict.value = string2;
+            edict.next = nullptr;
             StorePairStrings(edict);
             epairs.push_back(edict);
         } while (!Eof());

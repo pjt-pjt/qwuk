@@ -32,9 +32,6 @@ void    GameInterface::Init(Interface* interface)
     interface->EntityValueFloat = EntityValueFloat;
     interface->EntityValueVec3 = EntityValueVec3;
 
-    interface->SetEntityFloat = SetEntityFloat;
-    interface->SetEntityVec3 = SetEntityVec3;
-
     interface->PostCommand = PostCommand;
     interface->Spawn = Spawn;
     interface->SpawnPlayer = SpawnPlayer;
@@ -49,10 +46,9 @@ EntPtr  GameInterface::EnumerateEntites(EntPtr from)
         return begin;
     }
     Entity*  end = begin + game->bsp.entities.entities.size();
-    Entity*  efrom = reinterpret_cast<Entity*>(from);
-    ++efrom;
-    if (efrom > begin && efrom < end) {
-        return efrom;
+    ++from;
+    if (from > begin && from < end) {
+        return from;
     }
     return NULL;
 }
@@ -76,8 +72,7 @@ const char*   GameInterface::EntityClass(EntPtr entity)
     if (entity == NULL) {
         return 0;
     }
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    return ent.className;
+    return entity->className;
 }
 
 const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
@@ -85,8 +80,7 @@ const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
     if (entity == NULL) {
         return 0;
     }
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    return Entities::EntityValueStr(ent, key);
+    return Entities::EntityValueStr(*entity, key);
 }
 
 int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* value)
@@ -94,12 +88,11 @@ int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* v
     if (entity == NULL) {
         return 0;
     }
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
     if (StrEq(key, "angle")) {
-        *value = ent.angle;
+        *value = entity->angle;
         return 1;
     }
-    return Entities::EntityValueFloat(ent, key, value);
+    return Entities::EntityValueFloat(*entity, key, value);
 }
 
 int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* value)
@@ -107,33 +100,11 @@ int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* va
     if (entity == NULL) {
         return 0;
     }
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
     if (StrEq(key, "origin")) {
-        memcpy_s(value, 3 * sizeof(float), ent.origin, 3 * sizeof(float));
+        memcpy_s(value, 3 * sizeof(float), entity->origin, 3 * sizeof(float));
         return 1;
     }
-    return Entities::EntityValueVec3(ent, key, value);
-}
-
-
-void    GameInterface::SetEntityFloat(EntPtr entity, const char* member, float value)
-{
-    Entity& ent = *reinterpret_cast<Entity*>(entity);
-    if (StrEq(member, "eyePos")) {
-        ent.eyePos = value;
-    }
-}
-
-void    GameInterface::SetEntityVec3(EntPtr entity, const char* member, Vec3 vec3)
-{
-    Entity& ent = *reinterpret_cast<Entity*>(entity);
-    if (StrEq(member, "mins")) {
-        CopyVec3(ent.mins, vec3);
-    } else if (StrEq(member, "maxs")) {
-        CopyVec3(ent.maxs, vec3);
-    } else if (StrEq(member, "origin")) {
-        CopyVec3(ent.origin, vec3);
-    }
+    return Entities::EntityValueVec3(*entity, key, value);
 }
 
 
@@ -150,18 +121,16 @@ EntPtr  GameInterface::Spawn(EntPtr entity)
     if (entity == NULL) {
         return NULL;
     }
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    game->bsp.actEntities.push_back(ent);
+    game->bsp.actEntities.push_back(*entity);
     return &game->bsp.actEntities.back();
 }
 
 void    GameInterface::SpawnPlayer(EntPtr entity)
 {
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    if (!StrPrefix(ent.className, "info_player_start")) {
+    if (!StrPrefix(entity->className, "info_player_start")) {
         return;
     }
-    game->quake.player.Init(ent);
+    game->quake.player.Init(*entity);
 }
 
 void    GameInterface::SetPlayerPosAngle(const Vec3 origin, float angle)

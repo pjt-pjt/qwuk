@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game.h"
+#include "entity.h"
 
 
 class Quake;
@@ -23,9 +24,6 @@ private:
     static const char*  EntityValueStr(EntPtr entity, const char* key);
     static int          EntityValueFloat(EntPtr entity, const char* key, float* value);
     static int          EntityValueVec3(EntPtr entity, const char* key, float* value);
-
-    static void         SetEntityFloat(EntPtr entity, const char* member, float value);
-    static void         SetEntityVec3(EntPtr entity, const char* member, Vec3 vec3);
 
     static void         PostCommand(int command, const char* strParam1, float fltParam1, int intParam1);
     static EntPtr       Spawn(EntPtr entity);

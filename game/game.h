@@ -1,12 +1,13 @@
 #pragma once
 
+#include "entity.h"
 
 #if defined(__cplusplus)
     extern "C" {
 #endif
 
 
-typedef void* EntPtr;
+typedef Entity* EntPtr;
 typedef float Vec3[3];
 
 typedef struct Interface
@@ -18,9 +19,6 @@ typedef struct Interface
     const char* (*EntityValueStr)(EntPtr entity, const char* key);
     int         (*EntityValueFloat)(EntPtr entity, const char* key, float* value);
     int         (*EntityValueVec3)(EntPtr entity, const char* key, Vec3 value);
-
-    void        (*SetEntityFloat)(EntPtr entity, const char* member, float value);
-    void        (*SetEntityVec3)(EntPtr entity, const char* member, Vec3 vec3);
 
     void        (*PostCommand)(int command, const char* strParam1, float fltParam1, int intParam1);
     EntPtr      (*Spawn)(EntPtr entity);
