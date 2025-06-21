@@ -17,7 +17,6 @@ typedef struct Interface
     int         (*EntityValueFloat)(EntPtr entity, const char* key, float* value);
     int         (*EntityValueVec3)(EntPtr entity, const char* key, float* value);
     EntPtr      (*SearchEntity)(const char* className, const char* key, const char* value);
-    void        (*SpawnPlayer)(EntPtr entity);
     EntPtr      (*Spawn)(EntPtr entity);
     void        (*TeleportPlayer)(const float* origin, float angle);
 } Interface;

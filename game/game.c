@@ -29,7 +29,7 @@ void    ChangeMap(void)
         if (Equals(gInterface->EntityClass(entity), "worldspawn")) {
             gInterface->Spawn(entity);
         } else if (Equals(gInterface->EntityClass(entity), "info_player_start")) {
-            gInterface->SpawnPlayer(entity);
+            gInterface->Spawn(entity);
         } else if (StartsWith(gInterface->EntityClass(entity), "info_") ||
                    StartsWith(gInterface->EntityClass(entity), "trigger_") ||
                    StartsWith(gInterface->EntityClass(entity), "func_"))

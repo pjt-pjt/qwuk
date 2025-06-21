@@ -31,7 +31,6 @@ void    GameInterface::Init(Interface* interface)
     interface->EntityValueFloat = EntityValueFloat;
     interface->EntityValueVec3 = EntityValueVec3;
     interface->SearchEntity = SearchEntity;
-    interface->SpawnPlayer = SpawnPlayer;
     interface->Spawn = Spawn;
     interface->TeleportPlayer = TeleportPlayer;
 }
@@ -116,16 +115,6 @@ EntPtr  GameInterface::SearchEntity(const char* className, const char* key, cons
     return NULL;
 }
 
-void    GameInterface::SpawnPlayer(EntPtr entity)
-{
-    if (entity == NULL) {
-        return;
-    }
-    const Entity& ent = *reinterpret_cast<const Entity*>(entity);
-    game->bsp.actEntities.push_back(ent);
-    game->quake.player.Init(ent);
-}
-
 EntPtr  GameInterface::Spawn(EntPtr entity)
 {
     if (entity == NULL) {
@@ -133,6 +122,9 @@ EntPtr  GameInterface::Spawn(EntPtr entity)
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
     game->bsp.actEntities.push_back(ent);
+    if (StartsWith(ent.className, "info_player_start")) {
+        game->quake.player.Init(ent);
+    }
     return &game->bsp.actEntities.back();
 }
 
