@@ -1,14 +1,13 @@
 #pragma once
 
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
 
 
 struct Edict
 {
     const char*     key;
     const char*     value;
-    struct Edict*   next = NULL;
+    struct Edict*   next = nullptr;
 };
 
 
@@ -18,5 +17,5 @@ struct Entity
     float           origin[3] = {0, 0, 0};
     float           angle = 0;
     int32_t         model = -1;
-    const Edict*    first = NULL;
+    const Edict*    first = nullptr;
 };

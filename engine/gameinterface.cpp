@@ -43,7 +43,7 @@ void    GameInterface::AddCommand(int command, const char* strParam1, float /* f
 EntPtr  GameInterface::EnumerateEntites(EntPtr from)
 {
     const Entity*  begin = &game->bsp.entities.entities[0];
-    if (from == nullptr) {
+    if (from == NULL) {
         return begin;
     }
     const Entity*  end = begin + game->bsp.entities.entities.size();
@@ -51,12 +51,12 @@ EntPtr  GameInterface::EnumerateEntites(EntPtr from)
     if (efrom >= begin && efrom < end) {
         return ++efrom;
     }
-    return nullptr;
+    return NULL;
 }
 
 const char*   GameInterface::EntityClass(EntPtr entity)
 {
-    if (entity == nullptr) {
+    if (entity == NULL) {
         return 0;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
@@ -65,7 +65,7 @@ const char*   GameInterface::EntityClass(EntPtr entity)
 
 const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
 {
-    if (entity == nullptr) {
+    if (entity == NULL) {
         return 0;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
@@ -74,7 +74,7 @@ const char*   GameInterface::EntityValueStr(EntPtr entity, const char* key)
 
 int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* value)
 {
-    if (entity == nullptr) {
+    if (entity == NULL) {
         return 0;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
@@ -87,7 +87,7 @@ int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* v
 
 int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* value)
 {
-    if (entity == nullptr) {
+    if (entity == NULL) {
         return 0;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);
@@ -113,7 +113,7 @@ EntPtr  GameInterface::SearchEntity(const char* className, const char* key, cons
 
 void    GameInterface::SpawnPlayer(EntPtr entity)
 {
-    if (entity == nullptr) {
+    if (entity == NULL) {
         return;
     }
     const Entity& ent = *reinterpret_cast<const Entity*>(entity);

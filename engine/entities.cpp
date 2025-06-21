@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 
 bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)

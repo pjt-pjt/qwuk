@@ -10,7 +10,7 @@ bool    GameModule::InitModule(const char* gamePath, GameInterface& game)
     game.Init(&interface);
 
     handle = lt_dlopen(gamePath);
-    bool ok = (handle != NULL);
+    bool ok = (handle != nullptr);
     ok = ok && SetFunctions();
     ok = ok && (Init(&interface) == INIT_OK);
     return ok;

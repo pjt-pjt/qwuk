@@ -14,7 +14,7 @@ bool    Program::Init(const char* vertexShader, const char* fragmentShader)
         TextBuffer  source;
         if (shader != 0 && source.Init(shaderPath)) {
             const char* sourceStr = source.Get().c_str();
-            glShaderSource(shader, 1, &sourceStr, NULL);
+            glShaderSource(shader, 1, &sourceStr, nullptr);
             glCompileShader(shader);
     
             int  success;
@@ -22,7 +22,7 @@ bool    Program::Init(const char* vertexShader, const char* fragmentShader)
             if(success) {
                 return shader;
             } else {
-                glGetShaderInfoLog(shader, 512, NULL, infoLog);
+                glGetShaderInfoLog(shader, 512, nullptr, infoLog);
                 printf("%s shader compilation failed:\n%s\n", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment", infoLog);
             }
         }
@@ -37,7 +37,7 @@ bool    Program::Init(const char* vertexShader, const char* fragmentShader)
         int  success;
         glGetProgramiv(linkedProgram, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetProgramInfoLog(linkedProgram, 512, NULL, infoLog);
+            glGetProgramInfoLog(linkedProgram, 512, nullptr, infoLog);
             printf ("Shader linking failed:\n%s\n", infoLog);
             return 0;
         }
