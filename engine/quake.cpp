@@ -249,7 +249,7 @@ void    Quake::GUI()
             ImGui::EndPopup();
         }
         if (selectedMapFile > -1) {
-            AddCommand({Command::ChangeMap, 2, "maps/" + fileList[selectedMapFile]});
+            PostCommand({Command::ChangeMap, 2, "maps/" + fileList[selectedMapFile]});
             selectedMapFile = -1;
         }
 
@@ -291,7 +291,7 @@ void    Quake::GUI()
         ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
             ImGui::PushFont(quakeFontLarge);
             if (ImGui::Button("    Start   ")) {
-                AddCommand({Command::ChangeMap, 2, "maps/start.bsp"});
+                PostCommand({Command::ChangeMap, 2, "maps/start.bsp"});
             }
             if (ImGui::Button("    Quit    ")) {
                 app->Quit();
@@ -443,7 +443,7 @@ void    Quake::Collision(Actor& /* actor */, EntPtr entity)
     game.Collision(entity);
 }
 
-void    Quake::AddCommand(const Command& cmd)
+void    Quake::PostCommand(const Command& cmd)
 {
     commands.push(cmd);
 }

@@ -27,7 +27,7 @@ private:
     static void         SetEntityFloat(EntPtr entity, const char* member, float value);
     static void         SetEntityVec3(EntPtr entity, const char* member, Vec3 vec3);
 
-    static void         AddCommand(int command, const char* strParam1, float fltParam1, int intParam1);
+    static void         PostCommand(int command, const char* strParam1, float fltParam1, int intParam1);
     static EntPtr       Spawn(EntPtr entity);
     static void         SpawnPlayer(EntPtr entity);
     static void         TeleportPlayer(const float* origin, float angle);

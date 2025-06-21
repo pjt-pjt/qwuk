@@ -35,7 +35,7 @@ void    GameInterface::Init(Interface* interface)
     interface->SetEntityFloat = SetEntityFloat;
     interface->SetEntityVec3 = SetEntityVec3;
 
-    interface->PostCommand = AddCommand;
+    interface->PostCommand = PostCommand;
     interface->Spawn = Spawn;
     interface->SpawnPlayer = SpawnPlayer;
     interface->TeleportPlayer = TeleportPlayer;
@@ -137,12 +137,12 @@ void    GameInterface::SetEntityVec3(EntPtr entity, const char* member, Vec3 vec
 }
 
 
-void    GameInterface::AddCommand(int command, const char* strParam1, float /* fltParam1 */, int /* intParam1 */)
+void    GameInterface::PostCommand(int command, const char* strParam1, float /* fltParam1 */, int /* intParam1 */)
 {
     if (game == nullptr) {
         return;
     }
-    game->quake.AddCommand({Command::Cmd(command), 2, strParam1});
+    game->quake.PostCommand({Command::Cmd(command), 2, strParam1});
 }
 
 EntPtr  GameInterface::Spawn(EntPtr entity)

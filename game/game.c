@@ -5,67 +5,81 @@
 #include "tools.h"
 
 
-static Interface* gInterface;
+static Interface i;
 
 int     Init(Interface* interface)
 {
-    gInterface = interface;
+    i.EnumerateEntites = interface->EnumerateEntites;
+    i.SearchEntity = interface->SearchEntity;
+
+    i.EntityClass = interface->EntityClass;
+    i.EntityValueStr = interface->EntityValueStr;
+    i.EntityValueFloat = interface->EntityValueFloat;
+    i.EntityValueVec3 = interface->EntityValueVec3;
+
+    i.SetEntityFloat = interface->SetEntityFloat;
+    i.SetEntityVec3 = interface->SetEntityVec3;
+
+    i.PostCommand = interface->PostCommand;
+    i.Spawn = interface->Spawn;
+    i.SpawnPlayer = interface->SpawnPlayer;
+    i.TeleportPlayer = interface->TeleportPlayer;
     return INIT_OK;
 }
 
 void    Run(char* startMap)
 {
     if (startMap == NULL) {
-        gInterface->PostCommand(1, "maps/start.bsp", 0, 0);
+        i.PostCommand(1, "maps/start.bsp", 0, 0);
     } else {
-        gInterface->PostCommand(1, startMap, 0, 0);
+        i.PostCommand(1, startMap, 0, 0);
     }
 }
 
 void    ChangeMap(void)
 {
-    EntPtr entity = gInterface->EnumerateEntites(NULL);
+    EntPtr entity = i.EnumerateEntites(NULL);
     while (entity != NULL) {
-        if (StrEq(gInterface->EntityClass(entity), "worldspawn")) {
-            gInterface->Spawn(entity);
-        } else if (StrEq(gInterface->EntityClass(entity), "info_player_start")) {
-            EntPtr ent = gInterface->Spawn(entity);
+        if (StrEq(i.EntityClass(entity), "worldspawn")) {
+            i.Spawn(entity);
+        } else if (StrEq(i.EntityClass(entity), "info_player_start")) {
+            EntPtr ent = i.Spawn(entity);
             Vec3 mins, maxs;
             SetVec3(mins, -16, -16, -24);
             SetVec3(maxs,  16,  16,  32);
-            gInterface->SetEntityVec3(ent, "mins", mins);
-            gInterface->SetEntityVec3(ent, "maxs", maxs);
-            gInterface->SetEntityFloat(ent, "eyePos", 22);
-            gInterface->SpawnPlayer(ent);
-        } else if (StrPrefix(gInterface->EntityClass(entity), "info_") ||
-                   StrPrefix(gInterface->EntityClass(entity), "trigger_") ||
-                   StrPrefix(gInterface->EntityClass(entity), "func_"))
+            i.SetEntityVec3(ent, "mins", mins);
+            i.SetEntityVec3(ent, "maxs", maxs);
+            i.SetEntityFloat(ent, "eyePos", 22);
+            i.SpawnPlayer(ent);
+        } else if (StrPrefix(i.EntityClass(entity), "info_") ||
+                   StrPrefix(i.EntityClass(entity), "trigger_") ||
+                   StrPrefix(i.EntityClass(entity), "func_"))
         {
-            gInterface->Spawn(entity);
+            i.Spawn(entity);
         }
-        entity = gInterface->EnumerateEntites(entity);
+        entity = i.EnumerateEntites(entity);
     }
 }
 
 void    Collision(EntPtr entity)
 {
-    if (strcmp(gInterface->EntityClass(entity), "trigger_teleport") == 0) {
-        const char* target = gInterface->EntityValueStr(entity, "target");
-        EntPtr targetEnt = gInterface->SearchEntity("info_teleport_destination", "targetname", target);
+    if (strcmp(i.EntityClass(entity), "trigger_teleport") == 0) {
+        const char* target = i.EntityValueStr(entity, "target");
+        EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
         if (targetEnt != NULL) {
             float origin[3];
-            gInterface->EntityValueVec3(targetEnt, "origin", origin);
+            i.EntityValueVec3(targetEnt, "origin", origin);
             float angle;
-            gInterface->EntityValueFloat(targetEnt, "angle", &angle);
-            gInterface->TeleportPlayer(origin, angle);
+            i.EntityValueFloat(targetEnt, "angle", &angle);
+            i.TeleportPlayer(origin, angle);
         }
-    } else if (strcmp(gInterface->EntityClass(entity), "trigger_changelevel") == 0) {
-        const char* map = gInterface->EntityValueStr(entity, "map");
+    } else if (strcmp(i.EntityClass(entity), "trigger_changelevel") == 0) {
+        const char* map = i.EntityValueStr(entity, "map");
         char path[1024] = "";
         strcat(path, "maps/");
         strcat(path, map);
         strcat(path, ".bsp");
-        gInterface->PostCommand(1, path, 0, 0);
+        i.PostCommand(1, path, 0, 0);
     }
 }
 

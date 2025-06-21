@@ -109,7 +109,7 @@ private:
 
     void Collision(Actor& actor, EntPtr entity);
 
-    void AddCommand(const Command& cmd);
+    void PostCommand(const Command& cmd);
     void DoCommands(uint64_t elapsed);
 
 private:
