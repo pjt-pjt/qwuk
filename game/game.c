@@ -60,13 +60,10 @@ void    Collision(EntPtr entity)
         const char* target = i.EntityValueStr(entity, "target");
         EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
         if (targetEnt != NULL) {
-            float origin[3];
-            i.EntityValueVec3(targetEnt, "origin", origin);
-            float angle;
-            i.EntityValueFloat(targetEnt, "angle", &angle);
-            Vec3 mins;
-            i.EntityValueVec3(targetEnt, "mins", mins);
-            origin[2] -= mins[2];
+            Vec3 origin;
+            CopyVec3(origin, targetEnt->origin);
+            float angle = targetEnt->angle;
+            origin[2] -= targetEnt->mins[2];
             i.SetPlayerPosAngle(origin, angle);
         }
     } else if (strcmp(entity->className, "trigger_changelevel") == 0) {

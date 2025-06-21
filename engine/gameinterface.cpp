@@ -79,10 +79,6 @@ int     GameInterface::EntityValueFloat(EntPtr entity, const char* key, float* v
     if (entity == NULL) {
         return 0;
     }
-    if (StrEq(key, "angle")) {
-        *value = entity->angle;
-        return 1;
-    }
     return Entities::EntityValueFloat(*entity, key, value);
 }
 
@@ -90,10 +86,6 @@ int     GameInterface::EntityValueVec3(EntPtr entity, const char* key, float* va
 {
     if (entity == NULL) {
         return 0;
-    }
-    if (StrEq(key, "origin")) {
-        memcpy_s(value, 3 * sizeof(float), entity->origin, 3 * sizeof(float));
-        return 1;
     }
     return Entities::EntityValueVec3(*entity, key, value);
 }
