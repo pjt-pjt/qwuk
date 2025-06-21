@@ -38,7 +38,7 @@ void    GameInterface::Init(Interface* interface)
     interface->PostCommand = PostCommand;
     interface->Spawn = Spawn;
     interface->SpawnPlayer = SpawnPlayer;
-    interface->TeleportPlayer = TeleportPlayer;
+    interface->SetPlayerPosAngle = SetPlayerPosAngle;
 }
 
 
@@ -164,10 +164,8 @@ void    GameInterface::SpawnPlayer(EntPtr entity)
     game->quake.player.Init(ent);
 }
 
-void    GameInterface::TeleportPlayer(const float* origin, float angle)
+void    GameInterface::SetPlayerPosAngle(const Vec3 origin, float angle)
 {
-    glm::vec3   pos(origin[0], origin[1], origin[2]);
-    pos.z -= game->quake.player.mins.z;
-    game->quake.player.SetPosition(pos);
+    game->quake.player.SetPosition({origin[0], origin[1], origin[2]});
     game->quake.player.SetYaw(angle);
 }

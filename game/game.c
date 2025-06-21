@@ -23,7 +23,7 @@ int     Init(Interface* interface)
     i.PostCommand = interface->PostCommand;
     i.Spawn = interface->Spawn;
     i.SpawnPlayer = interface->SpawnPlayer;
-    i.TeleportPlayer = interface->TeleportPlayer;
+    i.SetPlayerPosAngle = interface->SetPlayerPosAngle;
     return INIT_OK;
 }
 
@@ -71,7 +71,10 @@ void    Collision(EntPtr entity)
             i.EntityValueVec3(targetEnt, "origin", origin);
             float angle;
             i.EntityValueFloat(targetEnt, "angle", &angle);
-            i.TeleportPlayer(origin, angle);
+            Vec3 mins;
+            i.EntityValueVec3(targetEnt, "mins", mins);
+            origin[2] -= mins[2];
+            i.SetPlayerPosAngle(origin, angle);
         }
     } else if (strcmp(i.EntityClass(entity), "trigger_changelevel") == 0) {
         const char* map = i.EntityValueStr(entity, "map");

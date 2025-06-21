@@ -25,7 +25,7 @@ typedef struct Interface
     void        (*PostCommand)(int command, const char* strParam1, float fltParam1, int intParam1);
     EntPtr      (*Spawn)(EntPtr entity);
     void        (*SpawnPlayer)(EntPtr entity);
-    void        (*TeleportPlayer)(const float* origin, float angle);
+    void        (*SetPlayerPosAngle)(const Vec3 origin, float angle);
 } Interface;
 
 

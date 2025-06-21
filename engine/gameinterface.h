@@ -30,7 +30,7 @@ private:
     static void         PostCommand(int command, const char* strParam1, float fltParam1, int intParam1);
     static EntPtr       Spawn(EntPtr entity);
     static void         SpawnPlayer(EntPtr entity);
-    static void         TeleportPlayer(const float* origin, float angle);
+    static void         SetPlayerPosAngle(const Vec3 origin, float angle);
 
 private:
     Quake&      quake;
