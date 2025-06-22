@@ -7,9 +7,6 @@
 #endif
 
 
-typedef Entity* EntPtr;
-typedef float Vec3[3];
-
 typedef struct Interface
 {
     EntPtr      (*EnumerateEntites)(EntPtr from);

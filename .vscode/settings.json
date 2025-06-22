@@ -58,6 +58,8 @@
         "text_encoding": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "entity.h": "c",
+        "tools.h": "c"
     }
 }

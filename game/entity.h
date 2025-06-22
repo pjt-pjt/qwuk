@@ -25,8 +25,10 @@ typedef struct Entity
     float           eyePos;
     Vec3            mins;
     Vec3            maxs;
+    void            (*Touch)(struct Entity* self);
 } Entity;
 
+typedef Entity* EntPtr;
 
 #if defined(__cplusplus)
     }

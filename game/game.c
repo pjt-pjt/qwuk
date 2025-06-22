@@ -44,23 +44,8 @@ void    ChangeMap(void)
 
 void    Collision(EntPtr entity)
 {
-    if (strcmp(entity->className, "trigger_teleport") == 0) {
-        const char* target = i.EntityValueStr(entity, "target");
-        EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
-        if (targetEnt != NULL) {
-            Vec3 origin;
-            CopyVec3(origin, targetEnt->origin);
-            float angle = targetEnt->angle;
-            origin[2] -= targetEnt->mins[2];
-            i.SetPlayerPosAngle(origin, angle);
-        }
-    } else if (strcmp(entity->className, "trigger_changelevel") == 0) {
-        const char* map = i.EntityValueStr(entity, "map");
-        char path[1024] = "";
-        strcat(path, "maps/");
-        strcat(path, map);
-        strcat(path, ".bsp");
-        i.PostCommand(1, path, 0, 0);
+    if (entity->Touch != NULL) {
+        entity->Touch(entity);
     }
 }
 

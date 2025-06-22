@@ -50,11 +50,35 @@ void    InfoPlayerStart(Entity* self)
     i.SpawnPlayer(ent);
 }
 
+void    TouchTeleport(Entity* self)
+{
+    const char* target = i.EntityValueStr(self, "target");
+    EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
+    if (targetEnt != NULL) {
+        Vec3 origin;
+        CopyVec3(origin, targetEnt->origin);
+        float angle = targetEnt->angle;
+        origin[2] -= targetEnt->mins[2];
+        i.SetPlayerPosAngle(origin, angle);
+    }
+}
 void    TriggerTeleport(Entity* self)
 {
-    i.Spawn(self);
+    EntPtr ent = i.Spawn(self);
+    ent->Touch = TouchTeleport;
+}
+
+void    TouchChangelevel(Entity* self)
+{
+    const char* map = i.EntityValueStr(self, "map");
+    char path[1024] = "";
+    strcat(path, "maps/");
+    strcat(path, map);
+    strcat(path, ".bsp");
+    i.PostCommand(1, path, 0, 0);
 }
 void    TriggerChangelevel(Entity* self)
 {
-    i.Spawn(self);
+    EntPtr ent = i.Spawn(self);
+    ent->Touch = TouchChangelevel;
 }

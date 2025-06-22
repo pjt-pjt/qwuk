@@ -1,8 +1,6 @@
 #pragma once
 
-#if defined(TOOLS_IMPL)
-    #include <string.h>
-#endif
+#include <string.h>
 
 
 int     StrEq(const char* left, const char* right);
