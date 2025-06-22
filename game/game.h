@@ -25,6 +25,8 @@ typedef struct Interface
     void        (*SetPlayerPosAngle)(const Vec3 origin, float angle);
 } Interface;
 
+extern Interface i;
+
 
 #define INIT_OK 0
 

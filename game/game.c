@@ -1,11 +1,12 @@
 #include "game.h"
+#include "entities.h"
 #include <stdio.h>
 
 #define TOOLS_IMPL
 #include "tools.h"
 
 
-static Interface i;
+Interface i;
 
 int     Init(Interface* interface)
 {
@@ -36,20 +37,7 @@ void    ChangeMap(void)
 {
     EntPtr entity = i.EnumerateEntites(NULL);
     while (entity != NULL) {
-        if (StrEq(entity->className, "worldspawn")) {
-            i.Spawn(entity);
-        } else if (StrEq(entity->className, "info_player_start")) {
-            EntPtr ent = i.Spawn(entity);
-            SetVec3(ent->mins, -16, -16, -24);
-            SetVec3(ent->maxs,  16,  16,  32);
-            ent->eyePos = 22;
-            i.SpawnPlayer(ent);
-        } else if (StrPrefix(entity->className, "info_") ||
-                   StrPrefix(entity->className, "trigger_") ||
-                   StrPrefix(entity->className, "func_"))
-        {
-            i.Spawn(entity);
-        }
+        Construct(entity);
         entity = i.EnumerateEntites(entity);
     }
 }

@@ -27,7 +27,9 @@ list(TRANSFORM  BACKEND_SRC PREPEND "${BACKEND_DIR}/")
 list(TRANSFORM  BACKEND_HDR PREPEND "${BACKEND_DIR}/")
 
 set(GAME_HDR game.h tools.h)
+set(GAME_SRC game.c entities.c entities.h)
 list(TRANSFORM GAME_HDR PREPEND "${GAME_DIR}/")
+list(TRANSFORM GAME_SRC PREPEND "${GAME_DIR}/")
 
 include_directories(SYSTEM ${SYTEM_INCLUDE_ROOT})
 include_directories($ENV{IMGUI_HOME})
@@ -54,7 +56,7 @@ endif()
 
 
 # game code
-add_library(game SHARED game/game.c ${GAME_HDR})
+add_library(game SHARED ${GAME_SRC} ${GAME_HDR})
 
 
 # create version.h
