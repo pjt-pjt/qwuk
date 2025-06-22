@@ -42,7 +42,7 @@ void    ChangeMap(void)
     }
 }
 
-void    Collision(EntPtr entity)
+void    Touch(EntPtr entity)
 {
     if (entity->Touch != NULL) {
         entity->Touch(entity);

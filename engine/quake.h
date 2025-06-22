@@ -107,7 +107,7 @@ private:
     void PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& trace);
     void PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
-    void Collision(Actor& actor, EntPtr entity);
+    void Touch(Actor& actor, EntPtr entity);
 
     void PostCommand(const Command& cmd);
     void DoCommands(uint64_t elapsed);

@@ -374,7 +374,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
             Trace trace;
             PlayerGroundMove(start, end, trace);
             if (trace.entity != nullptr) {
-                Collision(player, trace.entity);
+                Touch(player, trace.entity);
             }
         }
         //
@@ -438,9 +438,9 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     }
 }
 
-void    Quake::Collision(Actor& /* actor */, EntPtr entity)
+void    Quake::Touch(Actor& /* actor */, EntPtr entity)
 {
-    game.Collision(entity);
+    game.Touch(entity);
 }
 
 void    Quake::PostCommand(const Command& cmd)

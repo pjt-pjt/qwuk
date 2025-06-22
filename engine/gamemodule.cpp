@@ -21,8 +21,8 @@ bool    GameModule::SetFunctions()
     Init = (InitProc)lt_dlsym(handle, "Init");
     Run = (RunProc)lt_dlsym(handle, "Run");
     ChangeMap = (ChangeMapProc)lt_dlsym(handle, "ChangeMap");
-    Collision = (CollisionProc)lt_dlsym(handle, "Collision");
+    Touch = (TouchProc)lt_dlsym(handle, "Touch");
     Destroy = (DestroyProc)lt_dlsym(handle, "Destroy");
     return Init != nullptr && Run != nullptr && ChangeMap != nullptr &&
-           Collision != nullptr && Destroy != nullptr;
+           Touch != nullptr && Destroy != nullptr;
 }

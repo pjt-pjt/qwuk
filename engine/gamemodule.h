@@ -15,7 +15,7 @@ public:
     InitProc        Init = nullptr;
     RunProc         Run = nullptr;
     ChangeMapProc   ChangeMap = nullptr;
-    CollisionProc   Collision = nullptr;
+    TouchProc       Touch = nullptr;
     DestroyProc     Destroy = nullptr;
 
 private:
