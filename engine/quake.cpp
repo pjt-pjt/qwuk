@@ -360,11 +360,15 @@ void    Quake::MovePlayer(uint64_t elapsed)
             // Can we step down?
             glm::vec3 stepStart = player.Position();
             glm::vec3 stepEnd = player.Position() + glm::vec3(0, 0, -fallSpeed);
-            Trace stepTrace;
-            if (!bsp.TraceLine(stepStart, stepEnd, stepTrace)) {
+            Trace fallTrace;
+            if (!bsp.TraceLine(stepStart, stepEnd, fallTrace)) {
                 player.onGround = true;
             }
-            player.SetPosition(stepTrace.end);
+            player.SetPosition(fallTrace.end);
+            if (fallTrace.entity != nullptr) {
+                Touch(player, fallTrace.entity);
+            }
+
         }
         //
         if (toMove) {

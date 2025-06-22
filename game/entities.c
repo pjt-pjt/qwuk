@@ -53,6 +53,10 @@ void    InfoPlayerStart(Entity* self)
 void    TouchTeleport(Entity* self)
 {
     const char* target = i.EntityValueStr(self, "target");
+    if (target != NULL && i.EntityValueStr(self, "targetname") != NULL)
+    {
+        return;
+    }
     EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
     if (targetEnt != NULL) {
         Vec3 origin;
