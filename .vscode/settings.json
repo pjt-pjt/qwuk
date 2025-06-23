@@ -62,6 +62,8 @@
         "entity.h": "c",
         "tools.h": "c",
         "entities.h": "c",
+        "entities.c": "c",
+        "entities.cpp": "cpp",
         "game.h": "c"
     }
 }

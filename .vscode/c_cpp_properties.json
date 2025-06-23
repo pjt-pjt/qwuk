@@ -6,6 +6,7 @@
                 "${workspaceFolder}/**",
                 "${env:MINGW64_HOME}/include/SDL2/",
                 "${env:MINGW64_HOME}/include/GL/",
+                "${env:MINGW64_HOME}/include/",
                 "${env:IMGUI_HOME}/",
                 "${env:IMGUI_HOME}/backends"
             ],
@@ -13,6 +14,7 @@
                 "DEBUG"
             ],
             "compilerPath": "${env:MINGW64_HOME}/bin/gcc",
+            "compilerArgs": ["-fms-extension"],
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "windows-gcc-x64"

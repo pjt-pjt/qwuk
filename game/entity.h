@@ -15,6 +15,17 @@ typedef struct Edict
 
 typedef float Vec3[3];
 
+typedef union Fields
+{
+    struct DoorFields
+    {
+        Vec3        direction;
+        Vec3        pos1;
+        Vec3        pos2;
+        float       speed;
+    };
+} Fields;
+
 typedef struct Entity
 {
     const char*     className;
@@ -26,6 +37,7 @@ typedef struct Entity
     Vec3            mins;
     Vec3            maxs;
     void            (*Touch)(struct Entity* self, struct Entity* other);
+    Fields*         fields;
 } Entity;
 
 typedef Entity* EntPtr;

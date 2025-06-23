@@ -4,9 +4,25 @@
 #include <stdio.h>
 
 
+Fields  fieldList[2048];
+int     numFields;
+
+
 void    InfoPlayerStart(Entity* self);
 void    TriggerTeleport(Entity* self);
 void    TriggerChangelevel(Entity* self);
+void    FuncDoor(Entity* self);
+
+
+void    ResetFields()
+{
+    numFields = 0;
+}
+
+Fields* NewFields()
+{
+    return &fieldList[numFields++];
+}
 
 
 void    Construct(Entity* entity)
@@ -16,13 +32,15 @@ void    Construct(Entity* entity)
         "info_player_start2",
         "trigger_teleport",
         "trigger_changelevel",
+        "func_door",
         NULL
     };
     void (*Constructors[])(Entity* self) = {
         InfoPlayerStart,
         InfoPlayerStart,
         TriggerTeleport,
-        TriggerChangelevel
+        TriggerChangelevel,
+        FuncDoor
     };
 
     for (int cl = 0; Classes[cl] != NULL; ++cl) {
@@ -100,4 +118,10 @@ void    TriggerChangelevel(Entity* self)
 {
     EntPtr ent = i.Spawn(self);
     ent->Touch = TouchChangelevel;
+}
+
+void    FuncDoor(Entity* self)
+{
+    self->fields = NewFields();
+    CopyVec3(self->fields->pos1, self->origin);
 }

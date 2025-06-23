@@ -4,6 +4,7 @@
 #include "game.h"
 
 
+void    ResetFields();
 void    Construct(Entity* entity);
 
 

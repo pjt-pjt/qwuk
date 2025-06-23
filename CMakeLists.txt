@@ -58,6 +58,7 @@ endif()
 
 # game code
 add_library(${GAME} SHARED ${GAME_SRC} ${GAME_HDR})
+target_compile_features(${GAME} PUBLIC c_std_17)
 
 
 # create version.h
