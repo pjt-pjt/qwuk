@@ -6,7 +6,8 @@
 #include "tools.h"
 
 
-Interface i;
+Interface   i;
+
 
 int     Init(Interface* interface)
 {
@@ -42,10 +43,10 @@ void    ChangeMap(void)
     }
 }
 
-void    Touch(EntPtr entity)
+void    Touch(EntPtr entity, EntPtr other)
 {
     if (entity->Touch != NULL) {
-        entity->Touch(entity);
+        entity->Touch(entity, other);
     }
 }
 

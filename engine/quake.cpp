@@ -63,14 +63,15 @@ glm::vec3   Camera::Direction() const
 }
 
 
-void    Actor::Init(const Entity& entity)
+void    Actor::Init(Entity& ent)
 {
-    if (StrEq(entity.className,"info_player_start")) {
-        SetPosition({entity.origin[0], entity.origin[1], entity.origin[2]});
-        SetYaw(entity.angle);
-        SetEyeHeight(entity.eyePos);
-        mins = {entity.mins[0], entity.mins[1], entity.mins[2]};
-        maxs = {entity.maxs[0], entity.maxs[1], entity.maxs[2]};
+    if (StrEq(ent.className,"info_player_start")) {
+        SetPosition({ent.origin[0], ent.origin[1], ent.origin[2]});
+        SetYaw(ent.angle);
+        SetEyeHeight(ent.eyePos);
+        mins = {ent.mins[0], ent.mins[1], ent.mins[2]};
+        maxs = {ent.maxs[0], ent.maxs[1], ent.maxs[2]};
+        entity = &ent;
     }
 }
 
@@ -366,7 +367,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
             }
             player.SetPosition(fallTrace.end);
             if (fallTrace.entity != nullptr) {
-                Touch(player, fallTrace.entity);
+                Touch(fallTrace.entity, player);
             }
 
         }
@@ -378,7 +379,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
             Trace trace;
             PlayerGroundMove(start, end, trace);
             if (trace.entity != nullptr) {
-                Touch(player, trace.entity);
+                Touch(trace.entity, player);
             }
         }
         //
@@ -442,9 +443,9 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     }
 }
 
-void    Quake::Touch(Actor& /* actor */, EntPtr entity)
+void    Quake::Touch(EntPtr entity, Actor& actor)
 {
-    game.Touch(entity);
+    game.Touch(entity, actor.entity);
 }
 
 void    Quake::PostCommand(const Command& cmd)

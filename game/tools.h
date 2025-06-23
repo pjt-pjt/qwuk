@@ -31,3 +31,6 @@ void    CopyVec3(float* target, const float* source);
     }
 
 #endif
+
+
+#define UNUSED(x) (void)(x)

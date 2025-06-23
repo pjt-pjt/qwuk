@@ -47,10 +47,11 @@ void    InfoPlayerStart(Entity* self)
     SetVec3(ent->mins, -16, -16, -24);
     SetVec3(ent->maxs,  16,  16,  32);
     ent->eyePos = 22;
+    ++ent->origin[2];
     i.SpawnPlayer(ent);
 }
 
-void    TouchTeleport(Entity* self)
+void    TouchTeleport(Entity* self, Entity* other)
 {
     const char* target = i.EntityValueStr(self, "target");
     if (target != NULL && i.EntityValueStr(self, "targetname") != NULL)
@@ -62,7 +63,8 @@ void    TouchTeleport(Entity* self)
         Vec3 origin;
         CopyVec3(origin, targetEnt->origin);
         float angle = targetEnt->angle;
-        origin[2] -= targetEnt->mins[2];
+        origin[2] -= other->mins[2];
+        origin[2]++;
         i.SetPlayerPosAngle(origin, angle);
     }
 }
@@ -72,8 +74,9 @@ void    TriggerTeleport(Entity* self)
     ent->Touch = TouchTeleport;
 }
 
-void    TouchChangelevel(Entity* self)
+void    TouchChangelevel(Entity* self, Entity* other)
 {
+    UNUSED(other);
     const char* map = i.EntityValueStr(self, "map");
     char path[1024] = "";
     strcat(path, "maps/");

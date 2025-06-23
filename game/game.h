@@ -30,7 +30,7 @@ extern Interface i;
 typedef int     (*InitProc)(Interface* interface);
 typedef void    (*RunProc)(const char* startMap);
 typedef void    (*ChangeMapProc)(void);
-typedef void    (*TouchProc)(EntPtr entity);
+typedef void    (*TouchProc)(EntPtr entity, EntPtr other);
 typedef void    (*DestroyProc)(void);
 
 

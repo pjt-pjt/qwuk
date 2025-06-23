@@ -60,6 +60,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "entity.h": "c",
-        "tools.h": "c"
+        "tools.h": "c",
+        "entities.h": "c",
+        "game.h": "c"
     }
 }

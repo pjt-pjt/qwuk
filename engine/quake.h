@@ -55,7 +55,7 @@ private:
 class Actor : public Camera
 {
 public:
-    void Init(const Entity& entity);
+    void Init(Entity& entity);
     
 public:
     glm::vec3   mins;
@@ -65,6 +65,7 @@ public:
     glm::vec3   direction = { 0, 0, 0 };
     float       speed = 0;
     float       verticalSpeed = 0;
+    EntPtr      entity;
 };
 
 
@@ -107,7 +108,7 @@ private:
     void PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& trace);
     void PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
-    void Touch(Actor& actor, EntPtr entity);
+    void Touch(EntPtr entity, Actor& actor);
 
     void PostCommand(const Command& cmd);
     void DoCommands(uint64_t elapsed);
