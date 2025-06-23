@@ -2,6 +2,7 @@
     "C_Cpp.default.compilerPath": "${env:MINGW64_HOME}/bin/gcc",
     "files.associations": {
         "*.json": "jsonc",
+        "*.c": "c",
         "*.hdr": "code-text-binary",
         "array": "cpp",
         "string": "cpp",

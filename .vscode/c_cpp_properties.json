@@ -14,7 +14,7 @@
                 "DEBUG"
             ],
             "compilerPath": "${env:MINGW64_HOME}/bin/gcc",
-            "compilerArgs": ["-fms-extension"],
+            "compilerArgs": ["-fms-extensions"],
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "windows-gcc-x64"
