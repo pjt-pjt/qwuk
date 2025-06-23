@@ -65,7 +65,7 @@ glm::vec3   Camera::Direction() const
 
 void    Actor::Init(Entity& ent)
 {
-    if (StrEq(ent.className,"info_player_start")) {
+    if (StrPrefix(ent.className,"info_player_start")) {
         SetPosition({ent.origin[0], ent.origin[1], ent.origin[2]});
         SetYaw(ent.angle);
         SetEyeHeight(ent.eyePos);
@@ -197,6 +197,8 @@ bool    Quake::InitGame(const std::string& map)
 {
     bool ok = game.InitModule("libgame.dll", interface);
     if (ok) {
+        //TODO Set globals
+        globals.status = 0;
         game.Run(!map.empty() ? map.c_str() : nullptr);
     }
     return ok;
@@ -469,11 +471,21 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
             --cmd.waitFrames;
         } else {
             if (cmd.cmd == Command::ChangeMap) {
-                bool loaded = bsp.Load(cmd.strParam1.c_str());
+                const char* map = cmd.strParam1.c_str();
+                bool loaded = bsp.Load(map);
                 if (!loaded) {
-                    loaded = bsp.Load("maps/start.bsp");
+                    map = "maps/start.bsp";
+                    loaded = bsp.Load(map);
                 }
                 if (loaded) {
+                    static char mapName[256];
+                    strncpy(mapName, map, 256);
+                    char* name = strrchr(mapName, '/');
+                    char* ext  = strrchr(mapName, '.');
+                    if (ext != nullptr ) {
+                        *ext = '\0';
+                    }
+                    globals.map = (name != nullptr) ? ++name : mapName;
                     game.ChangeMap();
                     status = Running;
                 }    

@@ -3,6 +3,7 @@
 
 
 static Interface    interface;
+Variables           globals;
 
 bool    GameModule::InitModule(const char* gamePath, GameInterface& game)
 {
@@ -12,7 +13,7 @@ bool    GameModule::InitModule(const char* gamePath, GameInterface& game)
     handle = lt_dlopen(gamePath);
     bool ok = (handle != nullptr);
     ok = ok && SetFunctions();
-    ok = ok && (Init(&interface) == INIT_OK);
+    ok = ok && (Init(&interface, &globals) == INIT_OK);
     return ok;
 }
 

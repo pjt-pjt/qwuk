@@ -7,9 +7,10 @@
 
 
 Interface   i;
+Variables*  globals;
 
 
-int     Init(Interface* interface)
+int     Init(Interface* interface, Variables* variables)
 {
     i.EnumerateEntites = interface->EnumerateEntites;
     i.SearchEntity = interface->SearchEntity;
@@ -22,6 +23,8 @@ int     Init(Interface* interface)
     i.Spawn = interface->Spawn;
     i.SpawnPlayer = interface->SpawnPlayer;
     i.SetPlayerPosAngle = interface->SetPlayerPosAngle;
+
+    globals = variables;
     return INIT_OK;
 }
 

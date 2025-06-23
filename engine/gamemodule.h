@@ -24,3 +24,6 @@ private:
 private:
     lt_dlhandle     handle = nullptr;
 };
+
+
+extern Variables globals;

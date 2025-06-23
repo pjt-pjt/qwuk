@@ -13,11 +13,13 @@ void    Construct(Entity* entity)
 {
     const char* Classes[] = {
         "info_player_start",
+        "info_player_start2",
         "trigger_teleport",
         "trigger_changelevel",
         NULL
     };
     void (*Constructors[])(Entity* self) = {
+        InfoPlayerStart,
         InfoPlayerStart,
         TriggerTeleport,
         TriggerChangelevel
@@ -43,6 +45,13 @@ void    Construct(Entity* entity)
 
 void    InfoPlayerStart(Entity* self)
 {
+    if (StrEq(globals->map, "start")) {
+        if (globals->status == 0 && StrEq(self->className, "info_player_start2")) {
+            return;
+        } else if (globals->status > 0 && !StrEq(self->className, "info_player_start2")) {
+            return;
+        }
+    }
     EntPtr ent = i.Spawn(self);
     SetVec3(ent->mins, -16, -16, -24);
     SetVec3(ent->maxs,  16,  16,  32);
@@ -77,6 +86,9 @@ void    TriggerTeleport(Entity* self)
 void    TouchChangelevel(Entity* self, Entity* other)
 {
     UNUSED(other);
+    if (globals->status == 0) {
+        globals->status = 1;
+    }
     const char* map = i.EntityValueStr(self, "map");
     char path[1024] = "";
     strcat(path, "maps/");

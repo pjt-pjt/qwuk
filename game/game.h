@@ -7,6 +7,13 @@
 #endif
 
 
+typedef struct Variables
+{
+    int         status;
+    const char* map;
+} Variables;
+
+
 typedef struct Interface
 {
     EntPtr      (*EnumerateEntites)(EntPtr from);
@@ -27,7 +34,7 @@ extern Interface i;
 
 #define INIT_OK 0
 
-typedef int     (*InitProc)(Interface* interface);
+typedef int     (*InitProc)(Interface* interface, Variables* variables);
 typedef void    (*RunProc)(const char* startMap);
 typedef void    (*ChangeMapProc)(void);
 typedef void    (*TouchProc)(EntPtr entity, EntPtr other);
