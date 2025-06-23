@@ -3,7 +3,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
 set(PROJECT qwuk)
 
 project(${PROJECT} VERSION 0.1
-        DESCRIPTION "Quake 1 viewer"
+        DESCRIPTION "Quake with use key project"
         LANGUAGES CXX C)
 
 add_compile_definitions($<$<CONFIG:Debug>:DEBUG>)
@@ -11,15 +11,16 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror -pedantic-errors)
 
 set(APP_NAME qwuk)
 set(IMGUI_LIB imgui)
+set(GAME quake)
 
 set(SYTEM_INCLUDE_ROOT $ENV{MINGW64_HOME}/include)
 set(ENGINE_DIR engine)
 set(BACKEND_DIR opengl)
 set(GAME_DIR game)
 
-set(QUAKE_SRC application.cpp quake.cpp bsp.cpp bspfile.cpp entities.cpp filebuffer.cpp gameinterface.cpp gamemodule.cpp
-              application.h quake.h bsp.h bspfile.h entities.h filebuffer.h gameinterface.h gamemodule.h vertex.h plane.h math.h)
-list(TRANSFORM QUAKE_SRC PREPEND "${ENGINE_DIR}/")
+set(ENGINE_SRC application.cpp client.cpp bsp.cpp bspfile.cpp entities.cpp filebuffer.cpp gameinterface.cpp gamemodule.cpp
+               application.h client.h bsp.h bspfile.h entities.h filebuffer.h gameinterface.h gamemodule.h vertex.h plane.h math.h)
+list(TRANSFORM ENGINE_SRC PREPEND "${ENGINE_DIR}/")
 
 set(BACKEND_SRC pipeline.cpp program.cpp storagebuffer.cpp graphics.cpp application_opengl.cpp)
 set(BACKEND_HDR pipeline.h program.h storagebuffer.h graphics.h )
@@ -27,7 +28,7 @@ list(TRANSFORM  BACKEND_SRC PREPEND "${BACKEND_DIR}/")
 list(TRANSFORM  BACKEND_HDR PREPEND "${BACKEND_DIR}/")
 
 set(GAME_HDR game.h tools.h)
-set(GAME_SRC game.c entities.c entities.h)
+set(GAME_SRC quake.c entities.c entities.h)
 list(TRANSFORM GAME_HDR PREPEND "${GAME_DIR}/")
 list(TRANSFORM GAME_SRC PREPEND "${GAME_DIR}/")
 
@@ -35,7 +36,7 @@ include_directories(SYSTEM ${SYTEM_INCLUDE_ROOT})
 include_directories($ENV{IMGUI_HOME})
 include_directories($ENV{IMGUI_HOME}/backends)
 
-add_executable(${APP_NAME} ${QUAKE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} ${GAME_HDR} main.cpp version.h)
+add_executable(${APP_NAME} ${ENGINE_SRC} ${BACKEND_SRC} ${BACKEND_HDR} ${GAME_HDR} main.cpp version.h)
 target_include_directories(${APP_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${ENGINE_DIR} ${BACKEND_DIR} ${GAME_DIR})
 target_link_libraries(${APP_NAME} PUBLIC ${IMGUI_LIB} mingw32 ltdl SDL2main SDL2 glew32 freeglut glu32 opengl32 comdlg32 ole32)
 
@@ -56,7 +57,7 @@ endif()
 
 
 # game code
-add_library(game SHARED ${GAME_SRC} ${GAME_HDR})
+add_library(${GAME} SHARED ${GAME_SRC} ${GAME_HDR})
 
 
 # create version.h

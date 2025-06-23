@@ -1,4 +1,4 @@
-#include "quake.h"
+#include "client.h"
 #include "application.h"
 #include "graphics.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -195,7 +195,7 @@ void    Quake::Render()
 
 bool    Quake::InitGame(const std::string& map)
 {
-    bool ok = game.InitModule("libgame.dll", interface);
+    bool ok = game.InitModule("libquake.dll", interface);
     if (ok) {
         //TODO Set globals
         globals.status = 0;

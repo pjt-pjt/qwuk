@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 #include "SDL2/SDL.h"
-#include "quake.h"
+#include "client.h"
 
 
 #define APP_NAME "qwuk"

@@ -1,5 +1,5 @@
 #include "gameinterface.h"
-#include "quake.h"
+#include "client.h"
 #include "game.h"
 #include "glm/gtc/type_ptr.hpp"
 

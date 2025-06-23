@@ -3,7 +3,7 @@
 #include "graphics.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
-#include "quake.h"
+#include "client.h"
 #include "version.h"
 
 

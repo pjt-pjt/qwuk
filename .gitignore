@@ -1,6 +1,6 @@
 build
 version.h
 qwuk.exe
-libgame.dll
+libquake.dll
 *temp*
 imgui.ini
