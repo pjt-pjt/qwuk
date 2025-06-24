@@ -19,6 +19,7 @@ typedef union Fields
 {
     struct DoorFields
     {
+        Vec3        size;
         Vec3        direction;
         Vec3        pos1;
         Vec3        pos2;
@@ -37,7 +38,7 @@ typedef struct Entity
     Vec3            mins;
     Vec3            maxs;
     void            (*Touch)(struct Entity* self, struct Entity* other);
-    Fields*         fields;
+    Fields*         f;
 } Entity;
 
 typedef Entity* EntPtr;

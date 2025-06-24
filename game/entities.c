@@ -2,16 +2,17 @@
 #include "tools.h"
 #include "game.h"
 #include <stdio.h>
+#include <math.h>
 
 
 Fields  fieldList[2048];
 int     numFields;
 
 
-void    InfoPlayerStart(Entity* self);
-void    TriggerTeleport(Entity* self);
-void    TriggerChangelevel(Entity* self);
-void    FuncDoor(Entity* self);
+void    InfoPlayerStart(Entity* ent);
+void    TriggerTeleport(Entity* ent);
+void    TriggerChangelevel(Entity* ent);
+void    FuncDoor(Entity* ent);
 
 
 void    ResetFields()
@@ -61,21 +62,21 @@ void    Construct(Entity* entity)
 }
 
 
-void    InfoPlayerStart(Entity* self)
+void    InfoPlayerStart(Entity* ent)
 {
     if (StrEq(globals->map, "start")) {
-        if (globals->status == 0 && StrEq(self->className, "info_player_start2")) {
+        if (globals->status == 0 && StrEq(ent->className, "info_player_start2")) {
             return;
-        } else if (globals->status > 0 && !StrEq(self->className, "info_player_start2")) {
+        } else if (globals->status > 0 && !StrEq(ent->className, "info_player_start2")) {
             return;
         }
     }
-    EntPtr ent = i.Spawn(self);
-    SetVec3(ent->mins, -16, -16, -24);
-    SetVec3(ent->maxs,  16,  16,  32);
-    ent->eyePos = 22;
-    ++ent->origin[2];
-    i.SpawnPlayer(ent);
+    EntPtr self = i.Spawn(ent);
+    SetVec3(self->mins, -16, -16, -24);
+    SetVec3(self->maxs,  16,  16,  32);
+    self->eyePos = 22;
+    ++self->origin[2];
+    i.SpawnPlayer(self);
 }
 
 void    TouchTeleport(Entity* self, Entity* other)
@@ -95,10 +96,10 @@ void    TouchTeleport(Entity* self, Entity* other)
         i.SetPlayerPosAngle(origin, angle);
     }
 }
-void    TriggerTeleport(Entity* self)
+void    TriggerTeleport(Entity* ent)
 {
-    EntPtr ent = i.Spawn(self);
-    ent->Touch = TouchTeleport;
+    EntPtr self = i.Spawn(ent);
+    self->Touch = TouchTeleport;
 }
 
 void    TouchChangelevel(Entity* self, Entity* other)
@@ -114,14 +115,27 @@ void    TouchChangelevel(Entity* self, Entity* other)
     strcat(path, ".bsp");
     i.PostCommand(1, path, 0, 0);
 }
-void    TriggerChangelevel(Entity* self)
+void    TriggerChangelevel(Entity* ent)
 {
-    EntPtr ent = i.Spawn(self);
-    ent->Touch = TouchChangelevel;
+    EntPtr self = i.Spawn(ent);
+    self->Touch = TouchChangelevel;
 }
 
-void    FuncDoor(Entity* self)
+void    FuncDoor(Entity* ent)
 {
-    self->fields = NewFields();
-    CopyVec3(self->fields->pos1, self->origin);
+    EntPtr self = i.Spawn(ent);
+    self->f = NewFields();
+    SetVec3(self->f->size, self->maxs[0] - self->mins[0], self->maxs[1] - self->mins[1], self->maxs[2] - self->mins[2]);
+    CopyVec3(self->f->pos1, self->origin);
+    if (self->angle == 0) {
+        self->f->direction[0] =  1;
+    } else if (self->angle == 180) {
+        self->f->direction[0] = -1;
+    } else if (self->angle == 90) {
+        self->f->direction[1] =  1;
+    } else if (self->angle == 270) {
+        self->f->direction[1] = -1;
+    }
+    float dot = fabs(self->f->direction[0] * self->f->size[0] + self->f->direction[1] * self->f->size[1] + self->f->direction[2] * self->f->size[2]) - 8/*lip*/;
+    SetVec3(self->f->pos2, self->f->pos1[0] + self->f->direction[0] * dot, self->f->pos1[1] + self->f->direction[1] * dot, self->f->pos1[2] + self->f->direction[2] * dot);
 }
