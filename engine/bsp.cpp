@@ -56,12 +56,6 @@ bool    BSP::Load(const char* path)
     Close();
     bool ok = bspFile.Init(path);
     if (ok) {
-        ok = CreateEntities();
-#if 0
-        printf("Entities:\n%s", bspFile.entities);
-#endif
-    }
-    if (ok) {
         // LoadPalette
         if (!palette.Init("resources/palette.lmp")) {
             return false;
@@ -77,8 +71,14 @@ bool    BSP::Load(const char* path)
         CreateBSP();
         CreateClipNodes();
         CreateModels();
-        CreateLights();
     }
+    if (ok) {
+        ok = CreateEntities();
+#if 0
+        printf("Entities:\n%s", bspFile.entities);
+#endif
+    }
+    CreateLights();
     if (ok) {
         vertexBuffer.Use();
         vertexBuffer.SetData<Vertex>(vertices);
@@ -281,7 +281,17 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
 
 bool    BSP::CreateEntities()
 {
-    return entities.Init(bspFile.entities, bspFile.entitiesSize);;
+    bool ok = entities.Init(bspFile.entities, bspFile.entitiesSize);
+    if (ok) {
+        for (auto& entity : entities.entities) {
+            if (entity.model != -1) {
+                const auto& node = nodes[models[entity.model].firstNode];
+                CopyVec3(entity.mins, glm::value_ptr(node.mins));
+                CopyVec3(entity.maxs, glm::value_ptr(node.maxs));
+            }
+        }
+    }
+    return ok;
 }
 
 void    BSP::CreateTextures()
@@ -412,6 +422,8 @@ void    BSP::CreateBSP()
             node.backLeaf = &leaves[idx];
         }
         node.plane = &planes[bnode.plane_id];
+        node.mins = {bnode.box.min[0], bnode.box.min[1], bnode.box.min[2]};
+        node.maxs = {bnode.box.max[0], bnode.box.max[1], bnode.box.max[2]};
     }
     for (uint32_t li = 0; li < bspFile.numLeaves; ++li) {
         dleaf_t& dleaf = bspFile.leaves[li];

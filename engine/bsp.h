@@ -169,6 +169,8 @@ public:
         Node*       backNode = nullptr;
         Leaf*       frontLeaf = nullptr;
         Leaf*       backLeaf = nullptr;
+        glm::vec3   mins;
+        glm::vec3   maxs;
     };
     struct Leaf
     {
