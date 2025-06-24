@@ -286,8 +286,8 @@ bool    BSP::CreateEntities()
         for (auto& entity : entities.entities) {
             if (entity.model != -1) {
                 const auto& node = nodes[models[entity.model].firstNode];
-                CopyVec3(entity.mins, glm::value_ptr(node.mins));
-                CopyVec3(entity.maxs, glm::value_ptr(node.maxs));
+                Vec3Copy(entity.mins, glm::value_ptr(node.mins));
+                Vec3Copy(entity.maxs, glm::value_ptr(node.maxs));
             }
         }
     }

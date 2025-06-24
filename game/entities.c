@@ -72,8 +72,8 @@ void    InfoPlayerStart(Entity* ent)
         }
     }
     EntPtr self = i.Spawn(ent);
-    SetVec3(self->mins, -16, -16, -24);
-    SetVec3(self->maxs,  16,  16,  32);
+    Vec3Set(self->mins, -16, -16, -24);
+    Vec3Set(self->maxs,  16,  16,  32);
     self->eyePos = 22;
     ++self->origin[2];
     i.SpawnPlayer(self);
@@ -89,7 +89,7 @@ void    TouchTeleport(Entity* self, Entity* other)
     EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
     if (targetEnt != NULL) {
         Vec3 origin;
-        CopyVec3(origin, targetEnt->origin);
+        Vec3Copy(origin, targetEnt->origin);
         float angle = targetEnt->angle;
         origin[2] -= other->mins[2];
         origin[2]++;
@@ -125,8 +125,8 @@ void    FuncDoor(Entity* ent)
 {
     EntPtr self = i.Spawn(ent);
     self->f = NewFields();
-    SetVec3(self->f->size, self->maxs[0] - self->mins[0], self->maxs[1] - self->mins[1], self->maxs[2] - self->mins[2]);
-    CopyVec3(self->f->pos1, self->origin);
+    Vec3Sub(self->f->size, self->maxs, self->mins);
+    Vec3Copy(self->f->pos1, self->origin);
     if (self->angle == 0) {
         self->f->direction[0] =  1;
     } else if (self->angle == 180) {
@@ -136,6 +136,7 @@ void    FuncDoor(Entity* ent)
     } else if (self->angle == 270) {
         self->f->direction[1] = -1;
     }
-    float dot = fabs(self->f->direction[0] * self->f->size[0] + self->f->direction[1] * self->f->size[1] + self->f->direction[2] * self->f->size[2]) - 8/*lip*/;
-    SetVec3(self->f->pos2, self->f->pos1[0] + self->f->direction[0] * dot, self->f->pos1[1] + self->f->direction[1] * dot, self->f->pos1[2] + self->f->direction[2] * dot);
+    float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - 8/*lip*/;
+    Vec3Mul(self->f->direction, self->f->direction, dot);
+    Vec3Add(self->f->pos2, self->f->pos1, self->f->direction);
 }
