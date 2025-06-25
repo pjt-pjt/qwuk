@@ -135,8 +135,12 @@ void    FuncDoor(Entity* ent)
         self->f->direction[1] =  1;
     } else if (self->angle == 270) {
         self->f->direction[1] = -1;
+    } else if (self->angle == -1) {
+        self->f->direction[2] =  1;
+    } else if (self->angle == -2) {
+        self->f->direction[2] = -1;
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - 8/*lip*/;
-    Vec3Mul(self->f->direction, self->f->direction, dot);
-    Vec3Add(self->f->pos2, self->f->pos1, self->f->direction);
+    Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
+    //Vec3Copy(self->origin, self->f->pos2);
 }

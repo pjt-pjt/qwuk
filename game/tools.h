@@ -11,6 +11,7 @@ void    Vec3Copy(Vec3 target, const Vec3 source);
 void    Vec3Add(Vec3 res, const Vec3 v1, const Vec3 v2);
 void    Vec3Sub(Vec3 res, const Vec3 v1, const Vec3 v2);
 void    Vec3Mul(Vec3 res, const Vec3 v, float mul);
+void    Vec3AddMul(Vec3 res, const Vec3 v1, const Vec3 v2, float mul);
 float   Vec3Dot(const Vec3 v1, const Vec3 v2);
 
 
@@ -52,6 +53,12 @@ float   Vec3Dot(const Vec3 v1, const Vec3 v2);
         res[0] = v[0] * mul;
         res[1] = v[1] * mul;
         res[2] = v[2] * mul;
+    }
+    void    Vec3AddMul(Vec3 res, const Vec3 v1, const Vec3 v2, float mul)
+    {
+        res[0] = v1[0] + v2[0] * mul;
+        res[1] = v1[1] + v2[1] * mul;
+        res[2] = v1[2] + v2[2] * mul;
     }
     float   Vec3Dot(const Vec3 v1, const Vec3 v2)
     {

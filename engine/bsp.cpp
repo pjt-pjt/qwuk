@@ -186,6 +186,11 @@ void    BSP::Draw(const glm::vec3& camera)
                     continue;
                 }
             }
+            Program& program = pipeline.GetProgram();
+            glm::mat4   mm(1);
+            mm = glm::translate(mm, {entity.origin[0], entity.origin[1], entity.origin[2]});
+            program.SetUniform("model", mm);
+
             const Model& model = models[entity.model];
             Draw(&nodes[model.firstNode], camera);
         }
@@ -287,9 +292,9 @@ bool    BSP::CreateEntities()
     if (ok) {
         for (auto& entity : entities.entities) {
             if (entity.model != -1) {
-                const auto& node = nodes[models[entity.model].firstNode];
-                Vec3Copy(entity.mins, glm::value_ptr(node.mins));
-                Vec3Copy(entity.maxs, glm::value_ptr(node.maxs));
+                const auto& model = models[entity.model];
+                Vec3Copy(entity.mins, glm::value_ptr(model.mins));
+                Vec3Copy(entity.maxs, glm::value_ptr(model.maxs));
             }
         }
     }
@@ -460,6 +465,8 @@ void    BSP::CreateModels()
         Model model;
         model.firstNode = bmodel.node_id0;
         model.clipNode = bmodel.node_id1;
+        model.mins = {bmodel.bound.min.x, bmodel.bound.min.y, bmodel.bound.min.z};
+        model.maxs = {bmodel.bound.max.x, bmodel.bound.max.y, bmodel.bound.max.z};
         models.push_back(model);
     }
 }
