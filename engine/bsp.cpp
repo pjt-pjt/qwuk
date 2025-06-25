@@ -125,10 +125,12 @@ void    BSP::SetTextureMode(bool smooth)
 
 void    BSP::BeginDraw(const glm::vec3& camera, const glm::mat4& view, const glm::mat4& proj)
 {
+    static glm::mat4 model(1);
     auto SetUniforms = [&view, &proj] (Pipeline& pipeline) {
         Program& program = pipeline.GetProgram();
         program.SetUniform("view", view);
         program.SetUniform("proj", proj);
+        program.SetUniform("model", model);
         program.SetUniformInt("tex", 0);
         CheckOK();
     };
