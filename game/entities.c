@@ -93,7 +93,8 @@ void    TouchTeleport(Entity* self, Entity* other)
         float angle = targetEnt->angle;
         origin[2] -= other->mins[2];
         origin[2]++;
-        i.SetPlayerPosAngle(origin, angle);
+        i.SetPlayerPos(origin);
+        i.SetPlayerAngle(angle);
     }
 }
 void    TriggerTeleport(Entity* ent)

@@ -22,7 +22,10 @@ int     Init(Interface* interface, Variables* variables)
     i.PostCommand = interface->PostCommand;
     i.Spawn = interface->Spawn;
     i.SpawnPlayer = interface->SpawnPlayer;
-    i.SetPlayerPosAngle = interface->SetPlayerPosAngle;
+    i.SetAngle = interface->SetAngle;
+    i.SetPos = interface->SetPos;
+    i.SetPlayerPos = interface->SetPlayerPos;
+    i.SetPlayerAngle = interface->SetPlayerAngle;
 
     globals = variables;
     return INIT_OK;

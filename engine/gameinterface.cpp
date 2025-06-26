@@ -34,7 +34,10 @@ void    GameInterface::Init(Interface* interface)
     interface->PostCommand = PostCommand;
     interface->Spawn = Spawn;
     interface->SpawnPlayer = SpawnPlayer;
-    interface->SetPlayerPosAngle = SetPlayerPosAngle;
+    interface->SetPos = SetPos;
+    interface->SetAngle = SetAngle;
+    interface->SetPlayerPos = SetPlayerPos;
+    interface->SetPlayerAngle = SetPlayerAngle;
 }
 
 
@@ -116,8 +119,28 @@ void    GameInterface::SpawnPlayer(EntPtr entity)
     game->quake.player.Init(*entity);
 }
 
-void    GameInterface::SetPlayerPosAngle(const Vec3 origin, float angle)
+void    GameInterface::SetPos(EntPtr entity, const Vec3 origin)
+{
+    if (entity == NULL) {
+        return;
+    }
+    Vec3Copy(entity->origin, origin);
+}
+
+void    GameInterface::SetAngle(EntPtr entity, float angle)
+{
+    if (entity == NULL) {
+        return;
+    }
+    entity->angle = angle;
+}
+
+void    GameInterface::SetPlayerPos(const Vec3 origin)
 {
     game->quake.player.SetPosition({origin[0], origin[1], origin[2]});
+}
+
+void    GameInterface::SetPlayerAngle(float angle)
+{
     game->quake.player.SetYaw(angle);
 }
