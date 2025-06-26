@@ -186,18 +186,15 @@ void    BSP::Draw(const glm::vec3& camera)
                     continue;
                 }
             }
-            glm::mat4   mm(1);
-            mm = glm::translate(mm, {entity.origin[0], entity.origin[1], entity.origin[2]});
+            const Model& model = models[entity.model];
             if (test.testModeOn) {
                 Program& program = testPipeline.GetProgram();
-                program.SetUniform("model", mm);
+                program.SetUniform("model", model.transform);
             } else {
                 Program& program = pipeline.GetProgram();
-                program.SetUniform("model", mm);
+                program.SetUniform("model", model.transform);
             }
             CheckOK();
-
-            const Model& model = models[entity.model];
             Draw(&nodes[model.firstNode], camera);
         }
     }
@@ -473,6 +470,7 @@ void    BSP::CreateModels()
         model.clipNode = bmodel.node_id1;
         model.mins = {bmodel.bound.min.x, bmodel.bound.min.y, bmodel.bound.min.z};
         model.maxs = {bmodel.bound.max.x, bmodel.bound.max.y, bmodel.bound.max.z};
+        model.transform = glm::mat4(1);
         models.push_back(model);
     }
 }

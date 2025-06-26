@@ -125,6 +125,12 @@ void    GameInterface::SetPos(EntPtr entity, const Vec3 origin)
         return;
     }
     Vec3Copy(entity->origin, origin);
+    if (entity->model != -1) {
+        BSP::Model& model = game->bsp.models[entity->model];
+        glm::mat4   mm(1);
+        model.transform = glm::translate(mm, {entity->origin[0], entity->origin[1], entity->origin[2]});
+    }
+
 }
 
 void    GameInterface::SetAngle(EntPtr entity, float angle)

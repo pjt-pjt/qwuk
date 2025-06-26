@@ -192,6 +192,7 @@ public:
         uint32_t    clipNode;
         glm::vec3   mins;
         glm::vec3   maxs;
+        glm::mat4   transform;
     };
 
 private:
