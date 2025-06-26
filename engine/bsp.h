@@ -72,6 +72,11 @@ public:
     {
         return orientation;
     }
+    void Transform(const glm::mat4& mat)
+    {
+        Plane::Transform(mat);
+        //TODO calculate orientation
+    }
 private:
     Orientation     orientation;
 };
@@ -205,11 +210,11 @@ private:
     void        CreateModels();
     void        CreateLights();
 
-    void        Draw(Node* node, const glm::vec3& camera);
+    void        Draw(const Model& model, Node* node, const glm::vec3& camera);
     void        Draw(Leaf* node);
 
-    Content     TracePoint(short node, const glm::vec3& point);
-    bool        TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
+    Content     TracePoint(const Model& model, short node, const glm::vec3& point);
+    bool        TraceLine(const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
     Entities                entities;

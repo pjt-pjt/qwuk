@@ -145,5 +145,5 @@ void    FuncDoor(Entity* ent)
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - 8/*lip*/;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    //i.SetOrigin(self, self->f->pos2);
+    i.SetOrigin(self, self->f->pos2);
 }

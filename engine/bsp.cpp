@@ -195,7 +195,7 @@ void    BSP::Draw(const glm::vec3& camera)
                 program.SetUniform("model", model.transform);
             }
             CheckOK();
-            Draw(&nodes[model.firstNode], camera);
+            Draw(model, &nodes[model.firstNode], camera);
         }
     }
 }
@@ -232,7 +232,7 @@ Content    BSP::TracePoint(const glm::vec3& point)
                     continue;
                 }
             }
-            content = TracePoint(models[entity.model].clipNode, point);
+            content = TracePoint(models[entity.model], models[entity.model].clipNode, point);
             if (content.content != EMPTY) {
                 content.entity = &entity;
             }
@@ -275,7 +275,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
                     continue;
                 }
             }
-            empty = TraceLine(models[entity.model].clipNode, start, end, 0, 1, trace);
+            empty = TraceLine(models[entity.model], models[entity.model].clipNode, start, end, 0, 1, trace);
         }
         if (!empty) {
             break;
@@ -518,21 +518,23 @@ void    BSP::CreateLights()
 #endif
 }
 
-void    BSP::Draw(Node* node, const glm::vec3& camera)
+void    BSP::Draw(const Model& model, Node* node, const glm::vec3& camera)
 {
-    auto DrawFront = [this, &camera](Node* node) {
+    auto DrawFront = [this, &camera, &model](Node* node) {
         if (node->frontNode != nullptr)
-            Draw(node->frontNode, camera);
+            Draw(model, node->frontNode, camera);
         else if (node->frontLeaf != nullptr)
             Draw(node->frontLeaf);
     };
-    auto DrawBack = [this, &camera](Node* node) {
+    auto DrawBack = [this, &camera, &model](Node* node) {
         if (node->backNode != nullptr)
-            Draw(node->backNode, camera);
+            Draw(model, node->backNode, camera);
         else if (node->backLeaf != nullptr)
             Draw(node->backLeaf);
     };
-    if (node->plane->Classify(camera) != BSPPlane::Back) {
+    BSPPlane    plane = *node->plane;
+    plane.Transform(model.transform);
+    if (plane.Classify(camera) != BSPPlane::Back) {
         DrawFront(node);
         DrawBack(node);
     } else {
@@ -573,11 +575,13 @@ void    BSP::Draw(Leaf* leaf)
     }
 }
 
-Content    BSP::TracePoint(short node, const glm::vec3& point)
+Content    BSP::TracePoint(const Model& model, short node, const glm::vec3& point)
 {
     while (node >= 0) {
         const ClipNode& cnode = clipNodes[node];
-        if (cnode.plane->Classify(point) != BSPPlane::Back) {
+        BSPPlane        plane = *cnode.plane;
+        plane.Transform(model.transform);
+        if (plane.Classify(point) != BSPPlane::Back) {
             node = cnode.front;
         } else {
             node = cnode.back;
@@ -588,18 +592,20 @@ Content    BSP::TracePoint(short node, const glm::vec3& point)
     return content;
 }
 
-bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)
+bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)
 {
     static constexpr float DIST_EPSILON = 0.03125;
 
     if (node >= 0) {
         const ClipNode& cnode = clipNodes[node];
-        float t1 = cnode.plane->SignedDistance(start);
-        float t2 = cnode.plane->SignedDistance(end);
+        BSPPlane        plane = *cnode.plane;
+        plane.Transform(model.transform);
+        float t1 = plane.SignedDistance(start);
+        float t2 = plane.SignedDistance(end);
         if (t1 >= 0 && t2 >= 0) {
-            return TraceLine(cnode.front, start, end, fstart, fend, trace);
+            return TraceLine(model, cnode.front, start, end, fstart, fend, trace);
         } else if (t1 < 0 && t2 < 0) {
-            return TraceLine(cnode.back, start, end, fstart, fend, trace);
+            return TraceLine(model, cnode.back, start, end, fstart, fend, trace);
         }
 
         float frac;
@@ -621,18 +627,18 @@ bool    BSP::TraceLine(short node, const glm::vec3& start, const glm::vec3& end,
 
         short front = (t1 >= 0) ? cnode.front : cnode.back;
         short back = (t1 >= 0) ? cnode.back : cnode.front;
-        if (!TraceLine(front, start, mid, fstart, fmid, trace)) {
+        if (!TraceLine(model, front, start, mid, fstart, fmid, trace)) {
             return false;
         }
 
-        if (TracePoint(back, mid).content == EMPTY) {
-            return TraceLine(back, mid, end, fmid, fend, trace);
+        if (TracePoint(model, back, mid).content == EMPTY) {
+            return TraceLine(model, back, mid, end, fmid, fend, trace);
         }
 
         if (t1 >= 0) {
-            trace.plane = *cnode.plane;
+            trace.plane = plane;
         } else {
-            trace.plane = BSPPlane(-cnode.plane->Normal(), -cnode.plane->Distance(), cnode.plane->GetOrientation());
+            trace.plane = BSPPlane(-plane.Normal(), -plane.Distance(), plane.GetOrientation());
         }
 
         trace.fraction = fmid;

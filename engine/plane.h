@@ -52,6 +52,13 @@ public:
     {
         return distance;
     }
+    void Transform(const glm::mat4& mat)
+    {
+        glm::vec3 point = normal * distance;
+        point = glm::vec3(mat * glm::vec4(point, 1.0));
+        distance = dot(normal, point);
+    }
+
 private:
     glm::vec3   normal = up;
     float       distance = 0.f;
