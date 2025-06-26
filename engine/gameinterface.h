@@ -27,9 +27,9 @@ private:
     static void         PostCommand(int command, const char* strParam1, float fltParam1, int intParam1);
     static EntPtr       Spawn(EntPtr entity);
     static void         SpawnPlayer(EntPtr entity);
-    static void         SetPos(EntPtr entity, const Vec3 origin);
+    static void         SetOrigin(EntPtr entity, const Vec3 origin);
     static void         SetAngle(EntPtr entity, float angle);
-    static void         SetPlayerPos(const Vec3 origin);
+    static void         SetPlayerOrigin(const Vec3 origin);
     static void         SetPlayerAngle(float angle);
 
 private:

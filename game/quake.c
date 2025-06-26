@@ -23,8 +23,8 @@ int     Init(Interface* interface, Variables* variables)
     i.Spawn = interface->Spawn;
     i.SpawnPlayer = interface->SpawnPlayer;
     i.SetAngle = interface->SetAngle;
-    i.SetPos = interface->SetPos;
-    i.SetPlayerPos = interface->SetPlayerPos;
+    i.SetOrigin = interface->SetOrigin;
+    i.SetPlayerOrigin = interface->SetPlayerOrigin;
     i.SetPlayerAngle = interface->SetPlayerAngle;
 
     globals = variables;

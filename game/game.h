@@ -26,9 +26,9 @@ typedef struct Interface
     void        (*PostCommand)(int command, const char* strParam1, float fltParam1, int intParam1);
     EntPtr      (*Spawn)(EntPtr entity);
     void        (*SpawnPlayer)(EntPtr entity);
-    void        (*SetPos)(EntPtr entity, const Vec3 origin);
+    void        (*SetOrigin)(EntPtr entity, const Vec3 origin);
     void        (*SetAngle)(EntPtr entity, float angle);
-    void        (*SetPlayerPos)(const Vec3 origin);
+    void        (*SetPlayerOrigin)(const Vec3 origin);
     void        (*SetPlayerAngle)(float angle);
 } Interface;
 

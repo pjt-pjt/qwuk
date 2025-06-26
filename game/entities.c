@@ -93,7 +93,7 @@ void    TouchTeleport(Entity* self, Entity* other)
         float angle = targetEnt->angle;
         origin[2] -= other->mins[2];
         origin[2]++;
-        i.SetPlayerPos(origin);
+        i.SetPlayerOrigin(origin);
         i.SetPlayerAngle(angle);
     }
 }
@@ -143,5 +143,5 @@ void    FuncDoor(Entity* ent)
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - 8/*lip*/;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    //i.SetPos(self, self->f->pos2);
+    //i.SetOrigin(self, self->f->pos2);
 }
