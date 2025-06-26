@@ -358,6 +358,9 @@ void    Quake::MovePlayer(uint64_t elapsed)
         Trace traceGravity;
         if (!bsp.TraceLine(gravityStart, gravityEnd, traceGravity)) {
             player.onGround = true;
+            if (traceGravity.entity != nullptr) {
+                Touch(traceGravity.entity, player);
+            }
         } else {
             player.onGround = false;
             // Can we step down?
@@ -371,7 +374,6 @@ void    Quake::MovePlayer(uint64_t elapsed)
             if (fallTrace.entity != nullptr) {
                 Touch(fallTrace.entity, player);
             }
-
         }
         //
         if (toMove) {

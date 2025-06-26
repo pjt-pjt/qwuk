@@ -101,6 +101,10 @@ bool    Entities::Init(const char* entitiesStr, uint32_t entitiesSize)
         } else if (StrEq(entity.className, "worldspawn")) {
             entity.model = 0;
         }
+        idx = Search("spawnflags");
+        if (idx != -1) {
+            sscanf(epairs[idx].value, "%d", &entity.flags);
+        }
         uint32_t first = edicts.size();
         edicts.insert(edicts.end(), epairs.cbegin(), epairs.cend());
         for (uint32_t pi = first; pi < edicts.size() - 1; ++pi) {

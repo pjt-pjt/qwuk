@@ -124,6 +124,13 @@ void    TriggerChangelevel(Entity* ent)
     self->Touch = TouchChangelevel;
 }
 
+
+void    TouchDoor(Entity* self, Entity* other)
+{
+    UNUSED(other);
+    i.SetOrigin(self, self->f->pos2);
+    self->Touch = NULL;
+}
 void    FuncDoor(Entity* ent)
 {
     EntPtr self = i.Spawn(ent);
@@ -143,7 +150,11 @@ void    FuncDoor(Entity* ent)
     } else if (self->angle == -2) {
         self->f->direction[2] = -1;
     }
-    float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - 8/*lip*/;
+    float lip = 8;
+    if (ent->flags == 1) {
+        lip = 0; //TODO Hack for "elevator" doors that start "open"
+    }
+    float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    i.SetOrigin(self, self->f->pos2);
+    self->Touch = TouchDoor;
 }
