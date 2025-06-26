@@ -22,7 +22,9 @@ void    ResetFields()
 
 Fields* NewFields()
 {
-    return &fieldList[numFields++];
+    Fields* fields = &fieldList[numFields++];
+    memset(fields, 0, sizeof(Fields));
+    return fields;
 }
 
 
@@ -92,7 +94,7 @@ void    TouchTeleport(Entity* self, Entity* other)
         Vec3Copy(origin, targetEnt->origin);
         float angle = targetEnt->angle;
         origin[2] -= other->mins[2];
-        origin[2]++;
+        ++origin[2];
         i.SetPlayerOrigin(origin);
         i.SetPlayerAngle(angle);
     }
