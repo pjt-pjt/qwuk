@@ -186,10 +186,16 @@ void    BSP::Draw(const glm::vec3& camera)
                     continue;
                 }
             }
-            Program& program = pipeline.GetProgram();
             glm::mat4   mm(1);
             mm = glm::translate(mm, {entity.origin[0], entity.origin[1], entity.origin[2]});
-            program.SetUniform("model", mm);
+            if (test.testModeOn) {
+                Program& program = testPipeline.GetProgram();
+                program.SetUniform("model", mm);
+            } else {
+                Program& program = pipeline.GetProgram();
+                program.SetUniform("model", mm);
+            }
+            CheckOK();
 
             const Model& model = models[entity.model];
             Draw(&nodes[model.firstNode], camera);
