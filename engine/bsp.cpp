@@ -164,7 +164,7 @@ void    BSP::Draw(const glm::vec3& camera)
     // Draw world
     color = 0x404040;
     // Draw models for entities, except for triggers
-    for (const auto& entity : /* entities.entities */actEntities) {
+    for (const auto& entity : actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showTriggers && StrPrefix(entity.className, "trigger")) {
@@ -213,7 +213,7 @@ void    BSP::EndDraw()
 Content    BSP::TracePoint(const glm::vec3& point)
 {
     Content content;
-    for (auto& entity : /* entities.entities */actEntities) {
+    for (auto& entity : actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
                 if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
@@ -253,7 +253,7 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     trace.fraction = 1;
     bool empty;
     // Draw models for entities, except for triggers
-    for (auto& entity : /* entities.entities */actEntities) {
+    for (auto& entity : actEntities) {
         if (entity.model != -1) {
             if (StrPrefix(entity.className, "trigger")) {
                 continue;

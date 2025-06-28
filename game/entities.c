@@ -12,6 +12,7 @@ int     numFields;
 void    InfoPlayerStart(Entity* ent);
 void    TriggerTeleport(Entity* ent);
 void    TriggerChangelevel(Entity* ent);
+void    Null(Entity* ent);
 void    FuncDoor(Entity* ent);
 
 
@@ -35,6 +36,7 @@ void    Construct(Entity* entity)
         "info_player_start2",
         "trigger_teleport",
         "trigger_changelevel",
+        "trigger_onlyregistered",
         "func_door",
         NULL
     };
@@ -43,6 +45,7 @@ void    Construct(Entity* entity)
         InfoPlayerStart,
         TriggerTeleport,
         TriggerChangelevel,
+        Null,
         FuncDoor
     };
 
@@ -157,4 +160,9 @@ void    FuncDoor(Entity* ent)
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
     self->Touch = TouchDoor;
+}
+
+void    Null(Entity* ent)
+{
+    UNUSED(ent);
 }
