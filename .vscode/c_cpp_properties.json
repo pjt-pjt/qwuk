@@ -13,7 +13,7 @@
             "defines": [
                 "DEBUG"
             ],
-            "compilerPath": "${env:MINGW64_HOME}/bin/gcc",
+            "compilerPath": "${env:MINGW64_HOME}/bin/gcc.exe",
             "compilerArgs": ["-fms-extensions"],
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",

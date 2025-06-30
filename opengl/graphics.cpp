@@ -101,7 +101,7 @@ int    Graphics::GenTexture()
 
 bool    Graphics::CreateTexture(int textureId, const Texture& texture, FilterMode min, FilterMode mag, MipMapMode mipmap)
 {
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    BindTexture(0, textureId);
     GLenum  format = (texture.components == 4) ? GL_RGBA : GL_RED;
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, format, GL_UNSIGNED_BYTE, texture.data);
     SetTextureFilters(min, mag, mipmap);
