@@ -78,6 +78,7 @@ void    Actor::Init(Entity& ent)
 
 Quake::Quake() :
     bsp(config, stats, test),
+    playerMove(bsp),
     velocity(0),
     interface(*this)
 {

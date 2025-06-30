@@ -3,6 +3,7 @@
 #include "bsp.h"
 #include "gameinterface.h"
 #include "gamemodule.h"
+#include "playermove.h"
 #include "SDL2/SDL.h"
 #include <string>
 #include <queue>
@@ -126,6 +127,7 @@ private:
     ImFont*         quakeFontSmall;
     ImFont*         quakeFontLarge;
 
+    PlayerMove      playerMove;
     Actor           player;
     bool            keyMatrix[256];
     SDL_Scancode    lastKey = SDL_SCANCODE_UNKNOWN;
