@@ -65,62 +65,46 @@ void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, fl
 
 void    PlayerMove::Friction()
 {
-/*
-	float	*vel;
-	float	speed, newspeed, control;
-	float	friction;
-	float	drop;
-	vec3_t	start, stop;
-	pmtrace_t		trace;
-	
-	if (pmove.waterjumptime)
-		return;
+	// if (pmove.waterjumptime) {
+	// 	return;
+    // }
 
-	vel = pmove.velocity;
-	
-	speed = sqrt(vel[0]*vel[0] +vel[1]*vel[1] + vel[2]*vel[2]);
-	if (speed < 1)
-	{
-		vel[0] = 0;
-		vel[1] = 0;
+    float speed = glm::length(velocity);
+	if (speed < 1) {
+		velocity.x = 0;
+		velocity.y = 0;
 		return;
 	}
+    float friction = 4/* movevars.friction */;
 
-	friction = movevars.friction;
+    // If the leading edge is over a dropoff, increase friction
+	// if (onground != -1) {
+	// 	start[0] = stop[0] = pmove.origin[0] + vel[0]/speed*16;
+	// 	start[1] = stop[1] = pmove.origin[1] + vel[1]/speed*16;
+	// 	start[2] = pmove.origin[2] + player_mins[2];
+	// 	stop[2] = start[2] - 34;
 
-// if the leading edge is over a dropoff, increase friction
-	if (onground != -1) {
-		start[0] = stop[0] = pmove.origin[0] + vel[0]/speed*16;
-		start[1] = stop[1] = pmove.origin[1] + vel[1]/speed*16;
-		start[2] = pmove.origin[2] + player_mins[2];
-		stop[2] = start[2] - 34;
+	// 	trace = PM_PlayerMove (start, stop);
 
-		trace = PM_PlayerMove (start, stop);
+	// 	if (trace.fraction == 1) {
+	// 		friction *= 2;
+	// 	}
+	// }
 
-		if (trace.fraction == 1) {
-			friction *= 2;
-		}
-	}
+    float drop = 0;
 
-	drop = 0;
-
-	if (waterlevel >= 2) // apply water friction
+	/* if (waterlevel >= 2) // apply water friction
 		drop += speed*movevars.waterfriction*waterlevel*frametime;
-	else if (onground != -1) // apply ground friction
-	{
-		control = speed < movevars.stopspeed ? movevars.stopspeed : speed;
-		drop += control*friction*frametime;
+	else  */if (onground != -1) {
+        // Apply ground friction
+		float control = (speed < 100/* movevars.stopspeed */) ? 100/* movevars.stopspeed */ : speed;
+		drop += control * friction * elapsed;
 	}
 
-
-// scale the velocity
-	newspeed = speed - drop;
+    // Scale the velocity
+	float newspeed = speed - drop;
 	if (newspeed < 0)
 		newspeed = 0;
 	newspeed /= speed;
-
-	vel[0] = vel[0] * newspeed;
-	vel[1] = vel[1] * newspeed;
-	vel[2] = vel[2] * newspeed;
-*/
+    velocity = velocity * newspeed;
 }
