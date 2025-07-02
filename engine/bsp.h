@@ -20,6 +20,7 @@ class Entity;
 struct Config
 {
     int     fov = 75;
+    bool    alwaysRun = true;
     bool    showAll = false;
     bool    showTriggers = false;
     bool    showFuncDoors = true;

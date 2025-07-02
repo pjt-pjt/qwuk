@@ -214,6 +214,7 @@ void    Quake::GUI()
         if (ImGui::SliderInt("FOV", &config.fov, 75, 100)) {
             SetViewPort(width, height);
         }
+        ImGui::Checkbox("Always Run", &config.alwaysRun);
         ImGui::Separator();
         ImGui::Checkbox("Show All", &config.showAll);
         ImGui::BeginDisabled(config.showAll);
@@ -312,9 +313,11 @@ void    Quake::MovePlayer(uint64_t elapsed)
         return;
     }
     float secondsElapsed = float(elapsed) / 1000.0f;
-    float speed = 256 * secondsElapsed;
-    float runSpeed = 320 * secondsElapsed;
-    float fallSpeed = 2 * runSpeed;
+    float walkSpeed = 200;
+    float runSpeed = 320;//400;
+    bool running = keyMatrix[SDL_SCANCODE_LSHIFT] || config.alwaysRun;
+    float speed = (running ? runSpeed : walkSpeed) * secondsElapsed;
+    float fallSpeed = 2 * runSpeed * secondsElapsed;
     if (keyMatrix[SDL_SCANCODE_W]) {
         velocity.x =  speed;
     } else if (keyMatrix[SDL_SCANCODE_S]) {
