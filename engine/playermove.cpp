@@ -14,7 +14,37 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
     elapsed = elapsed_;
     glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
     glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
-    AirMove(wishVelocity);
+
+	//pmove.numtouch = 0;
+	// if (pmove.spectator)
+	// {
+	// 	SpectatorMove ();
+	// 	return;
+	// }
+    // NudgePosition ();
+
+	// set onground, watertype, and waterlevel
+	// PM_CatagorizePosition ();
+
+	// if (waterlevel == 2)
+	// 	CheckWaterJump ();
+
+	// if (pmove.velocity[2] < 0)
+	// 	pmove.waterjumptime = 0;
+
+	// if (pmove.cmd.buttons & BUTTON_JUMP)
+	// 	JumpButton ();
+	// else
+	// 	pmove.oldbuttons &= ~BUTTON_JUMP;
+
+	Friction ();
+	/* if (waterlevel >= 2)
+		PM_WaterMove ();
+	else */
+		AirMove (wishVelocity);
+
+	// set onground, watertype, and waterlevel for final spot
+	//CatagorizePosition ();
 }
 
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
