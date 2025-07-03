@@ -138,3 +138,16 @@ void    PlayerMove::Friction()
 	newspeed /= speed;
     velocity = velocity * newspeed;
 }
+
+#define	STOP_EPSILON	0.1
+void	PlayerMove::ClipVelocity (const glm::vec3& in, const glm::vec3& normal, glm::vec3& out, float overbounce)
+{
+	float backoff = dot(in, normal) * overbounce;
+	for (int i=0 ; i<3 ; i++) {
+		float change = normal[i] * backoff;
+		out[i] = in[i] - change;
+		if (out[i] > -STOP_EPSILON && out[i] < STOP_EPSILON) {
+			out[i] = 0;
+		}
+	}
+}

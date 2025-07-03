@@ -19,6 +19,7 @@ private:
     enum AccelerateMode { OnGround, InAir };
     void    Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel);
     void    Friction();
+    void    ClipVelocity (const glm::vec3& in, const glm::vec3& normal, glm::vec3& out, float overbounce);
 
 private:
     BSP&        bsp;
