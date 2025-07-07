@@ -1,5 +1,6 @@
 #pragma once
 
+#include "entity.h"
 #include "glm/glm.hpp"
 
 
@@ -16,6 +17,7 @@ public:
 
 private:
     void    AirMove(const glm::vec3& wishVelocity);
+    void    FlyMove();
     enum AccelerateMode { OnGround, InAir };
     void    Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel);
     void    Friction();
@@ -23,7 +25,12 @@ private:
 
 private:
     BSP&        bsp;
+    glm::vec3   origin;
+    float       frameTime;
+
     glm::vec3   velocity;
     int         onground = 0;
-    float       elapsed;
+    int		    numTouch;
+    static constexpr int MAX_TOUCHENTS = 32;
+	EntPtr      touchEnts[MAX_TOUCHENTS];
 };

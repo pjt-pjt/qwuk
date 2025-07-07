@@ -9,9 +9,10 @@ PlayerMove::PlayerMove(BSP& bsp) :
     velocity(0)
 {}
 
-void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float elapsed_)
+void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float elapsed)
 {
-    elapsed = elapsed_;
+	origin = player.Position();
+    frameTime = elapsed;
     glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
     glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
 
@@ -50,7 +51,7 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 {
     float       wishSpeed = glm::length(wishVelocity);
-    [[maybe_unused]]glm::vec3   wishDir = glm::normalize(wishVelocity);
+    glm::vec3   wishDir = glm::normalize(wishVelocity);
 
     // Clamp to max speed
 	if (wishSpeed > /* movevars.maxspeed */320) {
@@ -68,8 +69,106 @@ void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 		Accelerate (InAir, wishDir, wishSpeed, 10/* movevars.accelerate */);
 		// Add gravity
 		// pmove.velocity[2] -= movevars.entgravity * movevars.gravity * frametime;
-		// FlyMove ();
+		FlyMove ();
 	}
+}
+
+void	PlayerMove::FlyMove()
+{
+	int			numbumps = 4;
+	//int			blocked = 0;
+	glm::vec3	originalVelocity = velocity;
+	glm::vec3	primalVelocity = velocity;
+	glm::vec3	dir;
+	static constexpr int MAX_CLIP_PLANES = 5;
+	int 		numplanes = 0;
+	glm::vec3	planes[MAX_CLIP_PLANES];
+	
+	float 		timeLeft = frameTime;
+	for (int bumpcount = 0; bumpcount < numbumps; ++bumpcount) {
+		glm::vec3	end = origin + timeLeft * velocity;
+		Trace		trace;
+		bool empty = bsp.TraceLine (origin, end, trace);
+
+		if (!empty/* trace.startsolid || trace.allsolid */) {
+			// Entity is trapped in another solid
+			velocity = {0,0,0};
+			return/*  3 */;
+		}
+		if (trace.fraction > 0) {
+			// Actually covered some distance
+			origin = trace.end;
+			numplanes = 0;
+		}
+		if (trace.fraction == 1) {
+			 break;		// moved the entire distance
+		}
+
+		// save entity for contact
+		touchEnts[numTouch++] = trace.entity;
+/*
+		if (trace.plane.normal[2] > 0.7)
+		{
+			blocked |= 1;		// floor
+		}
+		if (!trace.plane.normal[2])
+		{
+			blocked |= 2;		// step
+		}
+*/
+		timeLeft -= timeLeft * trace.fraction;
+		
+		// Cliped to another plane
+		if (numplanes >= MAX_CLIP_PLANES) {
+			// this shouldn't really happen
+			velocity = {0, 0, 0};
+			break;
+		}
+		planes[numplanes++] = trace.plane.Normal();
+		int i = 0;
+		for (; i < numplanes; ++i) {
+			ClipVelocity (originalVelocity, planes[i], velocity, 1);
+			int j = 0;
+			for (; j < numplanes; ++j) {
+				if (j != i) {
+					if (glm::dot(velocity, planes[j]) < 0) {
+						break;	// not ok
+					}
+				}
+			}
+			if (j == numplanes) {
+				break;
+			}
+		}
+		
+		// Modify original_velocity so it parallels all of the clip planes
+		if (i != numplanes) {
+			// go along this plane
+		} else {
+			// go along the crease
+			if (numplanes != 2) {
+//				Con_Printf ("clip velocity, numplanes == %i\n",numplanes);
+				velocity = {0, 0, 0};
+				break;
+			}
+			dir = glm::cross(planes[0], planes[1]);
+			float d = glm::dot(dir, velocity);
+			velocity = dir * d;
+		}
+		
+		// If original velocity is against the original velocity, stop dead
+		// to avoid tiny occilations in sloping corners
+		if (glm::dot(velocity, primalVelocity) <= 0) {
+			velocity = {0, 0, 0};
+			break;
+		}
+	}
+
+	// if (pmove.waterjumptime)
+	// {
+	// 	VectorCopy (primal_velocity, pmove.velocity);
+	// }
+	return /* blocked */;
 }
 
 void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel)
@@ -86,7 +185,7 @@ void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, fl
 	if (addSpeed <= 0) {
 		return;
     }
-	float accelSpeed = accel * wishSpeed * elapsed;
+	float accelSpeed = accel * wishSpeed * frameTime;
 	if (accelSpeed > addSpeed) {
 		accelSpeed = addSpeed;
     }
@@ -128,7 +227,7 @@ void    PlayerMove::Friction()
 	else  */if (onground != -1) {
         // Apply ground friction
 		float control = (speed < 100/* movevars.stopspeed */) ? 100/* movevars.stopspeed */ : speed;
-		drop += control * friction * elapsed;
+		drop += control * friction * frameTime;
 	}
 
     // Scale the velocity
