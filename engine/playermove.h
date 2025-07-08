@@ -18,6 +18,7 @@ public:
 private:
     void    AirMove(const glm::vec3& wishVelocity);
     void    FlyMove();
+    void    GroundMove();
     enum AccelerateMode { OnGround, InAir };
     void    Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel);
     void    Friction();

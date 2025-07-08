@@ -63,7 +63,7 @@ void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 		Accelerate (OnGround, wishDir, wishSpeed, 10/* movevars.accelerate */);
 		// Add gravity
 		// pmove.velocity[2] -= movevars.entgravity * movevars.gravity * frametime;
-		// GroundMove ();
+		GroundMove ();
 	} else {
         // Not on ground, so little effect on velocity
 		Accelerate (InAir, wishDir, wishSpeed, 10/* movevars.accelerate */);
@@ -169,6 +169,76 @@ void	PlayerMove::FlyMove()
 	// 	VectorCopy (primal_velocity, pmove.velocity);
 	// }
 	return /* blocked */;
+}
+
+void	PlayerMove::GroundMove()
+{
+	velocity[2] = 0;
+	if (velocity.length() < SMALL_EPS) {
+		return;
+	}
+	
+	// First try just moving to the destination
+	glm::vec3	dest = origin + velocity * frameTime;
+	
+	// First try moving directly to the next spot
+	Trace	trace;
+	bsp.TraceLine(origin, dest, trace);
+	if (trace.fraction == 1) {
+		origin = trace.end;
+		return;
+	}
+
+	// Try sliding forward both on ground and up 16 pixels
+	// Take the move that goes farthest
+	glm::vec3	original = origin;
+	glm::vec3	originalVel = velocity;
+	// Slide move
+	FlyMove ();
+
+	glm::vec3	down = origin;
+	glm::vec3	downVel = velocity;
+	glm::vec3	up;
+
+	origin = original;
+	velocity = originalVel;
+
+	// move up a stair height
+	static constexpr int STEPSIZE = 18;
+	dest = origin;
+	dest[2] += STEPSIZE;
+	bool solid = !bsp.TraceLine(origin, dest, trace);
+	if (/* !trace.startsolid && !trace.allsolid */!solid)
+	{
+		origin = trace.end;
+	}
+	// Slide move
+	FlyMove ();
+
+	// Press down the stepheight
+	dest = origin;
+	dest[2] -= STEPSIZE;
+	solid = !bsp.TraceLine(origin, dest, trace);
+	bool useDown = false;
+	if (trace.plane.Normal()[2] < 0.7) {
+		useDown = true;
+	} else {
+		if (/* !trace.startsolid && !trace.allsolid */!solid) {
+			origin = trace.end;
+		}
+		up = origin;
+	}
+
+	// Decide which one went farther
+	float	downDist = glm::length(glm::vec2(down) - glm::vec2(original));
+	float	upDist = glm::length(glm::vec2(up) - glm::vec2(original));
+	if (useDown || downDist > upDist) {
+		origin = down;
+		velocity = downVel;
+	} else {
+		// Copy z value from slide move
+		velocity[2] = downVel[2];
+	}
 }
 
 void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel)
