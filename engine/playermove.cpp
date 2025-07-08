@@ -25,7 +25,7 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
     // NudgePosition ();
 
 	// set onground, watertype, and waterlevel
-	// PM_CatagorizePosition ();
+	CategorizePosition ();
 
 	// if (waterlevel == 2)
 	// 	CheckWaterJump ();
@@ -45,7 +45,7 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 		AirMove (wishVelocity);
 
 	// set onground, watertype, and waterlevel for final spot
-	//CatagorizePosition ();
+	CategorizePosition ();
 }
 
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
@@ -319,4 +319,57 @@ void	PlayerMove::ClipVelocity (const glm::vec3& in, const glm::vec3& normal, glm
 			out[i] = 0;
 		}
 	}
+}
+
+void	PlayerMove::CategorizePosition (void)
+{
+	// If the player hull point one unit down is solid, the player is on ground
+	// See if standing on something solid
+	glm::vec3	point = origin;
+	point[2] -= 1;
+	if (velocity[2] > 180) {
+		onground = -1;
+	} else {
+		Trace tr;
+		bool solid = !bsp.TraceLine(origin, point, tr);
+		if (tr.plane.Normal()[2] < 0.7) {
+			onground = -1;	// too steep
+		} else {
+			onground = 1;//tr.entity;
+		}
+		if (onground != -1) {
+			//pmove.waterjumptime = 0;
+			if (/* !tr.startsolid && !tr.allsolid */!solid) {
+				origin = tr.end;
+			}
+		}
+
+		// standing on an entity other than the world
+		if (tr.entity != nullptr) {
+			touchEnts[numTouch++] = tr.entity;
+		}
+	}
+
+	// Get waterlevel
+	// waterlevel = 0;
+	// watertype = CONTENTS_EMPTY;
+
+	// point[2] = pmove.origin[2] + player_mins[2] + 1;	
+	// cont = PM_PointContents (point);
+
+	// if (cont <= CONTENTS_WATER)
+	// {
+	// 	watertype = cont;
+	// 	waterlevel = 1;
+	// 	point[2] = pmove.origin[2] + (player_mins[2] + player_maxs[2])*0.5;
+	// 	cont = PM_PointContents (point);
+	// 	if (cont <= CONTENTS_WATER)
+	// 	{
+	// 		waterlevel = 2;
+	// 		point[2] = pmove.origin[2] + 22;
+	// 		cont = PM_PointContents (point);
+	// 		if (cont <= CONTENTS_WATER)
+	// 			waterlevel = 3;
+	// 	}
+	// }
 }
