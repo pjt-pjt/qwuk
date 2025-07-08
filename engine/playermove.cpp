@@ -22,7 +22,7 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 	// 	SpectatorMove ();
 	// 	return;
 	// }
-    // NudgePosition ();
+    NudgePosition ();
 
 	// set onground, watertype, and waterlevel
 	CategorizePosition ();
@@ -373,3 +373,34 @@ void	PlayerMove::CategorizePosition (void)
 	// 	}
 	// }
 }
+
+void	PlayerMove::NudgePosition()
+{
+	glm::vec3	base = origin;
+	for (int i = 0; i<3 ; i++) {
+		origin[i] = int(origin[i] * 8) * 0.125;
+	}
+	//	pmove.origin[2] += 0.124;
+
+	//	if (pmove.dead)
+	//		return;		// might be a squished point, so don'y bother
+	//	if (PM_TestPlayerPosition (pmove.origin) )
+	//		return;
+	glm::vec3	sign = {0, -1, 1};
+
+	for (int z = 0; z <= 2; z++) {
+		for (int x = 0; x <= 2; x++) {
+			for (int y = 0; y <= 2; y++) {
+				origin[0] = base[0] + (sign[x] * 1.0/8);
+				origin[1] = base[1] + (sign[y] * 1.0/8);
+				origin[2] = base[2] + (sign[z] * 1.0/8);
+				if (bsp.TracePoint(origin).content != SOLID) {
+					return;
+				}
+			}
+		}
+	}
+	origin = base;
+//	Con_DPrintf ("NudgePosition: stuck\n");
+}
+

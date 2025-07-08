@@ -28,6 +28,7 @@ private:
     void    Friction();
     void    ClipVelocity (const glm::vec3& in, const glm::vec3& normal, glm::vec3& out, float overbounce);
     void    CategorizePosition();
+    void    NudgePosition();
 
 private:
     BSP&        bsp;
