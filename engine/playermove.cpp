@@ -51,7 +51,10 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 {
     float       wishSpeed = glm::length(wishVelocity);
-    glm::vec3   wishDir = glm::normalize(wishVelocity);
+    glm::vec3   wishDir(0);
+	if (wishSpeed > SMALL_EPS) {
+		wishDir = glm::normalize(wishVelocity);
+	}
 
     // Clamp to max speed
 	if (wishSpeed > /* movevars.maxspeed */320) {
@@ -105,7 +108,7 @@ void	PlayerMove::FlyMove()
 		}
 
 		// Save entity for contact
-		touchEnts[numTouch++] = trace.entity;
+		//TODO touchEnts[numTouch++] = trace.entity;
 /*
 		if (trace.plane.normal[2] > 0.7)
 		{
@@ -343,7 +346,7 @@ void	PlayerMove::CategorizePosition (void)
 
 		// standing on an entity other than the world
 		if (tr.entity != nullptr) {
-			touchEnts[numTouch++] = tr.entity;
+			//TODO touchEnts[numTouch++] = tr.entity;
 		}
 	}
 

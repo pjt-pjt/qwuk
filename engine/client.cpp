@@ -309,6 +309,7 @@ void    Quake::GUI()
 
 void    Quake::MovePlayer(uint64_t elapsed)
 {
+//#define OLD_MOVE
     if (status != Running) {
         return;
     }
@@ -316,8 +317,8 @@ void    Quake::MovePlayer(uint64_t elapsed)
     float walkSpeed = 200;
     float runSpeed = 320;//400;
     bool running = keyMatrix[SDL_SCANCODE_LSHIFT] || config.alwaysRun;
-    float speed = (running ? runSpeed : walkSpeed) * secondsElapsed;
-    float fallSpeed = 2 * runSpeed * secondsElapsed;
+    float speed = (running ? runSpeed : walkSpeed);
+    [[maybe_unused]]float fallSpeed = 2 * runSpeed * secondsElapsed;
     if (keyMatrix[SDL_SCANCODE_W]) {
         velocity.x =  speed;
     } else if (keyMatrix[SDL_SCANCODE_S]) {
@@ -351,11 +352,12 @@ void    Quake::MovePlayer(uint64_t elapsed)
         if (toMove) {
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
             glm::vec3 start = player.Position();
-            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
+            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0) * secondsElapsed);
             Trace trace;
             PlayerFly(start, end, trace);
         }
     } else {
+#if defined(OLD_MOVE)
         // check on ground
         glm::vec3 gravityStart = player.Position();
         glm::vec3 gravityEnd = player.Position() + glm::vec3(0, 0, -1);
@@ -379,17 +381,23 @@ void    Quake::MovePlayer(uint64_t elapsed)
                 Touch(fallTrace.entity, player);
             }
         }
+#endif
         //
+#if defined(OLD_MOVE)
         if (toMove) {
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
             glm::vec3 start = player.Position();
-            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0));
+            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0) * secondsElapsed);
             Trace trace;
             PlayerGroundMove(start, end, trace);
             if (trace.entity != nullptr) {
                 Touch(trace.entity, player);
             }
         }
+#else
+        playerMove.Move(player, velocity, secondsElapsed);
+        player.SetPosition(playerMove.Origin());
+#endif
         //
     }
 }
