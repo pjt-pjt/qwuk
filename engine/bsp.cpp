@@ -599,7 +599,19 @@ bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, c
 {
     static constexpr float DIST_EPSILON = 0.03125;
 
-    if (node >= 0) {
+    if (node < 0)
+	{
+		if (node != SOLID) {
+			trace.allSolid = false;
+			// if (node == CONTENTS_EMPTY)
+			// 	trace->inopen = true;
+			// else
+			// 	trace->inwater = true;
+		} else {
+			trace.startSolid = true;
+        }
+		return node == EMPTY;		// empty
+	} else {
         const ClipNode& cnode = clipNodes[node];
         BSPPlane        plane = *cnode.plane;
         plane.Transform(model.transform);

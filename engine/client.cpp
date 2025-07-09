@@ -406,7 +406,6 @@ void    Quake::PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Tr
     glm::vec3   actStart = start;
     glm::vec3   actEnd = end;
 
-    trace.startContent = bsp.TracePoint(actStart).content;
     bsp.TraceLine(actStart, actEnd, trace);
 
     uint32_t    bumps = 0;

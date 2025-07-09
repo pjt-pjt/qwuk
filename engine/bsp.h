@@ -99,8 +99,9 @@ struct Trace
     EntPtr      entity = nullptr;
     float       fraction = 1.0;   
     glm::vec3   end;
-    LeafType    startContent = SOLID;
     LeafType    endContent = SOLID;
+    bool        startSolid = false;
+    bool        allSolid = true;
 };
 
 struct Content
