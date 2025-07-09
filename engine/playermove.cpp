@@ -87,10 +87,9 @@ void	PlayerMove::FlyMove()
 	float 		timeLeft = frameTime;
 	for (int bumpcount = 0; bumpcount < numbumps; ++bumpcount) {
 		glm::vec3	end = origin + timeLeft * velocity;
-		Trace		trace;
-		bool empty = bsp.TraceLine (origin, end, trace);
+		Trace		trace = MovePlayer(origin, end);
 
-		if (!empty/* trace.startsolid || trace.allsolid */) {
+		if (trace.startSolid || trace.allSolid) {
 			// Entity is trapped in another solid
 			velocity = {0,0,0};
 			return/*  3 */;
@@ -182,8 +181,7 @@ void	PlayerMove::GroundMove()
 	glm::vec3	dest = origin + velocity * frameTime;
 	
 	// First try moving directly to the next spot
-	Trace	trace;
-	bsp.TraceLine(origin, dest, trace);
+	Trace	trace = MovePlayer(origin, dest);
 	if (trace.fraction == 1) {
 		origin = trace.end;
 		return;
@@ -207,9 +205,8 @@ void	PlayerMove::GroundMove()
 	static constexpr int STEPSIZE = 18;
 	dest = origin;
 	dest[2] += STEPSIZE;
-	bool solid = !bsp.TraceLine(origin, dest, trace);
-	if (/* !trace.startsolid && !trace.allsolid */!solid)
-	{
+	trace = MovePlayer(origin, dest);
+	if (!trace.startSolid && !trace.allSolid) {
 		origin = trace.end;
 	}
 	// Slide move
@@ -218,12 +215,12 @@ void	PlayerMove::GroundMove()
 	// Press down the stepheight
 	dest = origin;
 	dest[2] -= STEPSIZE;
-	solid = !bsp.TraceLine(origin, dest, trace);
+	trace = MovePlayer(origin, dest);
 	bool useDown = false;
 	if (trace.plane.Normal()[2] < 0.7) {
 		useDown = true;
 	} else {
-		if (/* !trace.startsolid && !trace.allsolid */!solid) {
+		if (!trace.startSolid && !trace.allSolid) {
 			origin = trace.end;
 		}
 		up = origin;
@@ -330,8 +327,7 @@ void	PlayerMove::CategorizePosition (void)
 	if (velocity[2] > 180) {
 		onground = -1;
 	} else {
-		Trace tr;
-		bool solid = !bsp.TraceLine(origin, point, tr);
+		Trace tr = MovePlayer(origin, point);
 		if (tr.plane.Normal()[2] < 0.7) {
 			onground = -1;	// too steep
 		} else {
@@ -339,7 +335,7 @@ void	PlayerMove::CategorizePosition (void)
 		}
 		if (onground != -1) {
 			//pmove.waterjumptime = 0;
-			if (/* !tr.startsolid && !tr.allsolid */!solid) {
+			if (!tr.startSolid && !tr.allSolid) {
 				origin = tr.end;
 			}
 		}
@@ -404,3 +400,9 @@ void	PlayerMove::NudgePosition()
 //	Con_DPrintf ("NudgePosition: stuck\n");
 }
 
+Trace	PlayerMove::MovePlayer(const glm::vec3& start, const glm::vec3& end)
+{
+	Trace trace;
+	bsp.TraceLine(start, end, trace);
+	return trace;
+}

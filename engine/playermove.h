@@ -1,10 +1,10 @@
 #pragma once
 
 #include "entity.h"
+#include "bsp.h"
 #include "glm/glm.hpp"
 
 
-class BSP;
 class Actor;
 
 
@@ -29,6 +29,8 @@ private:
     void    ClipVelocity (const glm::vec3& in, const glm::vec3& normal, glm::vec3& out, float overbounce);
     void    CategorizePosition();
     void    NudgePosition();
+
+    Trace   MovePlayer(const glm::vec3& start, const glm::vec3& end);
 
 private:
     BSP&        bsp;
