@@ -62,13 +62,14 @@ void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 		velocity[2] = 0;
 		Accelerate (OnGround, wishDir, wishSpeed, 10/* movevars.accelerate */);
 		// Add gravity
-		// pmove.velocity[2] -= movevars.entgravity * movevars.gravity * frametime;
+		velocity[2] -= /* movevars.entgravity(==1.0) * */ 800/* movevars.gravity */ * frameTime;
+		//TODO Delete if not used?
 		GroundMove ();
 	} else {
         // Not on ground, so little effect on velocity
 		Accelerate (InAir, wishDir, wishSpeed, 10/* movevars.accelerate */);
 		// Add gravity
-		// pmove.velocity[2] -= movevars.entgravity * movevars.gravity * frametime;
+		velocity[2] -= /* movevars.entgravity(==1.0) * */ 800/* movevars.gravity */ * frameTime;
 		FlyMove ();
 	}
 }
@@ -103,7 +104,7 @@ void	PlayerMove::FlyMove()
 			 break;		// moved the entire distance
 		}
 
-		// save entity for contact
+		// Save entity for contact
 		touchEnts[numTouch++] = trace.entity;
 /*
 		if (trace.plane.normal[2] > 0.7)
@@ -119,7 +120,7 @@ void	PlayerMove::FlyMove()
 		
 		// Cliped to another plane
 		if (numplanes >= MAX_CLIP_PLANES) {
-			// this shouldn't really happen
+			// This shouldn't really happen
 			velocity = {0, 0, 0};
 			break;
 		}
@@ -131,7 +132,7 @@ void	PlayerMove::FlyMove()
 			for (; j < numplanes; ++j) {
 				if (j != i) {
 					if (glm::dot(velocity, planes[j]) < 0) {
-						break;	// not ok
+						break;	// Not ok
 					}
 				}
 			}
@@ -142,9 +143,9 @@ void	PlayerMove::FlyMove()
 		
 		// Modify original_velocity so it parallels all of the clip planes
 		if (i != numplanes) {
-			// go along this plane
+			// Go along this plane
 		} else {
-			// go along the crease
+			// Go along the crease
 			if (numplanes != 2) {
 //				Con_Printf ("clip velocity, numplanes == %i\n",numplanes);
 				velocity = {0, 0, 0};
@@ -201,7 +202,7 @@ void	PlayerMove::GroundMove()
 	origin = original;
 	velocity = originalVel;
 
-	// move up a stair height
+	// Move up a stair height
 	static constexpr int STEPSIZE = 18;
 	dest = origin;
 	dest[2] += STEPSIZE;
@@ -390,7 +391,7 @@ void	PlayerMove::NudgePosition()
 				origin[0] = base[0] + (sign[x] * 1.0/8);
 				origin[1] = base[1] + (sign[y] * 1.0/8);
 				origin[2] = base[2] + (sign[z] * 1.0/8);
-				if (bsp.TracePoint(origin).content != SOLID) {
+				if (TestPlayerPosition(origin)) {
 					return;
 				}
 			}
@@ -405,4 +406,9 @@ Trace	PlayerMove::MovePlayer(const glm::vec3& start, const glm::vec3& end)
 	Trace trace;
 	bsp.TraceLine(start, end, trace);
 	return trace;
+}
+
+bool	PlayerMove::TestPlayerPosition(const glm::vec3& pos)
+{
+	return bsp.TracePoint(pos).content != SOLID;
 }

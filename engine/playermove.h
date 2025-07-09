@@ -31,6 +31,7 @@ private:
     void    NudgePosition();
 
     Trace   MovePlayer(const glm::vec3& start, const glm::vec3& end);
+    bool    TestPlayerPosition(const glm::vec3& pos);
 
 private:
     BSP&        bsp;
