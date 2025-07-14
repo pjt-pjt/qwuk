@@ -101,7 +101,7 @@ struct Trace
     glm::vec3   end;
     LeafType    endContent = SOLID;
     bool        startSolid = false;
-    bool        allSolid = true;
+    bool        allSolid = false;
 };
 
 struct Content

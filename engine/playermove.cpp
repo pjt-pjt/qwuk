@@ -177,12 +177,15 @@ void	PlayerMove::FlyMove()
 void	PlayerMove::GroundMove()
 {
 	velocity[2] = 0;
-	if (velocity.length() < SMALL_EPS) {
+	if (glm::length(velocity) < SMALL_EPS) {
 		return;
 	}
 	
 	// First try just moving to the destination
-	glm::vec3	dest = origin + velocity * frameTime;
+	glm::vec3	dest;
+    dest[0] = origin[0] + velocity[0] * frameTime;
+	dest[1] = origin[1] + velocity[1] * frameTime;	
+	dest[2] = origin[2];
 	
 	// First try moving directly to the next spot
 	Trace	trace = MovePlayer(origin, dest);
@@ -248,11 +251,12 @@ void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, fl
 	// 	return;
 	// if (pmove.waterjumptime)
 	// 	return;
-    if (mode == InAir && wishSpeed > 30) {
-        return;
+    float wishSpd = wishSpeed;
+    if (mode == InAir && wishSpd > 30) {
+        wishSpd = 30;
     }
     float currentspeed = glm::dot(velocity, wishDir);
-    float addSpeed = wishSpeed - currentspeed;
+    float addSpeed = wishSpd - currentspeed;
 	if (addSpeed <= 0) {
 		return;
     }

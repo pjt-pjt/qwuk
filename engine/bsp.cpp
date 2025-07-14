@@ -236,11 +236,11 @@ Content    BSP::TracePoint(const glm::vec3& point)
             if (content.content != EMPTY) {
                 content.entity = &entity;
             }
-            if (StrPrefix(entity.className, "trigger") && content.content == SOLID) {
-                content.content = TRIGGER;
-                content.entity = &entity;
-                break;
-            }
+            // if (StrPrefix(entity.className, "trigger") && content.content == SOLID) {
+            //     content.content = TRIGGER;
+            //     content.entity = &entity;
+            //     break;
+            // }
         }
     }
 
@@ -249,8 +249,8 @@ Content    BSP::TracePoint(const glm::vec3& point)
 
 bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
-    trace.end = end;
-    trace.fraction = 1;
+    Trace total;
+    total.end = end;
     bool empty;
     // Draw models for entities, except for triggers
     for (auto& entity : actEntities) {
@@ -275,13 +275,26 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
                     continue;
                 }
             }
-            empty = TraceLine(models[entity.model], models[entity.model].clipNode, start, end, 0, 1, trace);
-        }
-        if (!empty) {
-            trace.entity = &entity;
-            break;
+            Trace tr;
+            tr.end = end;
+            tr.allSolid = true;
+            empty = TraceLine(models[entity.model], models[entity.model].clipNode, start, end, 0, 1, tr);
+
+            if (tr.allSolid)
+                tr.startSolid = true;
+            if (tr.startSolid)
+                tr.fraction = 0;
+
+            // if (!empty) {
+            //     tr.entity = &entity;
+            // }
+            if (tr.fraction < total.fraction) {
+                total = tr;
+                total.entity = &entity;
+            }
         }
     }
+    trace = total;
     Content content = TracePoint(trace.end);
     trace.endContent = content.content;
     if (content.content != EMPTY) {
@@ -599,8 +612,7 @@ bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, c
 {
     static constexpr float DIST_EPSILON = 0.03125;
 
-    if (node < 0)
-	{
+    if (node < 0) {
 		if (node != SOLID) {
 			trace.allSolid = false;
 			// if (node == CONTENTS_EMPTY)
@@ -610,54 +622,67 @@ bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, c
 		} else {
 			trace.startSolid = true;
         }
-		return node == EMPTY;		// empty
-	} else {
-        const ClipNode& cnode = clipNodes[node];
-        BSPPlane        plane = *cnode.plane;
-        plane.Transform(model.transform);
-        float t1 = plane.SignedDistance(start);
-        float t2 = plane.SignedDistance(end);
-        if (t1 >= 0 && t2 >= 0) {
-            return TraceLine(model, cnode.front, start, end, fstart, fend, trace);
-        } else if (t1 < 0 && t2 < 0) {
-            return TraceLine(model, cnode.back, start, end, fstart, fend, trace);
-        }
-
-        float frac;
-        if (t1 < 0) {
-            frac = (t1 + DIST_EPSILON)/(t1-t2);
-        } else {
-            frac = (t1 - DIST_EPSILON)/(t1-t2);
-        }
-        if (frac < 0) {
-            frac = 0;
-        }
-        if (frac > 1) {
-            frac = 1;
-        }
-
-        float       fmid = fstart + frac * (fend - fstart);
-        glm::vec3   mid;
-        mid = start + fmid * (end - start);
-
-        short front = (t1 >= 0) ? cnode.front : cnode.back;
-        short back = (t1 >= 0) ? cnode.back : cnode.front;
-        if (!TraceLine(model, front, start, mid, fstart, fmid, trace)) {
-            return false;
-        }
-
-        if (TracePoint(model, back, mid).content == EMPTY) {
-            return TraceLine(model, back, mid, end, fmid, fend, trace);
-        }
-
-        if (t1 >= 0) {
-            trace.plane = plane;
-        } else {
-            trace.plane = BSPPlane(-plane.Normal(), -plane.Distance(), plane.GetOrientation());
-        }
-
-        trace.fraction = fmid;
-        trace.end = mid;
+		return true;		// empty
+	}
+        
+    const ClipNode& cnode = clipNodes[node];
+    BSPPlane        plane = *cnode.plane;
+    plane.Transform(model.transform);
+    float t1 = plane.SignedDistance(start);
+    float t2 = plane.SignedDistance(end);
+    if (t1 >= 0 && t2 >= 0) {
+        return TraceLine(model, cnode.front, start, end, fstart, fend, trace);
+    } else if (t1 < 0 && t2 < 0) {
+        return TraceLine(model, cnode.back, start, end, fstart, fend, trace);
     }
-    return node == EMPTY;
+
+    float frac;
+    if (t1 < 0) {
+        frac = (t1 + DIST_EPSILON)/(t1-t2);
+    } else {
+        frac = (t1 - DIST_EPSILON)/(t1-t2);
+    }
+    if (frac < 0) {
+        frac = 0;
+    }
+    if (frac > 1) {
+        frac = 1;
+    }
+
+    float       fmid = fstart + frac * (fend - fstart);
+    glm::vec3   mid;
+    mid = start + fmid * (end - start);
+
+    short front = (t1 >= 0) ? cnode.front : cnode.back;
+    short back = (t1 >= 0) ? cnode.back : cnode.front;
+    if (!TraceLine(model, front, start, mid, fstart, fmid, trace)) {
+        return false;
+    }
+
+    if (TracePoint(model, back, mid).content == EMPTY) {
+        return TraceLine(model, back, mid, end, fmid, fend, trace);
+    }
+
+    if (t1 >= 0) {
+        trace.plane = plane;
+    } else {
+        trace.plane = BSPPlane(-plane.Normal(), -plane.Distance(), plane.GetOrientation());
+    }
+
+	while (TracePoint(model, model.clipNode, mid).content == SOLID) {
+        // Shouldn't really happen, but does occasionally
+		frac -= 0.1;
+		if (frac < 0) {
+			trace.fraction = fmid;
+            trace.end = mid;
+			return false;
+		}
+		fmid = fstart + (fend - fstart) * frac;
+        mid = start + frac * (end - start);
+	}
+
+    trace.fraction = fmid;
+    trace.end = mid;
+
+    return false;
 }
