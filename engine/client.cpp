@@ -356,7 +356,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
         playerMove.Fly(player, velocity, secondsElapsed);
         player.SetPosition(playerMove.Origin());
     } else {
-        playerMove.Move(player, velocity, secondsElapsed);
+        playerMove.Move(player, velocity, secondsElapsed, false);
         player.SetPosition(playerMove.Origin());
     }
 }

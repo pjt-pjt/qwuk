@@ -13,7 +13,7 @@ class PlayerMove
 public: 
     PlayerMove(BSP& bsp);
 
-    void    Move(Actor& player, const glm::vec3& velocityBase, float elapsed);
+    void    Move(Actor& player, const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown);
     void    Fly(Actor& player, const glm::vec3& velocityBase, float elapsed);
     const glm::vec3& Origin() const
     {
@@ -24,6 +24,8 @@ private:
     void    AirMove(const glm::vec3& wishVelocity);
     void    FlyMove();
     void    GroundMove();
+    void    Jump();
+
     enum AccelerateMode { OnGround, InAir };
     void    Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel);
     void    Friction();
@@ -41,6 +43,9 @@ private:
 
     glm::vec3   velocity;
     int         onground = 0;
+    bool        jumping = false;
+    bool        jumpKey = false;
+
     int		    numTouch;
     static constexpr int MAX_TOUCHENTS = 32;
 	EntPtr      touchEnts[MAX_TOUCHENTS];

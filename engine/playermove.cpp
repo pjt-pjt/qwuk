@@ -9,7 +9,7 @@ PlayerMove::PlayerMove(BSP& bsp) :
     velocity(0)
 {}
 
-void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float elapsed)
+void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown)
 {
 	origin = player.Position();
     frameTime = elapsed;
@@ -33,10 +33,10 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 	// if (pmove.velocity[2] < 0)
 	// 	pmove.waterjumptime = 0;
 
-	// if (pmove.cmd.buttons & BUTTON_JUMP)
-	// 	JumpButton ();
-	// else
-	// 	pmove.oldbuttons &= ~BUTTON_JUMP;
+	if (jumpKeyDown)
+		Jump();
+	else
+		jumpKey = false;
 
 	Friction ();
 	/* if (waterlevel >= 2)
@@ -259,6 +259,11 @@ void	PlayerMove::GroundMove()
 		// Copy z value from slide move
 		velocity[2] = downVel[2];
 	}
+}
+
+void    PlayerMove::Jump()
+{
+
 }
 
 void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel)
