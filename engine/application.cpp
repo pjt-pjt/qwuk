@@ -40,6 +40,7 @@ bool    Application::Run(const std::string& map)
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     uint32_t startTime = SDL_GetTicks();
+    uint32_t frameTime = startTime;
     while (true) {
         uint32_t elapsed = SDL_GetTicks() - startTime;
         if (elapsed == 0) {
@@ -49,8 +50,12 @@ bool    Application::Run(const std::string& map)
         if (!HandleEvents()) {
             break;
         }
+        uint32_t elapsedFrame = SDL_GetTicks() - frameTime;
+        if (elapsedFrame >= 25) {
+            frameTime = startTime;
+            NextFrame(elapsedFrame);
+        }
 
-        NextFrame(elapsed);
         bool relative = !quake.Paused();
         if (relative != relativeMode) {
             relativeMode = relative;
@@ -67,7 +72,7 @@ bool    Application::Run(const std::string& map)
         if (renderTime < quake.stats.minFrameTime) {
             quake.stats.minFrameTime = renderTime;
         }
-        quake.stats.FPS = renderTime > 0 ? 1000 / renderTime : 1000;
+        quake.stats.FPS = elapsed > 0 ? 1000 / elapsed : 1000;// renderTime > 0 ? 1000 / renderTime : 1000;
         quake.stats.totalFPS += quake.stats.FPS;
         if (quake.stats.FPS > quake.stats.maxFPS) {
             quake.stats.maxFPS = quake.stats.FPS;
