@@ -106,8 +106,6 @@ private:
     void GUI();
 
     void MovePlayer(uint64_t elapsed);
-    void PlayerFly(const glm::vec3& start, const glm::vec3& end, Trace& trace);
-    void PlayerGroundMove(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
     void Touch(EntPtr entity, Actor& actor);
 

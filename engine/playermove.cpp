@@ -48,6 +48,22 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 	CategorizePosition ();
 }
 
+void    PlayerMove::Fly(Actor& player, const glm::vec3& velocityBase, float elapsed)
+{
+    origin = player.Position();
+    frameTime = elapsed;
+    glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+    glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
+
+    float       wishSpeed = glm::length(wishVelocity);
+    glm::vec3   wishDir(0);
+	if (wishSpeed > SMALL_EPS) {
+		wishDir = glm::normalize(wishVelocity);
+	}
+    velocity = wishVelocity;
+    FlyMove();
+}
+
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 {
     float       wishSpeed = glm::length(wishVelocity);

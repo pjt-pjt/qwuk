@@ -14,6 +14,7 @@ public:
     PlayerMove(BSP& bsp);
 
     void    Move(Actor& player, const glm::vec3& velocityBase, float elapsed);
+    void    Fly(Actor& player, const glm::vec3& velocityBase, float elapsed);
     const glm::vec3& Origin() const
     {
         return origin;
