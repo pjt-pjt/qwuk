@@ -60,6 +60,6 @@ public:
     }
 
 private:
-    glm::vec3   normal = up;
+    glm::vec3   normal = {0, 0, 0};
     float       distance = 0.f;
 };
