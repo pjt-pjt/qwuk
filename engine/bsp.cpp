@@ -612,13 +612,19 @@ bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, c
 {
     static constexpr float DIST_EPSILON = 0.03125;
 
+#if 0
+    if (TracePoint(model, model.clipNode, start).content == SOLID) {
+        printf("Start is solid :o\n");
+    }
+#endif
+
     if (node < 0) {
 		if (node != SOLID) {
 			trace.allSolid = false;
-			// if (node == CONTENTS_EMPTY)
-			// 	trace->inopen = true;
+			// if (node == EMPTY)
+			// 	inOpen = true;
 			// else
-			// 	trace->inwater = true;
+			// 	inWater = true;
 		} else {
 			trace.startSolid = true;
         }
@@ -663,6 +669,10 @@ bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, c
         return TraceLine(model, back, mid, end, fmid, fend, trace);
     }
 
+	if (trace.allSolid) {
+		return false;		// never got out of the solid area
+    }
+
     if (t1 >= 0) {
         trace.plane = plane;
     } else {
@@ -673,8 +683,8 @@ bool    BSP::TraceLine(const Model& model, short node, const glm::vec3& start, c
         // Shouldn't really happen, but does occasionally
 		frac -= 0.1;
 		if (frac < 0) {
-			trace.fraction = fmid;
-            trace.end = mid;
+			trace.fraction = fstart;
+            trace.end = start;
 			return false;
 		}
 		fmid = fstart + (fend - fstart) * frac;
