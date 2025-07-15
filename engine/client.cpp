@@ -335,12 +335,19 @@ void    Quake::MovePlayer(uint64_t elapsed)
     }
 
     bool flyMode = player.flying || config.noclip;
-    if (flyMode && keyMatrix[SDL_SCANCODE_Q]) {
-        velocity.z =  speed;
-    } else if (flyMode && keyMatrix[SDL_SCANCODE_X]) {
-        velocity.z = -speed;
+    bool jump = false;
+    if (flyMode) {
+        if (keyMatrix[SDL_SCANCODE_SPACE]) {
+            velocity.z =  speed;
+        } else if (keyMatrix[SDL_SCANCODE_C]) {
+            velocity.z = -speed;
+        } else {
+            velocity.z =  0;
+        }
     } else {
-        velocity.z =  0;
+        if (keyMatrix[SDL_SCANCODE_SPACE]) {
+            jump = true;
+        }
     }
     player.SetYaw(player.Yaw() + yawDelta);
     player.SetPitch(player.Pitch() + pitchDelta);
@@ -356,7 +363,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
         playerMove.Fly(player, velocity, secondsElapsed);
         player.SetPosition(playerMove.Origin());
     } else {
-        playerMove.Move(player, velocity, secondsElapsed, false);
+        playerMove.Move(player, velocity, secondsElapsed, jump);
         player.SetPosition(playerMove.Origin());
     }
 }

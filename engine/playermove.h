@@ -43,7 +43,6 @@ private:
 
     glm::vec3   velocity;
     int         onground = 0;
-    bool        jumping = false;
     bool        jumpKey = false;
 
     int		    numTouch;

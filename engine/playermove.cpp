@@ -263,7 +263,44 @@ void	PlayerMove::GroundMove()
 
 void    PlayerMove::Jump()
 {
+	// if (pmove.dead)
+	// {
+	// 	pmove.oldbuttons |= BUTTON_JUMP;	// don't jump again until released
+	// 	return;
+	// }
 
+	// if (pmove.waterjumptime)
+	// {
+	// 	pmove.waterjumptime -= frametime;
+	// 	if (pmove.waterjumptime < 0)
+	// 		pmove.waterjumptime = 0;
+	// 	return;
+	// }
+
+	// if (waterlevel >= 2)
+	// {	// swimming, not jumping
+	// 	onground = -1;
+
+	// 	if (watertype == CONTENTS_WATER)
+	// 		pmove.velocity[2] = 100;
+	// 	else if (watertype == CONTENTS_SLIME)
+	// 		pmove.velocity[2] = 80;
+	// 	else
+	// 		pmove.velocity[2] = 50;
+	// 	return;
+	// }
+
+	if (onground == -1) {
+		return;		// in air, so no effect
+    }
+	if (jumpKey) {
+		return;		// don't pogo stick
+    }
+
+	onground = -1;
+	velocity[2] += 270;
+
+	jumpKey = true;	// don't jump again until released
 }
 
 void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel)
