@@ -16,7 +16,7 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
     glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
     glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
 
-	//pmove.numtouch = 0;
+	numTouch = 0;
 	// if (pmove.spectator)
 	// {
 	// 	SpectatorMove ();
@@ -62,6 +62,11 @@ void    PlayerMove::Fly(Actor& player, const glm::vec3& velocityBase, float elap
 	}
     velocity = wishVelocity;
     FlyMove();
+}
+
+void    PlayerMove::SetVelocity(const glm::vec3& velocityBase)
+{
+    velocity = velocityBase;
 }
 
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
@@ -124,7 +129,7 @@ void	PlayerMove::FlyMove()
 		}
 
 		// Save entity for contact
-		//TODO touchEnts[numTouch++] = trace.entity;
+		TouchEnt(trace.entity);
 /*
 		if (trace.plane.normal[2] > 0.7)
 		{
@@ -407,9 +412,7 @@ void	PlayerMove::CategorizePosition (void)
 		}
 
 		// standing on an entity other than the world
-		if (tr.entity != nullptr) {
-			//TODO touchEnts[numTouch++] = tr.entity;
-		}
+        TouchEnt(tr.entity);
 	}
 
 	// Get waterlevel
@@ -434,6 +437,7 @@ void	PlayerMove::CategorizePosition (void)
 	// 			waterlevel = 3;
 	// 	}
 	// }
+    TouchEnt(bsp.PointContent(point).entity);
 }
 
 void	PlayerMove::NudgePosition()
@@ -476,4 +480,21 @@ Trace	PlayerMove::MovePlayer(const glm::vec3& start, const glm::vec3& end)
 bool	PlayerMove::TestPlayerPosition(const glm::vec3& pos)
 {
 	return bsp.TracePoint(pos).content != SOLID;
+}
+
+void    PlayerMove::TouchEnt(EntPtr entity)
+{
+    if (entity == nullptr) {
+        return;
+    }
+    if (entity == &bsp.actEntities[0]) {
+        // Don't care for wolrdspawn
+        return;
+    }
+    for (int te = 0; te < numTouch; ++te) {
+        if (touchEnts[te] == entity) {
+            return;
+        }
+    }
+    touchEnts[numTouch++] = entity;
 }

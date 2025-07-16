@@ -106,6 +106,7 @@ private:
     void GUI();
 
     void MovePlayer(uint64_t elapsed);
+    void SetYaw(float yaw);
 
     void Touch(EntPtr entity, Actor& actor);
 

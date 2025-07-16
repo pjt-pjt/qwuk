@@ -148,5 +148,5 @@ void    GameInterface::SetPlayerOrigin(const Vec3 origin)
 
 void    GameInterface::SetPlayerAngle(float angle)
 {
-    game->quake.player.SetYaw(angle);
+    game->quake.SetYaw(angle);
 }

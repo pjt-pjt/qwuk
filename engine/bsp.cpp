@@ -233,16 +233,45 @@ Content    BSP::TracePoint(const glm::vec3& point)
                 }
             }
             content = TracePoint(models[entity.model], models[entity.model].clipNode, point);
-            if (content.content != EMPTY) {
+            if (content.content != EMPTY && &entity != &actEntities[0]) {
                 content.entity = &entity;
+                break;
             }
-            // if (StrPrefix(entity.className, "trigger") && content.content == SOLID) {
-            //     content.content = TRIGGER;
-            //     content.entity = &entity;
-            //     break;
-            // }
         }
     }
+
+    return content;
+}
+
+Content     BSP::PointContent(const glm::vec3& point)
+{
+    Content content = TracePoint(point);
+    // if (content.content == EMPTY) {
+    //     return content;
+    // }
+
+    // Entity& entity = actEntities[0];
+    // Model&  model = models[entity.model];
+    // Node*   node = &nodes[model.firstNode];
+    // while (node != nullptr) {
+    //     BSPPlane        plane = *node->plane;
+    //     plane.Transform(model.transform);
+    //     if (plane.Classify(point) != BSPPlane::Back) {
+    //         if (node->frontLeaf != nullptr) {
+    //             content.content = LeafType(node->frontLeaf->type);
+    //             break;
+    //         } else {
+    //             node = node->frontNode;
+    //         }
+    //     } else {
+    //         if (node->backLeaf != nullptr) {
+    //             content.content = LeafType(node->backLeaf->type);
+    //             break;
+    //         } else {
+    //             node = node->backNode;
+    //         }
+    //     }
+    // }
 
     return content;
 }
@@ -295,12 +324,6 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
         }
     }
     trace = total;
-    Content content = TracePoint(trace.end);
-    trace.endContent = content.content;
-    if (content.content != EMPTY) {
-        trace.entity = content.entity;
-    }
-
     return empty;
 }
 

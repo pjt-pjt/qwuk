@@ -90,7 +90,6 @@ enum LeafType
     SLIME   = -4,
     LAVA    = -5,
     SKY     = -6,
-    TRIGGER = -1000
 };
 
 struct Trace
@@ -99,7 +98,6 @@ struct Trace
     EntPtr      entity = nullptr;
     float       fraction = 1.0;   
     glm::vec3   end;
-    LeafType    endContent = SOLID;
     bool        startSolid = false;
     bool        allSolid = false;
 };
@@ -166,6 +164,7 @@ public:
     void        EndDraw();
 
     Content     TracePoint(const glm::vec3& point);
+    Content     PointContent(const glm::vec3& point);
     bool        TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
 
     struct Leaf;
@@ -252,4 +251,5 @@ private:
 
     friend class Quake;
     friend class GameInterface;
+    friend class PlayerMove;    //TODO
 };

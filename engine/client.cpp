@@ -365,7 +365,23 @@ void    Quake::MovePlayer(uint64_t elapsed)
     } else {
         playerMove.Move(player, velocity, secondsElapsed, jump);
         player.SetPosition(playerMove.Origin());
+        if (playerMove.numTouch > 0) {
+            //TODO Not public members
+            for (int i = 0; i < playerMove.numTouch; ++i) {
+                Touch(playerMove.touchEnts[i], player);
+            }
+        }
     }
+}
+
+void    Quake::SetYaw(float yaw)
+{
+    float rotate = yaw - player.Yaw();
+    player.SetYaw(yaw);
+    glm::vec3   velocity = playerMove.Velocity();
+    glm::mat4 mat = glm::rotate(glm::mat4(1), rotate * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+    velocity = glm::vec3(mat * glm::vec4(velocity, 0));
+    playerMove.SetVelocity(velocity);
 }
 
 void    Quake::Touch(EntPtr entity, Actor& actor)
@@ -401,6 +417,8 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
                     loaded = bsp.Load(map);
                 }
                 if (loaded) {
+                    //TODO
+                    playerMove.SetVelocity({0, 0, 0});
                     static char mapName[256];
                     strncpy(mapName, map, 256);
                     char* name = strrchr(mapName, '/');

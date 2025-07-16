@@ -15,9 +15,14 @@ public:
 
     void    Move(Actor& player, const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown);
     void    Fly(Actor& player, const glm::vec3& velocityBase, float elapsed);
+    void    SetVelocity(const glm::vec3& velocityBase);
     const glm::vec3& Origin() const
     {
         return origin;
+    }
+    const glm::vec3& Velocity() const
+    {
+        return velocity;
     }
 
 private:
@@ -36,6 +41,8 @@ private:
     Trace   MovePlayer(const glm::vec3& start, const glm::vec3& end);
     bool    TestPlayerPosition(const glm::vec3& pos);
 
+    void    TouchEnt(EntPtr entity);
+
 private:
     BSP&        bsp;
     glm::vec3   origin;
@@ -44,7 +51,7 @@ private:
     glm::vec3   velocity;
     int         onground = 0;
     bool        jumpKey = false;
-
+public:
     int		    numTouch;
     static constexpr int MAX_TOUCHENTS = 32;
 	EntPtr      touchEnts[MAX_TOUCHENTS];
