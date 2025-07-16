@@ -25,7 +25,7 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed, bool jump
 	// }
     NudgePosition ();
 
-	// set onground, watertype, and waterlevel
+	// Set onground, watertype, and waterlevel
 	CategorizePosition ();
 
 	// if (waterlevel == 2)
@@ -45,7 +45,7 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed, bool jump
 	else */
 		AirMove (wishVelocity);
 
-	// set onground, watertype, and waterlevel for final spot
+	// Set onground, watertype, and waterlevel for final spot
 	CategorizePosition ();
 }
 
@@ -126,7 +126,7 @@ void	PlayerMove::FlyMove()
 			numplanes = 0;
 		}
 		if (trace.fraction == 1) {
-			 break;		// moved the entire distance
+			 break;		// Moved the entire distance
 		}
 
 		// Save entity for contact
@@ -413,7 +413,7 @@ void	PlayerMove::CategorizePosition (void)
 			}
 		}
 
-		// standing on an entity other than the world
+		// Standing on an entity other than the world
         TouchEnt(tr.entity);
 	}
 
