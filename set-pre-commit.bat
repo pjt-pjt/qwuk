@@ -7,3 +7,10 @@ if not exist .git\hooks\pre-commit (
     copy git-hooks\pre-commit .git\hooks
 )
 
+if not exist .git\hooks\post-checkout (
+    echo Copy post-checkout to git
+    copy git-hooks\post-checkout .git\hooks
+) else (
+    echo Update post-checkout to git
+    copy git-hooks\post-checkout .git\hooks
+)
