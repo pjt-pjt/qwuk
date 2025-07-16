@@ -4,12 +4,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-PlayerMove::PlayerMove(BSP& bsp) :
+PlayerMove::PlayerMove(BSP& bsp, Actor& player) :
     bsp(bsp),
+    player(player),
     velocity(0)
 {}
 
-void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown)
+void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown)
 {
 	origin = player.Position();
     frameTime = elapsed;
@@ -48,7 +49,7 @@ void    PlayerMove::Move(Actor& player, const glm::vec3& velocityBase, float ela
 	CategorizePosition ();
 }
 
-void    PlayerMove::Fly(Actor& player, const glm::vec3& velocityBase, float elapsed)
+void    PlayerMove::Fly(const glm::vec3& velocityBase, float elapsed)
 {
     origin = player.Position();
     frameTime = elapsed;
@@ -345,18 +346,19 @@ void    PlayerMove::Friction()
     float friction = 4/* movevars.friction */;
 
     // If the leading edge is over a dropoff, increase friction
-	// if (onground != -1) {
-	// 	start[0] = stop[0] = pmove.origin[0] + vel[0]/speed*16;
-	// 	start[1] = stop[1] = pmove.origin[1] + vel[1]/speed*16;
-	// 	start[2] = pmove.origin[2] + player_mins[2];
-	// 	stop[2] = start[2] - 34;
+	if (onground != -1) {
+        glm::vec3   start;
+        glm::vec3   stop;
+		start[0] = stop[0] = origin[0] + velocity[0] / speed * 16;
+		start[1] = stop[1] = origin[1] + velocity[1] / speed * 16;
+		start[2] = origin[2] + player.mins[2];
+		stop[2]  = start[2] - 34;
 
-	// 	trace = PM_PlayerMove (start, stop);
-
-	// 	if (trace.fraction == 1) {
-	// 		friction *= 2;
-	// 	}
-	// }
+		Trace   trace = MovePlayer(start, stop);
+		if (trace.fraction == 1) {
+			friction *= 2;
+		}
+	}
 
     float drop = 0;
 

@@ -78,7 +78,7 @@ void    Actor::Init(Entity& ent)
 
 Quake::Quake() :
     bsp(config, stats, test),
-    playerMove(bsp),
+    playerMove(bsp, player),
     velocity(0),
     interface(*this)
 {
@@ -360,10 +360,10 @@ void    Quake::MovePlayer(uint64_t elapsed)
             player.SetPosition(end); 
         }
     } else if (player.flying) {
-        playerMove.Fly(player, velocity, secondsElapsed);
+        playerMove.Fly(velocity, secondsElapsed);
         player.SetPosition(playerMove.Origin());
     } else {
-        playerMove.Move(player, velocity, secondsElapsed, jump);
+        playerMove.Move(velocity, secondsElapsed, jump);
         player.SetPosition(playerMove.Origin());
         if (playerMove.numTouch > 0) {
             //TODO Not public members

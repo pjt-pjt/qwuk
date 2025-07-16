@@ -11,10 +11,10 @@ class Actor;
 class PlayerMove
 {
 public: 
-    PlayerMove(BSP& bsp);
+    PlayerMove(BSP& bsp, Actor& player);
 
-    void    Move(Actor& player, const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown);
-    void    Fly(Actor& player, const glm::vec3& velocityBase, float elapsed);
+    void    Move(const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown);
+    void    Fly(const glm::vec3& velocityBase, float elapsed);
     void    SetVelocity(const glm::vec3& velocityBase);
     const glm::vec3& Origin() const
     {
@@ -45,6 +45,7 @@ private:
 
 private:
     BSP&        bsp;
+    Actor&      player;
     glm::vec3   origin;
     float       frameTime;
 
