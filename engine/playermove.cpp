@@ -10,7 +10,7 @@ PlayerMove::PlayerMove(BSP& bsp, Actor& player) :
     velocity(0)
 {}
 
-void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown)
+void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 {
 	origin = player.Position();
     frameTime = elapsed;
@@ -68,6 +68,12 @@ void    PlayerMove::Fly(const glm::vec3& velocityBase, float elapsed)
 void    PlayerMove::SetVelocity(const glm::vec3& velocityBase)
 {
     velocity = velocityBase;
+}
+
+void    PlayerMove::SetKeys(bool jumpKeyDown_, bool useKeyDown_)
+{
+    jumpKeyDown = jumpKeyDown_;
+    useKeyDown = useKeyDown_;
 }
 
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)

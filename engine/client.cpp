@@ -314,10 +314,9 @@ void    Quake::MovePlayer(uint64_t elapsed)
     }
     float secondsElapsed = float(elapsed) / 1000.0f;
     float walkSpeed = 200;
-    float runSpeed = 320;//400;
+    float runSpeed = 400;
     bool running = keyMatrix[SDL_SCANCODE_LSHIFT] || config.alwaysRun;
     float speed = (running ? runSpeed : walkSpeed);
-    [[maybe_unused]]float fallSpeed = 2 * runSpeed * secondsElapsed;
     if (keyMatrix[SDL_SCANCODE_W]) {
         velocity.x =  speed;
     } else if (keyMatrix[SDL_SCANCODE_S]) {
@@ -353,6 +352,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
     player.SetPitch(player.Pitch() + pitchDelta);
     pitchDelta = yawDelta = 0;
 
+    playerMove.SetKeys(jump, keyMatrix[SDL_SCANCODE_E]);
     if (config.noclip) {
         if (glm::length(velocity) > SMALL_EPS) {
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
@@ -363,7 +363,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
         playerMove.Fly(velocity, secondsElapsed);
         player.SetPosition(playerMove.Origin());
     } else {
-        playerMove.Move(velocity, secondsElapsed, jump);
+        playerMove.Move(velocity, secondsElapsed);
         player.SetPosition(playerMove.Origin());
         if (playerMove.numTouch > 0) {
             //TODO Not public members

@@ -13,9 +13,10 @@ class PlayerMove
 public: 
     PlayerMove(BSP& bsp, Actor& player);
 
-    void    Move(const glm::vec3& velocityBase, float elapsed, bool jumpKeyDown);
+    void    Move(const glm::vec3& velocityBase, float elapsed);
     void    Fly(const glm::vec3& velocityBase, float elapsed);
     void    SetVelocity(const glm::vec3& velocityBase);
+    void    SetKeys(bool jumpKeyDown, bool useKeyDown);
     const glm::vec3& Origin() const
     {
         return origin;
@@ -50,6 +51,8 @@ private:
     float       frameTime;
 
     glm::vec3   velocity;
+    bool        jumpKeyDown = false;
+    bool        useKeyDown = false;
     int         onground = 0;
     bool        jumpKey = false;
 public:
