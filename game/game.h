@@ -41,6 +41,7 @@ typedef int     (*InitProc)(Interface* interface, Variables* variables);
 typedef void    (*RunProc)(const char* startMap);
 typedef void    (*ChangeMapProc)(void);
 typedef void    (*TouchProc)(EntPtr entity, EntPtr other);
+typedef void    (*UseProc)(EntPtr entity, EntPtr other);
 typedef void    (*DestroyProc)(void);
 
 

@@ -57,6 +57,13 @@ void    Touch(EntPtr entity, EntPtr other)
     }
 }
 
+void    Use(EntPtr entity, EntPtr other)
+{
+    if (entity->Use != NULL) {
+        entity->Use(entity, other);
+    }
+}
+
 void    Destroy()
 {
 }

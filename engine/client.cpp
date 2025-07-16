@@ -353,6 +353,7 @@ void    Quake::MovePlayer(uint64_t elapsed)
     pitchDelta = yawDelta = 0;
 
     playerMove.SetKeys(jump, keyMatrix[SDL_SCANCODE_E]);
+    playerMove.Use();
     if (config.noclip) {
         if (glm::length(velocity) > SMALL_EPS) {
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
@@ -365,10 +366,13 @@ void    Quake::MovePlayer(uint64_t elapsed)
     } else {
         playerMove.Move(velocity, secondsElapsed);
         player.SetPosition(playerMove.Origin());
+        if (playerMove.useEnt != nullptr) {
+            game.Use(playerMove.useEnt, player.entity);
+        }
         if (playerMove.numTouch > 0) {
             //TODO Not public members
             for (int i = 0; i < playerMove.numTouch; ++i) {
-                Touch(playerMove.touchEnts[i], player);
+                game.Touch(playerMove.touchEnts[i], player.entity);
             }
         }
     }

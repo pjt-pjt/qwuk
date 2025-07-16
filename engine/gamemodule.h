@@ -16,6 +16,7 @@ public:
     RunProc         Run = nullptr;
     ChangeMapProc   ChangeMap = nullptr;
     TouchProc       Touch = nullptr;
+    UseProc         Use = nullptr;
     DestroyProc     Destroy = nullptr;
 
 private:

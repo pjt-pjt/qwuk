@@ -38,6 +38,7 @@ typedef struct Entity
     Vec3            mins;
     Vec3            maxs;
     void            (*Touch)(struct Entity* self, struct Entity* other);
+    void            (*Use)(struct Entity* self, struct Entity* other);
     Fields*         f;
     int             flags;
 } Entity;

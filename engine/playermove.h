@@ -13,6 +13,7 @@ class PlayerMove
 public: 
     PlayerMove(BSP& bsp, Actor& player);
 
+    void    Use();
     void    Move(const glm::vec3& velocityBase, float elapsed);
     void    Fly(const glm::vec3& velocityBase, float elapsed);
     void    SetVelocity(const glm::vec3& velocityBase);
@@ -55,8 +56,10 @@ private:
     bool        useKeyDown = false;
     int         onground = 0;
     bool        jumpKey = false;
+    bool        useKey = false;
 public:
     int		    numTouch;
     static constexpr int MAX_TOUCHENTS = 32;
 	EntPtr      touchEnts[MAX_TOUCHENTS];
+    EntPtr      useEnt = nullptr;
 };

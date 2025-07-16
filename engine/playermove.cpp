@@ -10,6 +10,27 @@ PlayerMove::PlayerMove(BSP& bsp, Actor& player) :
     velocity(0)
 {}
 
+void    PlayerMove::Use()
+{
+    useEnt = nullptr;
+    if (useKeyDown) {
+        if (useKey) {
+            return;
+        }
+        glm::vec3   origin = player.EyePosition();
+        glm::vec3   dir = player.Direction();
+        glm::vec3   end = origin + dir * 64.0f;
+        Trace       trace;
+        bsp.TraceLine(origin, end, trace);
+        if (trace.fraction < 1) {
+            useEnt = (trace.entity != &bsp.actEntities[0]) ? trace.entity : nullptr;
+        }
+        useKey = true;
+    } else {
+        useKey = false;
+    }
+}
+
 void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 {
 	origin = player.Position();

@@ -128,11 +128,11 @@ void    TriggerChangelevel(Entity* ent)
 }
 
 
-void    TouchDoor(Entity* self, Entity* other)
+void    UseDoor(Entity* self, Entity* other)
 {
     UNUSED(other);
     i.SetOrigin(self, self->f->pos2);
-    self->Touch = NULL;
+    self->Use = NULL;
 }
 void    FuncDoor(Entity* ent)
 {
@@ -159,7 +159,7 @@ void    FuncDoor(Entity* ent)
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    self->Touch = TouchDoor;
+    self->Use = UseDoor;
 }
 
 void    Null(Entity* ent)
