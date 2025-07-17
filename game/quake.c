@@ -64,6 +64,13 @@ void    Use(EntPtr entity, EntPtr other)
     }
 }
 
+void    Think(EntPtr entity)
+{
+    if (entity->Think != NULL) {
+        entity->Think(entity);
+    }
+}
+
 void    Destroy()
 {
 }

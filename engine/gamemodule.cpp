@@ -24,7 +24,8 @@ bool    GameModule::SetFunctions()
     ChangeMap = (ChangeMapProc)lt_dlsym(handle, "ChangeMap");
     Touch = (TouchProc)lt_dlsym(handle, "Touch");
     Use = (UseProc)lt_dlsym(handle, "Use");
+    Think = (ThinkProc)lt_dlsym(handle, "Think");
     Destroy = (DestroyProc)lt_dlsym(handle, "Destroy");
     return Init != nullptr && Run != nullptr && ChangeMap != nullptr &&
-           Touch != nullptr && Use != nullptr && Destroy != nullptr;
+           Touch != nullptr && Use != nullptr  && Think != nullptr && Destroy != nullptr;
 }

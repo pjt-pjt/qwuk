@@ -55,15 +55,33 @@ EntPtr  GameInterface::EnumerateEntites(EntPtr from)
     return NULL;
 }
 
-EntPtr  GameInterface::SearchEntity(const char* className, const char* key, const char* value)
+EntPtr  GameInterface::SearchEntity(EntPtr from, const char* className, const char* key, const char* value)
 {
-    for (auto& entity : game->bsp.actEntities /* entities.entities */) {
-        if (StrEq(entity.className, className)) {
-            const char*   val = EntityValueStr(&entity, key);
-            if (val != nullptr && StrEq(val, value)) {
-                return &entity;
+    Entity*  begin = &game->bsp.actEntities[0];
+    Entity*  ent = from;
+    if (ent == NULL) {
+        ent = begin;
+    } else {
+        ++ent;    
+    }
+    if (ent < begin) {
+        return NULL;
+    }
+    Entity*  end = begin + game->bsp.actEntities.size();
+    for (; ent < end; ++ent) {
+        if (className != nullptr && !StrEq(ent->className, className)) {
+            continue;
+        }
+        if (key != nullptr) {
+            const char*   val = EntityValueStr(ent, key);
+            if (val == nullptr) {
+                continue;
+            }
+            if (value != nullptr && !StrEq(val, value)) {
+                continue;
             }
         }
+        return ent;
     }
     return NULL;
 }

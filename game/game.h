@@ -17,7 +17,7 @@ typedef struct Variables
 typedef struct Interface
 {
     EntPtr      (*EnumerateEntites)(EntPtr from);
-    EntPtr      (*SearchEntity)(const char* className, const char* key, const char* value);
+    EntPtr      (*SearchEntity)(EntPtr from, const char* className, const char* key, const char* value);
 
     const char* (*EntityValueStr)(EntPtr entity, const char* key);
     int         (*EntityValueFloat)(EntPtr entity, const char* key, float* value);
@@ -42,6 +42,7 @@ typedef void    (*RunProc)(const char* startMap);
 typedef void    (*ChangeMapProc)(void);
 typedef void    (*TouchProc)(EntPtr entity, EntPtr other);
 typedef void    (*UseProc)(EntPtr entity, EntPtr other);
+typedef void    (*ThinkProc)(EntPtr entity);
 typedef void    (*DestroyProc)(void);
 
 

@@ -39,8 +39,12 @@ typedef struct Entity
     Vec3            maxs;
     void            (*Touch)(struct Entity* self, struct Entity* other);
     void            (*Use)(struct Entity* self, struct Entity* other);
+    void            (*Think)(struct Entity* self);
     Fields*         f;
     int             flags;
+    int             wait;
+    struct Entity*  owner;
+    struct Entity*  link;
 } Entity;
 
 typedef Entity* EntPtr;

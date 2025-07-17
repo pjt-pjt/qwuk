@@ -177,6 +177,7 @@ void    Quake::NextFrame(uint64_t elapsed)
         lastKey = SDL_SCANCODE_UNKNOWN;
     }
     DoCommands(elapsed);
+    DoEntities(elapsed);
     MovePlayer(elapsed);
 }
 
@@ -440,3 +441,18 @@ void    Quake::DoCommands(uint64_t /* elapsed */)
         working = false;
     }
 }
+
+void    Quake::DoEntities(uint64_t elapsed)
+{
+    float secondsElapsed = float(elapsed) / 1000.0f;
+    for (auto& ent : bsp.actEntities) {
+        if (ent.wait != -1) {
+            ent.wait -= secondsElapsed;
+            if (ent.wait <= 0) {
+                ent.wait = -1;
+                game.Think(&ent);
+            }
+        }
+    }
+}
+

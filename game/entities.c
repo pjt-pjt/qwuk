@@ -66,6 +66,31 @@ void    Construct(Entity* entity)
     }
 }
 
+int     Touching(EntPtr ent1, EntPtr ent2)
+{
+    if (ent1->maxs[0] < ent2->mins[0]) {
+        return 0;
+    }
+    if (ent1->mins[0] > ent2->maxs[0]) {
+        return 0;
+    }
+
+    if (ent1->maxs[1] < ent2->mins[1]) {
+        return 0;
+    }
+    if (ent1->mins[1] > ent2->maxs[1]) {
+        return 0;
+    }
+
+    if (ent1->maxs[2] < ent2->mins[2]) {
+        return 0;
+    }
+    if (ent1->mins[2] > ent2->maxs[2]) {
+        return 0;
+    }
+    return 1;
+}
+
 
 void    InfoPlayerStart(Entity* ent)
 {
@@ -91,7 +116,7 @@ void    TouchTeleport(Entity* self, Entity* other)
     {
         return;
     }
-    EntPtr targetEnt = i.SearchEntity("info_teleport_destination", "targetname", target);
+    EntPtr targetEnt = i.SearchEntity(NULL, "info_teleport_destination", "targetname", target);
     if (targetEnt != NULL) {
         Vec3 origin;
         Vec3Copy(origin, targetEnt->origin);
@@ -131,8 +156,37 @@ void    TriggerChangelevel(Entity* ent)
 void    UseDoor(Entity* self, Entity* other)
 {
     UNUSED(other);
-    i.SetOrigin(self, self->f->pos2);
-    self->Use = NULL;
+    EntPtr  ent = self->owner;
+    while (ent != NULL) {
+        i.SetOrigin(ent, ent->f->pos2);
+        ent->Use = NULL;
+        ent = ent->link;
+    }
+}
+void    LinkDoors(Entity* self)
+{
+    if (self->owner != NULL) {
+        // Already linked
+        return;
+    }
+    EntPtr prev = NULL;
+    EntPtr ent = i.SearchEntity(NULL, self->className, NULL, NULL);
+    while (ent != NULL) {
+        if (ent != self && Touching(self, ent)) {
+            ent->owner = self;
+            ent->link = prev;
+            ent->Use = UseDoor;
+            ent->wait = -1;
+            ent->Think = NULL;
+            prev = ent;
+        }
+        ent = i.SearchEntity(ent, self->className, NULL, NULL);
+    }
+    self->owner = self;
+    self->link = prev;
+    self->Use = UseDoor;
+    self->wait = -1;
+    self->Think = NULL;
 }
 void    FuncDoor(Entity* ent)
 {
@@ -159,7 +213,8 @@ void    FuncDoor(Entity* ent)
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    self->Use = UseDoor;
+    self->Think = LinkDoors;
+    self->wait = .1;
 }
 
 void    Null(Entity* ent)

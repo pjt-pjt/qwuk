@@ -10,6 +10,7 @@ void InitEntity(Entity* entity)
 {
     memset(entity, 0, sizeof(Entity));
     entity->model = -1;
+    entity->wait = -1;
 }
 
 

@@ -112,6 +112,7 @@ private:
 
     void PostCommand(const Command& cmd);
     void DoCommands(uint64_t elapsed);
+    void DoEntities(uint64_t elapsed);
 
 private:
     Config          config;
