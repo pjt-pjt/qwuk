@@ -26,6 +26,8 @@ bool    GameModule::SetFunctions()
     Use = (UseProc)lt_dlsym(handle, "Use");
     Think = (ThinkProc)lt_dlsym(handle, "Think");
     Destroy = (DestroyProc)lt_dlsym(handle, "Destroy");
+    GetVariables = (GetVariablesProc)lt_dlsym(handle, "GetVariables");
     return Init != nullptr && Run != nullptr && ChangeMap != nullptr &&
-           Touch != nullptr && Use != nullptr  && Think != nullptr && Destroy != nullptr;
+           Touch != nullptr && Use != nullptr  && Think != nullptr &&
+           GetVariables != nullptr && Destroy != nullptr;
 }

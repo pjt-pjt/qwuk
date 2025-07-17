@@ -11,6 +11,7 @@ typedef struct Variables
 {
     int         status;
     const char* map;
+    float       frameTime;
 } Variables;
 
 
@@ -37,13 +38,14 @@ extern Interface i;
 
 #define INIT_OK 0
 
-typedef int     (*InitProc)(Interface* interface, Variables* variables);
-typedef void    (*RunProc)(const char* startMap);
-typedef void    (*ChangeMapProc)(void);
-typedef void    (*TouchProc)(EntPtr entity, EntPtr other);
-typedef void    (*UseProc)(EntPtr entity, EntPtr other);
-typedef void    (*ThinkProc)(EntPtr entity);
-typedef void    (*DestroyProc)(void);
+typedef int         (*InitProc)(Interface* interface, Variables* variables);
+typedef void        (*RunProc)(const char* startMap);
+typedef void        (*ChangeMapProc)(void);
+typedef void        (*TouchProc)(EntPtr entity, EntPtr other);
+typedef void        (*UseProc)(EntPtr entity, EntPtr other);
+typedef void        (*ThinkProc)(EntPtr entity);
+typedef void        (*DestroyProc)(void);
+typedef Variables*  (*GetVariablesProc)(void);
 
 
 #if defined(__cplusplus)

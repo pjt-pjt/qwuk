@@ -159,13 +159,36 @@ void    TriggerChangelevel(Entity* ent)
 }
 
 
+void    RunDoor(Entity* self)
+{
+    Vec3Ref target;
+    if (self->f->doorStatus == DOOR_CLOSED) {
+        target = self->f->pos2;
+    } else {
+        target = self->f->pos1;
+    }
+    Vec3    velocity;
+    Vec3Mul(velocity, self->f->direction, self->f->speed * globals->frameTime);
+    if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
+        i.SetOrigin(self, target);
+        self->wait = -1;
+        self->Think = NULL;
+        self->f->doorStatus = !self->f->doorStatus;
+        return;
+    }
+    Vec3    origin;
+    Vec3Add(origin, self->origin, velocity);
+    i.SetOrigin(self, origin);
+    self->wait = 0;
+}
 void    UseDoor(Entity* self, Entity* other)
 {
     UNUSED(other);
     EntPtr  ent = self->owner;
     while (ent != NULL) {
-        i.SetOrigin(ent, ent->f->pos2);
         ent->Use = NULL;
+        ent->wait = 0;
+        ent->Think = RunDoor;
         ent = ent->link;
     }
 }
@@ -219,6 +242,12 @@ void    FuncDoor(Entity* ent)
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
+    self->f->doorStatus = DOOR_CLOSED;
     self->Think = LinkDoors;
     self->wait = .1;
+    float speed;
+    if (!i.EntityValueFloat(self, "speed", &speed)) {
+        speed = 400;
+    }
+    self->f->speed = speed;
 }

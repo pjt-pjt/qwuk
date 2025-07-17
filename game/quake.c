@@ -74,3 +74,8 @@ void    Think(EntPtr entity)
 void    Destroy()
 {
 }
+
+Variables*  GetVariables()
+{
+    return globals;
+}

@@ -6,13 +6,15 @@
 int     StrEq(const char* left, const char* right);
 int     StrPrefix(const char* str, const char* subStr);
 
-void    Vec3Set(Vec3 vec3, float x, float y, float z);
+void    Vec3Set(Vec3 v, float x, float y, float z);
 void    Vec3Copy(Vec3 target, const Vec3 source);
 void    Vec3Add(Vec3 res, const Vec3 v1, const Vec3 v2);
 void    Vec3Sub(Vec3 res, const Vec3 v1, const Vec3 v2);
 void    Vec3Mul(Vec3 res, const Vec3 v, float mul);
 void    Vec3AddMul(Vec3 res, const Vec3 v1, const Vec3 v2, float mul);
 float   Vec3Dot(const Vec3 v1, const Vec3 v2);
+float   Vec3DistanceSq(const Vec3 v1, const Vec3 v2);
+float   Vec3LengthSq(const Vec3 v);
 
 
 #if defined(TOOLS_IMPL)
@@ -63,6 +65,16 @@ float   Vec3Dot(const Vec3 v1, const Vec3 v2);
     float   Vec3Dot(const Vec3 v1, const Vec3 v2)
     {
         return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+    }
+    float   Vec3DistanceSq(const Vec3 v1, const Vec3 v2)
+    {
+        Vec3 diff;
+        Vec3Sub(diff, v1, v2);
+        return Vec3LengthSq(diff);
+    }
+    float   Vec3LengthSq(const Vec3 v)
+    {
+        return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
     }
 
 #endif

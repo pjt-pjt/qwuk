@@ -177,6 +177,8 @@ void    Quake::NextFrame(uint64_t elapsed)
         lastKey = SDL_SCANCODE_UNKNOWN;
     }
     float secondsElapsed = elapsed / 1000.f;
+    Variables*  globals = game.GetVariables();
+    globals->frameTime = secondsElapsed;
     DoCommands(secondsElapsed);
     DoEntities(secondsElapsed);
     MovePlayer(secondsElapsed);
