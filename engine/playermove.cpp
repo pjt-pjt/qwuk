@@ -19,7 +19,7 @@ void    PlayerMove::Use()
         }
         glm::vec3   origin = player.EyePosition();
         glm::vec3   dir = player.Direction();
-        glm::vec3   end = origin + dir * 64.0f;
+        glm::vec3   end = origin + dir * 96.0f;
         Trace       trace;
         bsp.TraceLine(origin, end, trace);
         if (trace.fraction < 1) {
