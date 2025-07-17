@@ -226,6 +226,7 @@ void    Quake::GUI()
         ImGui::Checkbox("Show Func Doors", &config.showFuncDoors);
         ImGui::Checkbox("Show Func Plats", &config.showFuncPlats);
         ImGui::Checkbox("Show Func Walls", &config.showFuncWalls);
+        ImGui::Checkbox("Show Func Illusionary", &config.showFuncIllusionary);
         ImGui::Checkbox("Show Episode Gates", &config.showFuncEpisodeGate);
         ImGui::Checkbox("Show Boss Gate", &config.showFuncBossGate);
         ImGui::EndDisabled();

@@ -179,6 +179,9 @@ void    BSP::Draw(const glm::vec3& camera)
                 if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
                     continue;
                 }
+                if (!config.showFuncIllusionary && StrPrefix(entity.className, "func_illusionary")) {
+                    continue;
+                }
                 if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
                     continue;
                 }
@@ -229,6 +232,9 @@ Content    BSP::TracePoint(const glm::vec3& point)
                     continue;
                 }
                 if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
+                    continue;
+                }
+                if (StrPrefix(entity.className, "func_illusionary")) {
                     continue;
                 }
             }
@@ -301,6 +307,9 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
                     continue;
                 }
                 if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
+                    continue;
+                }
+                if (StrPrefix(entity.className, "func_illusionary")) {
                     continue;
                 }
             }

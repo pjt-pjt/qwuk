@@ -26,6 +26,7 @@ struct Config
     bool    showFuncDoors = true;
     bool    showFuncPlats = true;
     bool    showFuncWalls = false;
+    bool    showFuncIllusionary = true;
     bool    showFuncEpisodeGate = false;
     bool    showFuncBossGate = true;
     bool    smoothTextures = false;
