@@ -507,8 +507,8 @@ void    BSP::CreateModels()
         Model model;
         model.firstNode = bmodel.node_id0;
         model.clipNode = bmodel.node_id1;
-        model.mins = {bmodel.bound.min.x, bmodel.bound.min.y, bmodel.bound.min.z};
-        model.maxs = {bmodel.bound.max.x, bmodel.bound.max.y, bmodel.bound.max.z};
+        model.mins = {bmodel.bound.min.x - 1, bmodel.bound.min.y - 1, bmodel.bound.min.z - 1}; // Because... stuff?...
+        model.maxs = {bmodel.bound.max.x + 1, bmodel.bound.max.y + 1, bmodel.bound.max.z + 1};
         model.transform = glm::mat4(1);
         models.push_back(model);
     }
