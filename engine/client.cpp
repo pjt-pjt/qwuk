@@ -176,9 +176,10 @@ void    Quake::NextFrame(uint64_t elapsed)
         }
         lastKey = SDL_SCANCODE_UNKNOWN;
     }
-    DoCommands(elapsed);
-    DoEntities(elapsed);
-    MovePlayer(elapsed);
+    float secondsElapsed = elapsed / 1000.f;
+    DoCommands(secondsElapsed);
+    DoEntities(secondsElapsed);
+    MovePlayer(secondsElapsed);
 }
 
 void    Quake::Render()
@@ -308,12 +309,72 @@ void    Quake::GUI()
     }
 }
 
-void    Quake::MovePlayer(uint64_t elapsed)
+void    Quake::PostCommand(const Command& cmd)
+{
+    commands.push(cmd);
+}
+
+void    Quake::DoCommands(float /* elapsed */)
+{
+    if (!commands.empty()) {
+        static bool working = false;
+        if (working) {
+            return;
+        }
+        working = true;
+        Command& cmd = commands.front();
+        if (cmd.cmd == Command::ChangeMap) {
+            status = Loading;
+        }
+        if (cmd.waitFrames > 0) {
+            --cmd.waitFrames;
+        } else {
+            if (cmd.cmd == Command::ChangeMap) {
+                const char* map = cmd.strParam1.c_str();
+                bool loaded = bsp.Load(map);
+                if (!loaded) {
+                    map = "maps/start.bsp";
+                    loaded = bsp.Load(map);
+                }
+                if (loaded) {
+                    //TODO
+                    playerMove.SetVelocity({0, 0, 0});
+                    static char mapName[256];
+                    strncpy(mapName, map, 256);
+                    char* name = strrchr(mapName, '/');
+                    char* ext  = strrchr(mapName, '.');
+                    if (ext != nullptr ) {
+                        *ext = '\0';
+                    }
+                    globals.map = (name != nullptr) ? ++name : mapName;
+                    game.ChangeMap();
+                    status = Running;
+                }    
+            }
+            commands.pop();
+        }
+        working = false;
+    }
+}
+
+void    Quake::DoEntities(float elapsed)
+{
+    for (auto& ent : bsp.actEntities) {
+        if (ent.wait != -1) {
+            ent.wait -= elapsed;
+            if (ent.wait <= 0) {
+                ent.wait = -1;
+                game.Think(&ent);
+            }
+        }
+    }
+}
+
+void    Quake::MovePlayer(float elapsed)
 {
     if (status != Running) {
         return;
     }
-    float secondsElapsed = float(elapsed) / 1000.0f;
     float walkSpeed = 200;
     float runSpeed = 400;
     bool running = keyMatrix[SDL_SCANCODE_LSHIFT] || config.alwaysRun;
@@ -358,14 +419,14 @@ void    Quake::MovePlayer(uint64_t elapsed)
     if (config.noclip) {
         if (glm::length(velocity) > SMALL_EPS) {
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0) * secondsElapsed);
+            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0) * elapsed);
             player.SetPosition(end); 
         }
     } else if (player.flying) {
-        playerMove.Fly(velocity, secondsElapsed);
+        playerMove.Fly(velocity, elapsed);
         player.SetPosition(playerMove.Origin());
     } else {
-        playerMove.Move(velocity, secondsElapsed);
+        playerMove.Move(velocity, elapsed);
         player.SetPosition(playerMove.Origin());
         if (playerMove.useEnt != nullptr) {
             game.Use(playerMove.useEnt, player.entity);
@@ -388,71 +449,3 @@ void    Quake::SetYaw(float yaw)
     velocity = glm::vec3(mat * glm::vec4(velocity, 0));
     playerMove.SetVelocity(velocity);
 }
-
-void    Quake::Touch(EntPtr entity, Actor& actor)
-{
-    game.Touch(entity, actor.entity);
-}
-
-void    Quake::PostCommand(const Command& cmd)
-{
-    commands.push(cmd);
-}
-
-void    Quake::DoCommands(uint64_t /* elapsed */)
-{
-    if (!commands.empty()) {
-        static bool working = false;
-        if (working) {
-            return;
-        }
-        working = true;
-        Command& cmd = commands.front();
-        if (cmd.cmd == Command::ChangeMap) {
-            status = Loading;
-        }
-        if (cmd.waitFrames > 0) {
-            --cmd.waitFrames;
-        } else {
-            if (cmd.cmd == Command::ChangeMap) {
-                const char* map = cmd.strParam1.c_str();
-                bool loaded = bsp.Load(map);
-                if (!loaded) {
-                    map = "maps/start.bsp";
-                    loaded = bsp.Load(map);
-                }
-                if (loaded) {
-                    //TODO
-                    playerMove.SetVelocity({0, 0, 0});
-                    static char mapName[256];
-                    strncpy(mapName, map, 256);
-                    char* name = strrchr(mapName, '/');
-                    char* ext  = strrchr(mapName, '.');
-                    if (ext != nullptr ) {
-                        *ext = '\0';
-                    }
-                    globals.map = (name != nullptr) ? ++name : mapName;
-                    game.ChangeMap();
-                    status = Running;
-                }    
-            }
-            commands.pop();
-        }
-        working = false;
-    }
-}
-
-void    Quake::DoEntities(uint64_t elapsed)
-{
-    float secondsElapsed = float(elapsed) / 1000.0f;
-    for (auto& ent : bsp.actEntities) {
-        if (ent.wait != -1) {
-            ent.wait -= secondsElapsed;
-            if (ent.wait <= 0) {
-                ent.wait = -1;
-                game.Think(&ent);
-            }
-        }
-    }
-}
-

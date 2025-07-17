@@ -105,14 +105,12 @@ private:
     bool InitGame(const std::string& map);
     void GUI();
 
-    void MovePlayer(uint64_t elapsed);
-    void SetYaw(float yaw);
-
-    void Touch(EntPtr entity, Actor& actor);
-
     void PostCommand(const Command& cmd);
-    void DoCommands(uint64_t elapsed);
-    void DoEntities(uint64_t elapsed);
+    void DoCommands(float elapsed);
+    void DoEntities(float elapsed);
+
+    void MovePlayer(float elapsed);
+    void SetYaw(float yaw);
 
 private:
     Config          config;
