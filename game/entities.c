@@ -9,10 +9,10 @@ Fields  fieldList[2048];
 int     numFields;
 
 
+void    Spawn(Entity* ent);
 void    InfoPlayerStart(Entity* ent);
 void    TriggerTeleport(Entity* ent);
 void    TriggerChangelevel(Entity* ent);
-void    Null(Entity* ent);
 void    FuncDoor(Entity* ent);
 
 
@@ -32,6 +32,7 @@ Fields* NewFields()
 void    Construct(Entity* entity)
 {
     const char* Classes[] = {
+        "worldspawn",
         "info_player_start",
         "info_player_start2",
         "trigger_teleport",
@@ -41,24 +42,24 @@ void    Construct(Entity* entity)
         NULL
     };
     void (*Constructors[])(Entity* self) = {
+        Spawn,
         InfoPlayerStart,
         InfoPlayerStart,
         TriggerTeleport,
         TriggerChangelevel,
-        Null,
+        NULL,
         FuncDoor
     };
 
     for (int cl = 0; Classes[cl] != NULL; ++cl) {
-        if (StrEq(entity->className, Classes[cl])) {
+        if (StrEq(entity->className, Classes[cl]) && Constructors[cl] != NULL) {
             Constructors[cl](entity);
             return;
         }
     }
 
     //Hack construct all necessary
-    if (StrEq(entity->className, "worldspawn") ||
-        StrPrefix(entity->className, "info_") ||
+    if (StrPrefix(entity->className, "info_") ||
         StrPrefix(entity->className, "trigger_") ||
         StrPrefix(entity->className, "func_"))
     {
@@ -91,6 +92,11 @@ int     Touching(EntPtr ent1, EntPtr ent2)
     return 1;
 }
 
+
+void    Spawn(Entity* ent)
+{
+    i.Spawn(ent);
+}
 
 void    InfoPlayerStart(Entity* ent)
 {
@@ -215,9 +221,4 @@ void    FuncDoor(Entity* ent)
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
     self->Think = LinkDoors;
     self->wait = .1;
-}
-
-void    Null(Entity* ent)
-{
-    UNUSED(ent);
 }
