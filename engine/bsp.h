@@ -207,14 +207,15 @@ private:
     void        CreateFaces();
     void        CreateBSP();
     void        CreateClipNodes();
+    void        CreateHull0();
     void        CreateModels();
     void        CreateLights();
 
     void        Draw(const Model& model, u_short node, const glm::vec3& camera);
     void        Draw(const Leaf& leaf);
 
-    Content     TracePoint(const Model& model, short node, const glm::vec3& point);
-    bool        TraceLine(const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
+    Content     TracePoint(const std::vector<ClipNode>& hull, const Model& model, short node, const glm::vec3& point);
+    bool        TraceLine(const std::vector<ClipNode>& hull, const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
     Entities                entities;
@@ -226,6 +227,7 @@ private:
     std::vector<Node>       nodes;
     std::vector<Leaf>       leaves;
     std::vector<int>        faceList;
+    std::vector<ClipNode>   hull0;
     std::vector<ClipNode>   clipNodes;
     std::vector<Model>      models;
     std::vector<Light>      lights;
