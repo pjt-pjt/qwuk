@@ -198,7 +198,7 @@ void    BSP::Draw(const glm::vec3& camera)
                 program.SetUniform("model", model.transform);
             }
             CheckOK();
-            Draw(model, &nodes[model.firstNode], camera);
+            Draw(model, model.firstNode, camera);
         }
     }
 }
@@ -467,18 +467,8 @@ void    BSP::CreateBSP()
     for (uint32_t ni = 0; ni < bspFile.numNodes; ++ni) {
         node_t& bnode = bspFile.nodes[ni];
         Node& node = nodes[ni];
-        if ((bnode.front & 0x8000) == 0) {
-            node.frontNode = &nodes[bnode.front];
-        } else if (bnode.front != 65535) {
-            u_short idx = ~bnode.front;
-            node.frontLeaf = &leaves[idx];
-        }
-        if ((bnode.back & 0x8000) == 0) {
-            node.backNode = &nodes[bnode.back];
-        } else if (bnode.back != 65535) {
-            u_short idx = ~bnode.back;
-            node.backLeaf = &leaves[idx];
-        }
+        node.front = bnode.front;
+        node.back = bnode.back;
         node.plane = &planes[bnode.plane_id];
         node.mins = {bnode.box.min[0], bnode.box.min[1], bnode.box.min[2]};
         node.maxs = {bnode.box.max[0], bnode.box.max[1], bnode.box.max[2]};
@@ -566,37 +556,34 @@ void    BSP::CreateLights()
 #endif
 }
 
-void    BSP::Draw(const Model& model, Node* node, const glm::vec3& camera)
+void    BSP::Draw(const Model& model, u_short node, const glm::vec3& camera)
 {
-    auto DrawFront = [this, &camera, &model](Node* node) {
-        if (node->frontNode != nullptr)
-            Draw(model, node->frontNode, camera);
-        else if (node->frontLeaf != nullptr)
-            Draw(node->frontLeaf);
-    };
-    auto DrawBack = [this, &camera, &model](Node* node) {
-        if (node->backNode != nullptr)
-            Draw(model, node->backNode, camera);
-        else if (node->backLeaf != nullptr)
-            Draw(node->backLeaf);
-    };
-    BSPPlane    plane = *node->plane;
+    if ((node&0x8000) != 0) {
+        u_short leaf = ~node;
+        if (leaf == 0) {
+            return;
+        }
+        Draw(leaves[leaf]);
+        return;
+    }
+    Node&       bnode = nodes[node];
+    BSPPlane    plane = *bnode.plane;
     plane.Transform(model.transform);
     if (plane.Classify(camera) != BSPPlane::Back) {
-        DrawFront(node);
-        DrawBack(node);
+        Draw(model, bnode.front, camera);
+        Draw(model, bnode.back, camera);
     } else {
-        DrawBack(node);
-        DrawFront(node);
+        Draw(model, bnode.back, camera);
+        Draw(model, bnode.front, camera);
     }
 }
 
-void    BSP::Draw(Leaf* leaf)
+void    BSP::Draw(const Leaf& leaf)
 {
-    if (leaf == nullptr || leaf->type == SOLID) {
+    if (leaf.type == SOLID) {
         return;
     }
-    for (int32_t fli = leaf->firstFace; fli < leaf->firstFace + leaf->numFaces; ++fli) {
+    for (int32_t fli = leaf.firstFace; fli < leaf.firstFace + leaf.numFaces; ++fli) {
         int32_t fi = faceList[fli];
         if (facesToDraw[fi] == actFrame) {
             continue;

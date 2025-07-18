@@ -172,10 +172,8 @@ public:
     struct Node
     {
         BSPPlane*   plane = nullptr;
-        Node*       frontNode = nullptr;
-        Node*       backNode = nullptr;
-        Leaf*       frontLeaf = nullptr;
-        Leaf*       backLeaf = nullptr;
+        u_short     front;
+        u_short     back;
         glm::vec3   mins;
         glm::vec3   maxs;
     };
@@ -212,8 +210,8 @@ private:
     void        CreateModels();
     void        CreateLights();
 
-    void        Draw(const Model& model, Node* node, const glm::vec3& camera);
-    void        Draw(Leaf* node);
+    void        Draw(const Model& model, u_short node, const glm::vec3& camera);
+    void        Draw(const Leaf& leaf);
 
     Content     TracePoint(const Model& model, short node, const glm::vec3& point);
     bool        TraceLine(const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
