@@ -215,8 +215,14 @@ private:
     void        Draw(const Model& model, u_short node, const glm::vec3& camera);
     void        Draw(const Leaf& leaf);
 
-    Content     TracePoint(const std::vector<ClipNode>& hull, const Model& model, short node, const glm::vec3& point);
-    bool        TraceLine(const std::vector<ClipNode>& hull, const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
+    struct HullInfo
+    {
+        const std::vector<ClipNode>&    hull;
+        glm::mat4&                      transform;
+        short                           firstNode;
+    };
+    Content     TracePoint(const HullInfo& hull, short node, const glm::vec3& point);
+    bool        TraceLine(const HullInfo& hull, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:
     Entities                entities;

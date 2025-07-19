@@ -239,7 +239,8 @@ Content    BSP::TracePoint(const glm::vec3& point)
                     continue;
                 }
             }
-            content = TracePoint(clipNodes, models[entity.model], models[entity.model].clipNode, point);
+            HullInfo    hull = { clipNodes, models[entity.model].transform, short(models[entity.model].clipNode)};
+            content = TracePoint(hull, hull.firstNode, point);
             if (content.content != EMPTY && &entity != &actEntities[0]) {
                 content.entity = &entity;
                 break;
@@ -317,7 +318,8 @@ bool    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& tra
             Trace tr;
             tr.end = end;
             tr.allSolid = true;
-            empty = TraceLine(clipNodes, models[entity.model], models[entity.model].clipNode, start, end, 0, 1, tr);
+            HullInfo    hull = { clipNodes, models[entity.model].transform, short(models[entity.model].clipNode)};
+            empty = TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
 
             if (tr.allSolid)
                 tr.startSolid = true;
@@ -367,7 +369,8 @@ void    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             Trace tr;
             tr.end = end;
             tr.allSolid = true;
-            TraceLine(hull0, models[entity.model], models[entity.model].firstNode, start, end, 0, 1, tr);
+            HullInfo    hull = { hull0, models[entity.model].transform, short(models[entity.model].firstNode)};
+            TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
 
             if (tr.allSolid)
                 tr.startSolid = true;
@@ -676,12 +679,12 @@ void    BSP::Draw(const Leaf& leaf)
     }
 }
 
-Content    BSP::TracePoint(const std::vector<ClipNode>& hull, const Model& model, short node, const glm::vec3& point)
+Content    BSP::TracePoint(const HullInfo& hull, short node, const glm::vec3& point)
 {
     while (node >= 0) {
-        const ClipNode& cnode = hull[node];
+        const ClipNode& cnode = hull.hull[node];
         BSPPlane        plane = *cnode.plane;
-        plane.Transform(model.transform);
+        plane.Transform(hull.transform);
         if (plane.Classify(point) != BSPPlane::Back) {
             node = cnode.front;
         } else {
@@ -693,7 +696,7 @@ Content    BSP::TracePoint(const std::vector<ClipNode>& hull, const Model& model
     return content;
 }
 
-bool    BSP::TraceLine(const std::vector<ClipNode>& hull, const Model& model, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)
+bool    BSP::TraceLine(const HullInfo& hull, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)
 {
     static constexpr float DIST_EPSILON = 0.03125;
 
@@ -716,15 +719,15 @@ bool    BSP::TraceLine(const std::vector<ClipNode>& hull, const Model& model, sh
 		return true;		// empty
 	}
         
-    const ClipNode& cnode = hull[node];
+    const ClipNode& cnode = hull.hull[node];
     BSPPlane        plane = *cnode.plane;
-    plane.Transform(model.transform);
+    plane.Transform(hull.transform);
     float t1 = plane.SignedDistance(start);
     float t2 = plane.SignedDistance(end);
     if (t1 >= 0 && t2 >= 0) {
-        return TraceLine(hull, model, cnode.front, start, end, fstart, fend, trace);
+        return TraceLine(hull, cnode.front, start, end, fstart, fend, trace);
     } else if (t1 < 0 && t2 < 0) {
-        return TraceLine(hull, model, cnode.back, start, end, fstart, fend, trace);
+        return TraceLine(hull, cnode.back, start, end, fstart, fend, trace);
     }
 
     float frac;
@@ -746,12 +749,12 @@ bool    BSP::TraceLine(const std::vector<ClipNode>& hull, const Model& model, sh
 
     short front = (t1 >= 0) ? cnode.front : cnode.back;
     short back = (t1 >= 0) ? cnode.back : cnode.front;
-    if (!TraceLine(hull, model, front, start, mid, fstart, fmid, trace)) {
+    if (!TraceLine(hull, front, start, mid, fstart, fmid, trace)) {
         return false;
     }
 
-    if (TracePoint(hull, model, back, mid).content == EMPTY) {
-        return TraceLine(hull, model, back, mid, end, fmid, fend, trace);
+    if (TracePoint(hull, back, mid).content == EMPTY) {
+        return TraceLine(hull, back, mid, end, fmid, fend, trace);
     }
 
 	if (trace.allSolid) {
@@ -764,14 +767,7 @@ bool    BSP::TraceLine(const std::vector<ClipNode>& hull, const Model& model, sh
         trace.plane = BSPPlane(-plane.Normal(), -plane.Distance(), plane.GetOrientation());
     }
 
-    //TODO Unhack
-    short hackNode;
-    if (&hull == &hull0) {
-        hackNode = model.firstNode;
-    } else {
-        hackNode = model.clipNode;
-    }
-	while (TracePoint(hull, model, hackNode/* model.clipNode */, mid).content == SOLID) {
+	while (TracePoint(hull, hull.firstNode, mid).content == SOLID) {
         // Shouldn't really happen, but does occasionally
 		frac -= 0.1;
 		if (frac < 0) {
