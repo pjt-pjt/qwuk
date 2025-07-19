@@ -283,7 +283,7 @@ Content     BSP::PointContent(const glm::vec3& point)
     return content;
 }
 
-bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
+bool    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& trace)
 {
     Trace total;
     total.end = end;
@@ -324,9 +324,6 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             if (tr.startSolid)
                 tr.fraction = 0;
 
-            // if (!empty) {
-            //     tr.entity = &entity;
-            // }
             if (tr.fraction < total.fraction) {
                 total = tr;
                 total.entity = &entity;
@@ -335,6 +332,55 @@ bool    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
     }
     trace = total;
     return empty;
+}
+
+void    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
+{
+    Trace total;
+    total.end = end;
+    // Draw models for entities, except for triggers
+    for (auto& entity : actEntities) {
+        if (entity.model != -1) {
+            if (StrPrefix(entity.className, "trigger")) {
+                continue;
+            }
+            if (!config.showAll) {
+                if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
+                    continue;
+                }
+                if (!config.showFuncPlats && StrPrefix(entity.className, "func_plat")) {
+                    continue;
+                }
+                if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
+                    continue;
+                }
+                if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
+                    continue;
+                }
+                if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
+                    continue;
+                }
+                if (StrPrefix(entity.className, "func_illusionary")) {
+                    continue;
+                }
+            }
+            Trace tr;
+            tr.end = end;
+            tr.allSolid = true;
+            TraceLine(hull0, models[entity.model], models[entity.model].firstNode, start, end, 0, 1, tr);
+
+            if (tr.allSolid)
+                tr.startSolid = true;
+            if (tr.startSolid)
+                tr.fraction = 0;
+
+            if (tr.fraction < total.fraction) {
+                total = tr;
+                total.entity = &entity;
+            }
+        }
+    }
+    trace = total;
 }
 
 
@@ -510,13 +556,13 @@ void    BSP::CreateHull0()
             cnode.front = node.front;
         } else {
             u_short leaf = ~node.front;
-            cnode.front = (leaf == 0) ? SOLID : leaves[leaf].type;
+            cnode.front = leaves[leaf].type;
         }
         if (node.back < 0x8000) {
             cnode.back = node.back;
         } else {
             u_short leaf = ~node.back;
-            cnode.front = (leaf == 0) ? SOLID : leaves[leaf].type;
+            cnode.back = leaves[leaf].type;
         }
     }
 }
@@ -583,9 +629,6 @@ void    BSP::Draw(const Model& model, u_short node, const glm::vec3& camera)
 {
     if ((node&0x8000) != 0) {
         u_short leaf = ~node;
-        if (leaf == 0) {
-            return;
-        }
         Draw(leaves[leaf]);
         return;
     }
@@ -721,7 +764,14 @@ bool    BSP::TraceLine(const std::vector<ClipNode>& hull, const Model& model, sh
         trace.plane = BSPPlane(-plane.Normal(), -plane.Distance(), plane.GetOrientation());
     }
 
-	while (TracePoint(hull, model, model.clipNode, mid).content == SOLID) {
+    //TODO Unhack
+    short hackNode;
+    if (&hull == &hull0) {
+        hackNode = model.firstNode;
+    } else {
+        hackNode = model.clipNode;
+    }
+	while (TracePoint(hull, model, hackNode/* model.clipNode */, mid).content == SOLID) {
         // Shouldn't really happen, but does occasionally
 		frac -= 0.1;
 		if (frac < 0) {
