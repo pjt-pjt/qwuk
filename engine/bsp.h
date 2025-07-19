@@ -214,6 +214,8 @@ private:
     void        Draw(const Model& model, u_short node, const glm::vec3& camera);
     void        Draw(const Leaf& leaf);
 
+    template<int hullIndex>
+    Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
     struct HullInfo
     {
         const std::vector<ClipNode>&    hull;
