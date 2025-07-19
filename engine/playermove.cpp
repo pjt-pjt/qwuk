@@ -20,8 +20,7 @@ void    PlayerMove::Use()
         glm::vec3   origin = player.EyePosition();
         glm::vec3   dir = player.Direction();
         glm::vec3   end = origin + dir * 128.0f;
-        Trace       trace;
-        bsp.TraceLine(origin, end, trace);
+        Trace       trace = bsp.TraceLine(origin, end);
         if (trace.fraction < 1) {
             useEnt = (trace.entity != &bsp.actEntities[0]) ? trace.entity : nullptr;
         }
@@ -501,8 +500,7 @@ void	PlayerMove::NudgePosition()
 
 Trace	PlayerMove::MovePlayer(const glm::vec3& start, const glm::vec3& end)
 {
-	Trace trace;
-	bsp.PlayerMove(start, end, trace);
+	Trace trace = bsp.PlayerMove(start, end);
 	return trace;
 }
 

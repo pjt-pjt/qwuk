@@ -285,11 +285,10 @@ Content     BSP::PointContent(const glm::vec3& point)
     return content;
 }
 
-bool    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& trace)
+Trace    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end)
 {
     Trace total;
     total.end = end;
-    bool empty;
     // Draw models for entities, except for triggers
     for (auto& entity : actEntities) {
         if (entity.model != -1) {
@@ -320,7 +319,7 @@ bool    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& tra
             tr.end = end;
             tr.allSolid = true;
             HullInfo    hull = { hulls[1], models[entity.model].transform, short(models[entity.model].firstNode[1])};
-            empty = TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
+            TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
 
             if (tr.allSolid)
                 tr.startSolid = true;
@@ -333,11 +332,10 @@ bool    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& tra
             }
         }
     }
-    trace = total;
-    return empty;
+    return total;
 }
 
-void    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace)
+Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end)
 {
     Trace total;
     total.end = end;
@@ -384,7 +382,7 @@ void    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             }
         }
     }
-    trace = total;
+    return total;
 }
 
 

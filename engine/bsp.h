@@ -166,8 +166,8 @@ public:
 
     Content     TracePoint(const glm::vec3& point);
     Content     PointContent(const glm::vec3& point);
-    bool        PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& trace);
-    void        TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trace);
+    Trace       PlayerMove(const glm::vec3& start, const glm::vec3& end);
+    Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
 
     struct Leaf;
     struct Node
