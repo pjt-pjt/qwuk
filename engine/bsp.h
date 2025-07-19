@@ -194,8 +194,7 @@ public:
 
     struct Model
     {
-        uint32_t    firstNode;
-        uint32_t    clipNode;
+        short       firstNode[2];
         glm::vec3   mins;
         glm::vec3   maxs;
         glm::mat4   transform;
@@ -234,8 +233,7 @@ private:
     std::vector<Node>       nodes;
     std::vector<Leaf>       leaves;
     std::vector<int>        faceList;
-    std::vector<ClipNode>   hull0;
-    std::vector<ClipNode>   clipNodes;
+    std::vector<ClipNode>   hulls[2];
     std::vector<Model>      models;
     std::vector<Light>      lights;
 

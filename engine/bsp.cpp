@@ -105,7 +105,8 @@ void    BSP::Close()
         nodes.clear();
         leaves.clear();
         faceList.clear();
-        clipNodes.clear();
+        hulls[0].clear();
+        hulls[1].clear();
         models.clear();
         lights.clear();
     }
@@ -199,7 +200,7 @@ void    BSP::Draw(const glm::vec3& camera)
                 program.SetUniform("model", model.transform);
             }
             CheckOK();
-            Draw(model, model.firstNode, camera);
+            Draw(model, model.firstNode[0], camera);
         }
     }
 }
@@ -239,7 +240,7 @@ Content    BSP::TracePoint(const glm::vec3& point)
                     continue;
                 }
             }
-            HullInfo    hull = { clipNodes, models[entity.model].transform, short(models[entity.model].clipNode)};
+            HullInfo    hull = { hulls[1], models[entity.model].transform, short(models[entity.model].firstNode[1])};
             content = TracePoint(hull, hull.firstNode, point);
             if (content.content != EMPTY && &entity != &actEntities[0]) {
                 content.entity = &entity;
@@ -318,7 +319,7 @@ bool    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end, Trace& tra
             Trace tr;
             tr.end = end;
             tr.allSolid = true;
-            HullInfo    hull = { clipNodes, models[entity.model].transform, short(models[entity.model].clipNode)};
+            HullInfo    hull = { hulls[1], models[entity.model].transform, short(models[entity.model].firstNode[1])};
             empty = TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
 
             if (tr.allSolid)
@@ -369,7 +370,7 @@ void    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, Trace& trac
             Trace tr;
             tr.end = end;
             tr.allSolid = true;
-            HullInfo    hull = { hull0, models[entity.model].transform, short(models[entity.model].firstNode)};
+            HullInfo    hull = { hulls[0], models[entity.model].transform, short(models[entity.model].firstNode[0])};
             TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
 
             if (tr.allSolid)
@@ -537,23 +538,23 @@ void    BSP::CreateBSP()
 
 void    BSP::CreateClipNodes()
 {
-    clipNodes.reserve(bspFile.numClipnodes);
+    hulls[1].reserve(bspFile.numClipnodes);
     for (uint32_t ci = 0; ci < bspFile.numClipnodes; ++ci) {
         const clipnode_t&  bclip = bspFile.clipnodes[ci];
         ClipNode clip;
         clip.plane = &planes[bclip.planenum];
         clip.front = bclip.front;
         clip.back  = bclip.back;
-        clipNodes.push_back(clip);
+        hulls[1].push_back(clip);
     }
 }
 
 void    BSP::CreateHull0()
 {
-    hull0.resize(nodes.size());
+    hulls[0].resize(nodes.size());
     for (uint32_t ni = 0; ni < nodes.size(); ++ni) {
         const Node& node = nodes[ni];
-        ClipNode&   cnode = hull0[ni];
+        ClipNode&   cnode = hulls[0][ni];
         cnode.plane = node.plane;
         if (node.front < 0x8000) {
             cnode.front = node.front;
@@ -576,8 +577,8 @@ void    BSP::CreateModels()
     for (uint32_t mi = 0; mi < bspFile.numModels; ++mi) {
         const model_t&  bmodel = bspFile.models[mi];
         Model model;
-        model.firstNode = bmodel.node_id0;
-        model.clipNode = bmodel.node_id1;
+        model.firstNode[0] = bmodel.node_id0;
+        model.firstNode[1] = bmodel.node_id1;
         model.mins = {bmodel.bound.min.x - 1, bmodel.bound.min.y - 1, bmodel.bound.min.z - 1}; // Because... stuff?...
         model.maxs = {bmodel.bound.max.x + 1, bmodel.bound.max.y + 1, bmodel.bound.max.z + 1};
         model.transform = glm::mat4(1);
