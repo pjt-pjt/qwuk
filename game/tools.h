@@ -16,6 +16,7 @@ float   Vec3Dot(const Vec3 v1, const Vec3 v2);
 float   Vec3DistanceSq(const Vec3 v1, const Vec3 v2);
 float   Vec3LengthSq(const Vec3 v);
 
+extern  Vec3    Origin_Vec3;
 
 #if defined(TOOLS_IMPL)
 
@@ -77,6 +78,7 @@ float   Vec3LengthSq(const Vec3 v);
         return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
     }
 
+    Vec3    Origin_Vec3 = {0, 0, 0};
 #endif
 
 

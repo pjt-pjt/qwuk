@@ -28,10 +28,17 @@ typedef union Fields
     };
     struct DoorFields
     {
-        struct Common common;
+        struct Common commonDoor;
         #define DOOR_CLOSED 0
         #define DOOR_OPEN   1
         int         doorStatus;
+    };
+    struct ButtonFields
+    {
+        struct Common commonButton;
+        #define BUTTON_WAIT     0
+        #define BUTTON_PRESSED  1
+        int         buttonStatus;
     };
 } Fields;
 
