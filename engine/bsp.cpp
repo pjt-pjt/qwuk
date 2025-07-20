@@ -255,33 +255,6 @@ Content    BSP::TracePoint(const glm::vec3& point)
 Content     BSP::PointContent(const glm::vec3& point)
 {
     Content content = TracePoint(point);
-    // if (content.content == EMPTY) {
-    //     return content;
-    // }
-
-    // Entity& entity = actEntities[0];
-    // Model&  model = models[entity.model];
-    // Node*   node = &nodes[model.firstNode];
-    // while (node != nullptr) {
-    //     BSPPlane        plane = *node->plane;
-    //     plane.Transform(model.transform);
-    //     if (plane.Classify(point) != BSPPlane::Back) {
-    //         if (node->frontLeaf != nullptr) {
-    //             content.content = LeafType(node->frontLeaf->type);
-    //             break;
-    //         } else {
-    //             node = node->frontNode;
-    //         }
-    //     } else {
-    //         if (node->backLeaf != nullptr) {
-    //             content.content = LeafType(node->backLeaf->type);
-    //             break;
-    //         } else {
-    //             node = node->backNode;
-    //         }
-    //     }
-    // }
-
     return content;
 }
 
