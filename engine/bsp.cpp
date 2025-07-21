@@ -240,7 +240,7 @@ Content    BSP::TracePoint(const glm::vec3& point)
                     continue;
                 }
             }
-            HullInfo    hull = { hulls[1], models[entity.model].transform, short(models[entity.model].firstNode[1])};
+            HullInfo    hull = { hulls[1], models[entity.model].transform, models[entity.model].firstNode[1]};
             content = TracePoint(hull, hull.firstNode, point);
             if (content.content != EMPTY && &entity != &actEntities[0]) {
                 content.entity = &entity;
@@ -292,7 +292,7 @@ Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end)
             Trace tr;
             tr.end = end;
             tr.allSolid = true;
-            HullInfo    hull = { hulls[hullIndex], models[entity.model].transform, short(models[entity.model].firstNode[hullIndex])};
+            HullInfo    hull = { hulls[hullIndex], models[entity.model].transform, models[entity.model].firstNode[hullIndex]};
             TraceLine(hull, hull.firstNode, start, end, 0, 1, tr);
 
             if (tr.allSolid)

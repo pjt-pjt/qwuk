@@ -59,7 +59,7 @@ glm::vec3   Camera::Direction() const
     float p = pitch * glm::pi<float>() / 180.0;
     float y = yaw * glm::pi<float>() / 180.0;
     float xzLen = cos(p);
-    return glm::vec3(cos(y) * xzLen, sin(y) * xzLen, sin(p));
+    return glm::normalize(glm::vec3(cos(y) * xzLen, sin(y) * xzLen, sin(p)));
 }
 
 
