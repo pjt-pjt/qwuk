@@ -274,6 +274,17 @@ void    RunButton(Entity* self)
         if (self->f->buttonStatus == BUTTON_PRESSED) {
             self->wait = 1;
             self->Think = RunButton;
+            // Use targets
+            const char* target = i.EntityValueStr(self, "target");
+            if (target != NULL) {
+                EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
+                while (ent != NULL) {
+                    if (ent->Use != NULL) {
+                        ent->Use(ent, self);
+                    }
+                    ent = i.SearchEntity(ent, NULL, "targetname", target);
+                }
+            }
         } else {
             self->wait = -1;
             self->Think = NULL;
@@ -288,16 +299,6 @@ void    RunButton(Entity* self)
 void    UseButton(Entity* self, Entity* other)
 {
     UNUSED(other);
-    const char* target = i.EntityValueStr(self, "target");
-    if (target != NULL) {
-        EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
-        while (ent != NULL) {
-            if (ent->Use != NULL) {
-                ent->Use(ent, self);
-            }
-            ent = i.SearchEntity(ent, NULL, "targetname", target);
-        }
-    }
     self->Use = NULL;
     self->wait = 0;
     self->Think = RunButton;
