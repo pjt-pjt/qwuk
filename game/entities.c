@@ -323,13 +323,21 @@ void    FuncButton(Entity* ent)
     } else if (self->angle == -2) {
         self->f->direction[2] = -1;
     }
-    float lip = 4;
+    float lip;
+    if (!i.EntityValueFloat(self, "lip", &lip)) {
+        lip = 4;
+    }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
     float speed;
     if (!i.EntityValueFloat(self, "speed", &speed)) {
         speed = 40;
     }
+    float wait;
+    if (!i.EntityValueFloat(self, "wait", &wait)) {
+        wait = 1;
+    }
     self->f->speed = speed;
+    self->f->wait = wait;
     self->Use = UseButton;
 }

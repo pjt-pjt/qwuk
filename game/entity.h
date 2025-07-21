@@ -25,6 +25,7 @@ typedef union Fields
         Vec3        pos1;
         Vec3        pos2;
         float       speed;
+        float       wait;
     };
     struct DoorFields
     {

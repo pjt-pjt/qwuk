@@ -17,13 +17,7 @@ void    PlayerMove::Use()
         if (useKey) {
             return;
         }
-        glm::vec3   origin = player.EyePosition();
-        glm::vec3   dir = player.Direction();
-        glm::vec3   end = origin + dir * 128.0f;
-        Trace       trace = bsp.TraceLine(origin, end);
-        if (trace.fraction < 1) {
-            useEnt = (trace.entity != &bsp.actEntities[0]) ? trace.entity : nullptr;
-        }
+        useEnt = lookAtEnt;
         useKey = true;
     } else {
         useKey = false;
@@ -466,6 +460,17 @@ void	PlayerMove::CategorizePosition (void)
 	// 	}
 	// }
     TouchEnt(bsp.PointContent(point).entity);
+
+    // Look at entity
+    glm::vec3   origin = player.EyePosition();
+    glm::vec3   dir = player.Direction();
+    glm::vec3   end = origin + dir * 128.0f;
+    Trace       trace = bsp.TraceLine(origin, end);
+    if (trace.fraction < 1) {
+        lookAtEnt = (trace.entity != &bsp.actEntities[0]) ? trace.entity : nullptr;
+    } else {
+        lookAtEnt = nullptr;
+    }
 }
 
 void	PlayerMove::NudgePosition()

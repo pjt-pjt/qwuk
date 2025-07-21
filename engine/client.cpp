@@ -210,8 +210,6 @@ bool    Quake::InitGame(const std::string& map)
 }
 
 
-static bool inSolid = false;
-
 void    Quake::GUI()
 {
     ImGui::Begin("Settings");
@@ -289,8 +287,8 @@ void    Quake::GUI()
         ImGui::Text("Binds          %5u", stats.binds);
         ImGui::Text("Primitives     %5u", stats.primitives);
         ImGui::Separator();
+        ImGui::Text("Look at: %s", (playerMove.lookAtEnt != nullptr) ? playerMove.lookAtEnt->className : "");
         ImGui::Text("Player: %6.2f %6.2f %6.2f", player.Position().x, player.Position().y, player.Position().z);
-        ImGui::Text("Node: %s", inSolid ? "Solid" : "Empty");
         ImGui::Text("%s", player.onGround ? "On ground" : "In air");
     ImGui::End();
 
