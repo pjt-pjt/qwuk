@@ -165,13 +165,16 @@ void    TriggerChangelevel(Entity* ent)
 void    RunDoor(Entity* self)
 {
     Vec3Ref target;
+    Vec3    direction;
     if (self->f->doorStatus == DOOR_CLOSED) {
         target = self->f->pos2;
+        Vec3Copy(direction, self->f->direction);
     } else {
         target = self->f->pos1;
+        Vec3Sub(direction, Origin_Vec3, self->f->direction);
     }
     Vec3    velocity;
-    Vec3Mul(velocity, self->f->direction, self->f->speed * globals->frameTime);
+    Vec3Mul(velocity, direction, self->f->speed * globals->frameTime);
     if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
         i.SetOrigin(self, target);
         self->sleep = -1;
@@ -241,11 +244,16 @@ void    FuncDoor(Entity* ent)
     }
     float lip = 8;
     if (ent->flags == 1) {
-        lip = 0; //TODO Hack for "elevator" doors that start "open"
+        lip = 0; //TODO Hack for "elevator" or "slab" doors that start "open"
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    self->f->doorStatus = DOOR_CLOSED;
+    if (ent->flags == 1) {
+        i.SetOrigin(self, self->f->pos2);
+        self->f->doorStatus = DOOR_OPEN;
+    } else {
+        self->f->doorStatus = DOOR_CLOSED;
+    }
     self->Think = LinkDoors;
     self->sleep = .1;
     float speed;
