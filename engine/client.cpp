@@ -361,10 +361,10 @@ void    Quake::DoCommands(float /* elapsed */)
 void    Quake::DoEntities(float elapsed)
 {
     for (auto& ent : bsp.actEntities) {
-        if (ent.wait != -1) {
-            ent.wait -= elapsed;
-            if (ent.wait <= 0) {
-                ent.wait = -1;
+        if (ent.sleep != -1) {
+            ent.sleep -= elapsed;
+            if (ent.sleep <= 0) {
+                ent.sleep = -1;
                 game.Think(&ent);
             }
         }

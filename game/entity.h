@@ -58,7 +58,7 @@ typedef struct Entity
     void            (*Think)(struct Entity* self);
     Fields*         f;
     int             flags;
-    float           wait;
+    float           sleep;
     struct Entity*  owner;
     struct Entity*  link;
 } Entity;

@@ -174,7 +174,7 @@ void    RunDoor(Entity* self)
     Vec3Mul(velocity, self->f->direction, self->f->speed * globals->frameTime);
     if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
         i.SetOrigin(self, target);
-        self->wait = -1;
+        self->sleep = -1;
         self->Think = NULL;
         self->f->doorStatus = !self->f->doorStatus;
         return;
@@ -182,7 +182,7 @@ void    RunDoor(Entity* self)
     Vec3    origin;
     Vec3Add(origin, self->origin, velocity);
     i.SetOrigin(self, origin);
-    self->wait = 0;
+    self->sleep = 0;
 }
 void    UseDoor(Entity* self, Entity* other)
 {
@@ -190,7 +190,7 @@ void    UseDoor(Entity* self, Entity* other)
     EntPtr  ent = self->owner;
     while (ent != NULL) {
         ent->Use = NULL;
-        ent->wait = 0;
+        ent->sleep = 0;
         ent->Think = RunDoor;
         ent = ent->link;
     }
@@ -208,7 +208,7 @@ void    LinkDoors(Entity* self)
             ent->owner = self;
             ent->link = prev;
             ent->Use = UseDoor;
-            ent->wait = -1;
+            ent->sleep = -1;
             ent->Think = NULL;
             prev = ent;
         }
@@ -217,7 +217,7 @@ void    LinkDoors(Entity* self)
     self->owner = self;
     self->link = prev;
     self->Use = UseDoor;
-    self->wait = -1;
+    self->sleep = -1;
     self->Think = NULL;
 }
 void    FuncDoor(Entity* ent)
@@ -247,7 +247,7 @@ void    FuncDoor(Entity* ent)
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
     self->f->doorStatus = DOOR_CLOSED;
     self->Think = LinkDoors;
-    self->wait = .1;
+    self->sleep = .1;
     float speed;
     if (!i.EntityValueFloat(self, "speed", &speed)) {
         speed = 400;
@@ -274,7 +274,7 @@ void    RunButton(Entity* self)
         self->f->buttonStatus = !self->f->buttonStatus;
         if (self->f->buttonStatus == BUTTON_PRESSED) {
             if (self->f->wait != -1) {
-                self->wait = self->f->wait;
+                self->sleep = self->f->wait;
                 self->Think = RunButton;
             } else {
                 self->Think = NULL;
@@ -301,13 +301,13 @@ void    RunButton(Entity* self)
     Vec3    origin;
     Vec3Add(origin, self->origin, velocity);
     i.SetOrigin(self, origin);
-    self->wait = 0;
+    self->sleep = 0;
 }
 void    UseButton(Entity* self, Entity* other)
 {
     UNUSED(other);
     self->Use = NULL;
-    self->wait = 0;
+    self->sleep = 0;
     self->Think = RunButton;
 }
 void    FuncButton(Entity* ent)
