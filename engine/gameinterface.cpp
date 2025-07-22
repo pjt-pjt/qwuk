@@ -142,11 +142,19 @@ void    GameInterface::SetOrigin(EntPtr entity, const Vec3 origin)
     if (entity == NULL) {
         return;
     }
+    Vec3Copy(entity->prevOrigin, entity->origin);
     Vec3Copy(entity->origin, origin);
     if (entity->model != -1) {
         BSP::Model& model = game->bsp.models[entity->model];
         glm::mat4   mm(1);
         model.transform = glm::translate(mm, {entity->origin[0], entity->origin[1], entity->origin[2]});
+        // Check collision
+        //TODO Do it properly in the future
+        if (game->bsp.TracePoint(game->quake.player.Position()).content != EMPTY) {
+            Vec3Copy(entity->origin, entity->prevOrigin);
+            glm::mat4   mm(1);
+            model.transform = glm::translate(mm, {entity->origin[0], entity->origin[1], entity->origin[2]});
+        }
     }
 
 }

@@ -48,6 +48,7 @@ typedef struct Entity
     const char*     className;
     const Edict*    first;
     Vec3            origin;
+    Vec3            prevOrigin;
     float           angle;
     int             model;
     float           eyePos;

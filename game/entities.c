@@ -162,6 +162,7 @@ void    TriggerChangelevel(Entity* ent)
 }
 
 
+void    UseDoor(Entity* self, Entity* other);
 void    RunDoor(Entity* self)
 {
     Vec3Ref target;
@@ -177,9 +178,19 @@ void    RunDoor(Entity* self)
     Vec3Mul(velocity, direction, self->f->speed * globals->frameTime);
     if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
         i.SetOrigin(self, target);
+        self->f->doorStatus = !self->f->doorStatus;
         self->sleep = -1;
         self->Think = NULL;
-        self->f->doorStatus = !self->f->doorStatus;
+        if (self->f->doorStatus == DOOR_OPEN) {
+            if (self->f->wait != -1) {
+                self->sleep = self->f->wait;
+                self->Think = RunDoor;
+            }
+        } else {
+            if (self->f->wait != -1) {
+                self->Use = UseDoor;
+            }
+        }
         return;
     }
     Vec3    origin;
@@ -258,9 +269,14 @@ void    FuncDoor(Entity* ent)
     self->sleep = .1;
     float speed;
     if (!i.EntityValueFloat(self, "speed", &speed)) {
-        speed = 400;
+        speed = 100;
     }
     self->f->speed = speed;
+    float wait;
+    if (!i.EntityValueFloat(self, "wait", &wait)) {
+        wait = 3;
+    }
+    self->f->wait = wait;
 }
 
 void    UseButton(Entity* self, Entity* other);
@@ -349,11 +365,11 @@ void    FuncButton(Entity* ent)
     if (!i.EntityValueFloat(self, "speed", &speed)) {
         speed = 40;
     }
+    self->f->speed = speed;
     float wait;
     if (!i.EntityValueFloat(self, "wait", &wait)) {
         wait = 1;
     }
-    self->f->speed = speed;
     self->f->wait = wait;
     self->Use = UseButton;
 }
