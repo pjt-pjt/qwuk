@@ -255,6 +255,7 @@ void    FuncDoor(Entity* ent)
     self->f->speed = speed;
 }
 
+void    UseButton(Entity* self, Entity* other);
 void    RunButton(Entity* self)
 {
     Vec3Ref target;
@@ -272,8 +273,12 @@ void    RunButton(Entity* self)
         i.SetOrigin(self, target);
         self->f->buttonStatus = !self->f->buttonStatus;
         if (self->f->buttonStatus == BUTTON_PRESSED) {
-            self->wait = 1;
-            self->Think = RunButton;
+            if (self->f->wait != -1) {
+                self->wait = self->f->wait;
+                self->Think = RunButton;
+            } else {
+                self->Think = NULL;
+            }
             // Use targets
             const char* target = i.EntityValueStr(self, "target");
             if (target != NULL) {
@@ -286,8 +291,10 @@ void    RunButton(Entity* self)
                 }
             }
         } else {
-            self->wait = -1;
             self->Think = NULL;
+            if (self->f->wait != -1) {
+                self->Use = UseButton;
+            }
         }
         return;
     }
