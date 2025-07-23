@@ -142,21 +142,44 @@ void    GameInterface::SetOrigin(EntPtr entity, const Vec3 origin)
     if (entity == NULL) {
         return;
     }
-    Vec3Copy(entity->prevOrigin, entity->origin);
-    Vec3Copy(entity->origin, origin);
+    glm::vec3   vPrevOrigin = {entity->origin[0], entity->origin[1], entity->origin[2]};
+    glm::vec3   vOrigin = {origin[0], origin[1], origin[2]};
+    bool        set = true;
     if (entity->model != -1) {
-        BSP::Model& model = game->bsp.models[entity->model];
-        glm::mat4   mm(1);
-        model.transform = glm::translate(mm, {entity->origin[0], entity->origin[1], entity->origin[2]});
         // Check collision
         //TODO Do it properly in the future
-        if (game->bsp.TracePoint(game->quake.player.Position()).content != EMPTY) {
-            Vec3Copy(entity->origin, entity->prevOrigin);
+        BSP::Model& model = game->bsp.models[entity->model];
+        if (game->quake.playerMove.onground == entity) {
+            // Move player too
+            glm::vec3   offset = vOrigin - vPrevOrigin;
+            Trace       tr = game->bsp.PlayerMove(game->quake.player.Position(), game->quake.player.Position() + offset);
             glm::mat4   mm(1);
-            model.transform = glm::translate(mm, {entity->origin[0], entity->origin[1], entity->origin[2]});
+            model.transform = glm::translate(mm, vOrigin);
+            if (tr.startSolid || tr.allSolid || tr.fraction < 1) {
+                tr = game->bsp.PlayerMove(game->quake.player.Position(), game->quake.player.Position() + offset);
+                if (tr.startSolid || tr.allSolid || tr.fraction < 1) {
+                    set = false;
+                }
+            }
+            if (set) {
+                game->quake.player.SetPosition(game->quake.player.Position() + offset);
+            }
+        } else {
+            glm::mat4   mm(1);
+            model.transform = glm::translate(mm, vOrigin);
+            if (game->bsp.TracePoint(game->quake.player.Position()).content != EMPTY) {
+                set = false;
+            }
+        }
+        if (!set) {
+            glm::mat4   mm(1);
+            model.transform = glm::translate(mm, vPrevOrigin);
         }
     }
-
+    if (set) {
+        Vec3Copy(entity->prevOrigin, entity->origin);
+        Vec3Copy(entity->origin, origin);
+    }
 }
 
 void    GameInterface::SetAngle(EntPtr entity, float angle)

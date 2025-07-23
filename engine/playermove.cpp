@@ -103,7 +103,7 @@ void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 		wishSpeed = /* movevars.maxspeed */320;
 	}
 	
-	if (onground != -1) {
+	if (onground != nullptr) {
 		velocity[2] = 0;
 		Accelerate (OnGround, wishDir, wishSpeed, 10/* movevars.accelerate */);
 		// Add gravity
@@ -316,14 +316,14 @@ void    PlayerMove::Jump()
 	// 	return;
 	// }
 
-	if (onground == -1) {
+	if (onground == nullptr) {
 		return;		// in air, so no effect
     }
 	if (jumpKey) {
 		return;		// don't pogo stick
     }
 
-	onground = -1;
+	onground = nullptr;
 	velocity[2] += 270;
 
 	jumpKey = true;	// don't jump again until released
@@ -366,7 +366,7 @@ void    PlayerMove::Friction()
     float friction = 4/* movevars.friction */;
 
     // If the leading edge is over a dropoff, increase friction
-	if (onground != -1) {
+	if (onground != nullptr) {
         glm::vec3   start;
         glm::vec3   stop;
 		start[0] = stop[0] = origin[0] + velocity[0] / speed * 16;
@@ -384,7 +384,7 @@ void    PlayerMove::Friction()
 
 	/* if (waterlevel >= 2) // apply water friction
 		drop += speed*movevars.waterfriction*waterlevel*frametime;
-	else  */if (onground != -1) {
+	else  */if (onground != nullptr) {
         // Apply ground friction
 		float control = (speed < 100/* movevars.stopspeed */) ? 100/* movevars.stopspeed */ : speed;
 		drop += control * friction * frameTime;
@@ -418,15 +418,15 @@ void	PlayerMove::CategorizePosition (void)
 	glm::vec3	point = origin;
 	point[2] -= 1;
 	if (velocity[2] > 180) {
-		onground = -1;
+		onground = nullptr;
 	} else {
 		Trace tr = MovePlayer(origin, point);
 		if (tr.plane.Normal()[2] < 0.7) {
-			onground = -1;	// too steep
+			onground = nullptr;	// too steep
 		} else {
-			onground = 1;//tr.entity;
+			onground = tr.entity;
 		}
-		if (onground != -1) {
+		if (onground != nullptr) {
 			//pmove.waterjumptime = 0;
 			if (!tr.startSolid && !tr.allSolid) {
 				origin = tr.end;
