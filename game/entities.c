@@ -209,6 +209,16 @@ void    UseDoor(Entity* self, Entity* other)
         ent = ent->link;
     }
 }
+void    BlockedDoor(Entity* self, Entity* by)
+{
+    UNUSED(by);
+    if (self->f->doorStatus == DOOR_CLOSED) {
+        return;
+    }
+    self->f->doorStatus = !self->f->doorStatus;
+    self->sleep = .5;
+    self->Think = RunDoor;
+}
 void    LinkDoors(Entity* self)
 {
     if (self->owner != NULL) {
@@ -277,6 +287,7 @@ void    FuncDoor(Entity* ent)
         wait = 3;
     }
     self->f->wait = wait;
+    self->Blocked = BlockedDoor;
 }
 
 void    UseButton(Entity* self, Entity* other);

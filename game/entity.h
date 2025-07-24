@@ -57,6 +57,7 @@ typedef struct Entity
     void            (*Touch)(struct Entity* self, struct Entity* other);
     void            (*Use)(struct Entity* self, struct Entity* other);
     void            (*Think)(struct Entity* self);
+    void            (*Blocked)(struct Entity* self, struct Entity* by);
     Fields*         f;
     int             flags;
     float           sleep;

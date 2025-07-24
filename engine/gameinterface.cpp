@@ -174,6 +174,7 @@ void    GameInterface::SetOrigin(EntPtr entity, const Vec3 origin)
         if (!set) {
             glm::mat4   mm(1);
             model.transform = glm::translate(mm, vPrevOrigin);
+            game->quake.game.Blocked(entity, game->quake.player.entity);
         }
     }
     if (set) {

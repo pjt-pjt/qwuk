@@ -71,6 +71,13 @@ void    Think(EntPtr entity)
     }
 }
 
+void    Blocked(EntPtr entity, EntPtr by)
+{
+    if (entity->Blocked != NULL) {
+        entity->Blocked(entity, by);
+    }
+}
+
 void    Destroy()
 {
 }

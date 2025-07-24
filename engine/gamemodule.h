@@ -18,6 +18,7 @@ public:
     TouchProc           Touch = nullptr;
     UseProc             Use = nullptr;
     ThinkProc           Think = nullptr;
+    BlockedProc         Blocked = nullptr;
     DestroyProc         Destroy = nullptr;
     GetVariablesProc    GetVariables = nullptr;
 

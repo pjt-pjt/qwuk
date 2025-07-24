@@ -25,9 +25,10 @@ bool    GameModule::SetFunctions()
     Touch = (TouchProc)lt_dlsym(handle, "Touch");
     Use = (UseProc)lt_dlsym(handle, "Use");
     Think = (ThinkProc)lt_dlsym(handle, "Think");
+    Blocked = (BlockedProc)lt_dlsym(handle, "Blocked");
     Destroy = (DestroyProc)lt_dlsym(handle, "Destroy");
     GetVariables = (GetVariablesProc)lt_dlsym(handle, "GetVariables");
     return Init != nullptr && Run != nullptr && ChangeMap != nullptr &&
-           Touch != nullptr && Use != nullptr  && Think != nullptr &&
+           Touch != nullptr && Use != nullptr && Think != nullptr && Blocked != nullptr &&
            GetVariables != nullptr && Destroy != nullptr;
 }
