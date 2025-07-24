@@ -1,10 +1,10 @@
+#define TOOLS_IMPL
+#include "tools.h"
+
 #include "gameinterface.h"
 #include "client.h"
 #include "game.h"
 #include "glm/gtc/type_ptr.hpp"
-
-#define TOOLS_IMPL
-#include "tools.h"
 
 
 GameInterface* game = nullptr;

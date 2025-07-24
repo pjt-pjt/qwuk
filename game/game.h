@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity.h"
+#include "tools.h"
 
 #if defined(__cplusplus)
     extern "C" {

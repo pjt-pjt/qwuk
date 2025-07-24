@@ -5,6 +5,9 @@
 #endif
 
 
+#include "tools.h"
+
+
 typedef struct Edict
 {
     const char*     key;
@@ -12,9 +15,6 @@ typedef struct Edict
     struct Edict*   next;
 } Edict;
 
-
-typedef float   Vec3[3];
-typedef float*  Vec3Ref;
 
 typedef union Fields
 {

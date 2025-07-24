@@ -1,6 +1,16 @@
 #pragma once
 
 #include <string.h>
+#include <math.h>
+
+
+#if defined(__cplusplus)
+    extern "C" {
+#endif
+
+
+typedef float   Vec3[3];
+typedef float*  Vec3Ref;
 
 
 int     StrEq(const char* left, const char* right);
@@ -83,3 +93,8 @@ extern  Vec3    Origin_Vec3;
 
 
 #define UNUSED(x) (void)(x)
+
+
+#if defined(__cplusplus)
+    }
+#endif

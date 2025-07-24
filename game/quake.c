@@ -1,9 +1,8 @@
-#include "game.h"
-#include "entities.h"
-#include <stdio.h>
-
 #define TOOLS_IMPL
 #include "tools.h"
+
+#include "game.h"
+#include "entities.h"
 
 
 Interface   i;
