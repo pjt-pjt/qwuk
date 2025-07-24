@@ -9,12 +9,12 @@ Fields  fieldList[2048];
 int     numFields;
 
 
-void    Spawn(Entity* ent);
-void    InfoPlayerStart(Entity* ent);
-void    TriggerTeleport(Entity* ent);
-void    TriggerChangelevel(Entity* ent);
-void    FuncDoor(Entity* ent);
-void    FuncButton(Entity* ent);
+void    Spawn(EntPtr ent);
+void    InfoPlayerStart(EntPtr ent);
+void    TriggerTeleport(EntPtr ent);
+void    TriggerChangelevel(EntPtr ent);
+void    FuncDoor(EntPtr ent);
+void    FuncButton(EntPtr ent);
 
 
 void    ResetFields()
@@ -30,7 +30,7 @@ Fields* NewFields()
 }
 
 
-void    Construct(Entity* entity)
+void    Construct(EntPtr entity)
 {
     const char* Classes[] = {
         "worldspawn",
@@ -43,7 +43,7 @@ void    Construct(Entity* entity)
         "func_button",
         NULL
     };
-    void (*Constructors[])(Entity* self) = {
+    void (*Constructors[])(EntPtr self) = {
         Spawn,
         InfoPlayerStart,
         InfoPlayerStart,
@@ -96,12 +96,12 @@ int     Touching(EntPtr ent1, EntPtr ent2)
 }
 
 
-void    Spawn(Entity* ent)
+void    Spawn(EntPtr ent)
 {
     i.Spawn(ent);
 }
 
-void    InfoPlayerStart(Entity* ent)
+void    InfoPlayerStart(EntPtr ent)
 {
     if (StrEq(globals->map, "start")) {
         if (globals->status == 0 && StrEq(ent->className, "info_player_start2")) {
@@ -118,7 +118,7 @@ void    InfoPlayerStart(Entity* ent)
     i.SpawnPlayer(self);
 }
 
-void    TouchTeleport(Entity* self, Entity* other)
+void    TouchTeleport(EntPtr self, EntPtr other)
 {
     const char* target = i.EntityValueStr(self, "target");
     if (target != NULL && i.EntityValueStr(self, "targetname") != NULL)
@@ -136,13 +136,13 @@ void    TouchTeleport(Entity* self, Entity* other)
         i.SetPlayerAngle(angle);
     }
 }
-void    TriggerTeleport(Entity* ent)
+void    TriggerTeleport(EntPtr ent)
 {
     EntPtr self = i.Spawn(ent);
     self->Touch = TouchTeleport;
 }
 
-void    TouchChangelevel(Entity* self, Entity* other)
+void    TouchChangelevel(EntPtr self, EntPtr other)
 {
     UNUSED(other);
     if (globals->status == 0) {
@@ -155,15 +155,15 @@ void    TouchChangelevel(Entity* self, Entity* other)
     strcat(path, ".bsp");
     i.PostCommand(1, path, 0, 0);
 }
-void    TriggerChangelevel(Entity* ent)
+void    TriggerChangelevel(EntPtr ent)
 {
     EntPtr self = i.Spawn(ent);
     self->Touch = TouchChangelevel;
 }
 
 
-void    UseDoor(Entity* self, Entity* other);
-void    RunDoor(Entity* self)
+void    UseDoor(EntPtr self, EntPtr other);
+void    RunDoor(EntPtr self)
 {
     Vec3Ref target;
     Vec3    direction;
@@ -198,7 +198,7 @@ void    RunDoor(Entity* self)
     i.SetOrigin(self, origin);
     self->sleep = 0;
 }
-void    UseDoor(Entity* self, Entity* other)
+void    UseDoor(EntPtr self, EntPtr other)
 {
     UNUSED(other);
     EntPtr  ent = self->owner;
@@ -209,7 +209,7 @@ void    UseDoor(Entity* self, Entity* other)
         ent = ent->link;
     }
 }
-void    BlockedDoor(Entity* self, Entity* by)
+void    BlockedDoor(EntPtr self, EntPtr by)
 {
     UNUSED(by);
     if (self->f->doorStatus == DOOR_CLOSED) {
@@ -219,7 +219,7 @@ void    BlockedDoor(Entity* self, Entity* by)
     self->sleep = .5;
     self->Think = RunDoor;
 }
-void    LinkDoors(Entity* self)
+void    LinkDoors(EntPtr self)
 {
     if (self->owner != NULL) {
         // Already linked
@@ -244,7 +244,7 @@ void    LinkDoors(Entity* self)
     self->sleep = -1;
     self->Think = NULL;
 }
-void    FuncDoor(Entity* ent)
+void    FuncDoor(EntPtr ent)
 {
     EntPtr self = i.Spawn(ent);
     self->f = NewFields();
@@ -290,8 +290,8 @@ void    FuncDoor(Entity* ent)
     self->Blocked = BlockedDoor;
 }
 
-void    UseButton(Entity* self, Entity* other);
-void    RunButton(Entity* self)
+void    UseButton(EntPtr self, EntPtr other);
+void    RunButton(EntPtr self)
 {
     Vec3Ref target;
     Vec3    direction;
@@ -338,14 +338,14 @@ void    RunButton(Entity* self)
     i.SetOrigin(self, origin);
     self->sleep = 0;
 }
-void    UseButton(Entity* self, Entity* other)
+void    UseButton(EntPtr self, EntPtr other)
 {
     UNUSED(other);
     self->Use = NULL;
     self->sleep = 0;
     self->Think = RunButton;
 }
-void    FuncButton(Entity* ent)
+void    FuncButton(EntPtr ent)
 {
     EntPtr self = i.Spawn(ent);
     self->f = NewFields();
