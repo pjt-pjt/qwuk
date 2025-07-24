@@ -13,6 +13,7 @@ public:
     void    Destroy();
 
     static const char* EntityValueStr(const Entity& entity, const char* key);
+    static int         EntityValueInt(const Entity& entity, const char* key, int* value);
     static int         EntityValueFloat(const Entity& entity, const char* key, float* value);
     static int         EntityValueVec3(const Entity& entity, const char* key, Vec3 value);
 

@@ -21,6 +21,7 @@ private:
     static EntPtr       SearchEntity(EntPtr from, const char* className, const char* key, const char* value);
 
     static const char*  EntityValueStr(EntPtr entity, const char* key);
+    static int          EntityValueInt(EntPtr entity, const char* key, int* value);
     static int          EntityValueFloat(EntPtr entity, const char* key, float* value);
     static int          EntityValueVec3(EntPtr entity, const char* key, float* value);
 

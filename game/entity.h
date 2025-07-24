@@ -41,6 +41,11 @@ typedef union Fields
         #define BUTTON_PRESSED  1
         int         buttonStatus;
     };
+    struct CounterFields
+    {
+        int         counter;
+        int         count;
+    };
 } Fields;
 
 typedef struct Entity

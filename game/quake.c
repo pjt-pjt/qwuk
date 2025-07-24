@@ -15,6 +15,7 @@ int     Init(Interface* interface, Variables* variables)
     i.SearchEntity = interface->SearchEntity;
 
     i.EntityValueStr = interface->EntityValueStr;
+    i.EntityValueInt = interface->EntityValueInt;
     i.EntityValueFloat = interface->EntityValueFloat;
     i.EntityValueVec3 = interface->EntityValueVec3;
 

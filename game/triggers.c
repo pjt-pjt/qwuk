@@ -3,6 +3,42 @@
 #include "entities.h"
 
 
+//---- TriggerTeleport ---------------------------------------------------------
+
+void    UseCounter(EntPtr self, EntPtr other)
+{
+    UNUSED(other);
+    ++self->f->counter;
+    if (self->f->counter == self->f->count) {
+        // Use targets
+        const char* target = i.EntityValueStr(self, "target");
+        if (target != NULL) {
+            EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
+            while (ent != NULL) {
+                if (ent->Use != NULL) {
+                    ent->Use(ent, self);
+                }
+                ent = i.SearchEntity(ent, NULL, "targetname", target);
+            }
+        }
+    }
+}
+
+void    TriggerCounter(EntPtr ent)
+{
+    EntPtr self = i.Spawn(ent);
+    self->f = NewFields();
+    self->f->counter = 0;
+    if (!i.EntityValueInt(self, "count", &self->f->count)) {
+        self->f->count = 2; // Default
+    }
+
+    self->Use = UseCounter;
+}
+
+
+//---- TriggerTeleport ---------------------------------------------------------
+
 void    TouchTeleport(EntPtr self, EntPtr other)
 {
     const char* target = i.EntityValueStr(self, "target");
@@ -28,6 +64,8 @@ void    TriggerTeleport(EntPtr ent)
     self->Touch = TouchTeleport;
 }
 
+
+//---- TriggerChangelevel ------------------------------------------------------
 
 void    TouchChangelevel(EntPtr self, EntPtr other)
 {

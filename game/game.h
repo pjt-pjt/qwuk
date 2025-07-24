@@ -22,6 +22,7 @@ typedef struct Interface
     EntPtr      (*SearchEntity)(EntPtr from, const char* className, const char* key, const char* value);
 
     const char* (*EntityValueStr)(EntPtr entity, const char* key);
+    int         (*EntityValueInt)(EntPtr entity, const char* key, int* value);
     int         (*EntityValueFloat)(EntPtr entity, const char* key, float* value);
     int         (*EntityValueVec3)(EntPtr entity, const char* key, Vec3 value);
 

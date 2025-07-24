@@ -161,6 +161,16 @@ const char* Entities::EntityValueStr(const Entity& entity, const char* key)
     return nullptr;
 }
 
+int     Entities::EntityValueInt(const Entity& entity, const char* key, int* value)
+{
+    const char*   val = EntityValueStr(entity, key);
+    if (val == nullptr) {
+        return 0;
+    }
+    *value = std::atoi(val);
+    return 1;
+}
+
 int     Entities::EntityValueFloat(const Entity& entity, const char* key, float* value)
 {
     const char*   val = EntityValueStr(entity, key);
