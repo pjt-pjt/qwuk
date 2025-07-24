@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game.h"
+#include "entity.h"
 #include <ltdl.h>
 
 
@@ -15,12 +16,13 @@ public:
     InitProc            Init = nullptr;
     RunProc             Run = nullptr;
     ChangeMapProc       ChangeMap = nullptr;
-    TouchProc           Touch = nullptr;
-    UseProc             Use = nullptr;
-    ThinkProc           Think = nullptr;
-    BlockedProc         Blocked = nullptr;
     DestroyProc         Destroy = nullptr;
     GetVariablesProc    GetVariables = nullptr;
+
+    void    Touch(EntPtr entity, EntPtr other);
+    void    Use(EntPtr entity, EntPtr other);
+    void    Think(EntPtr entity);
+    void    Blocked(EntPtr entity, EntPtr by);
 
 private:
     bool    SetFunctions();

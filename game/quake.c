@@ -50,34 +50,6 @@ void    ChangeMap(void)
     }
 }
 
-void    Touch(EntPtr entity, EntPtr other)
-{
-    if (entity->Touch != NULL) {
-        entity->Touch(entity, other);
-    }
-}
-
-void    Use(EntPtr entity, EntPtr other)
-{
-    if (entity->Use != NULL) {
-        entity->Use(entity, other);
-    }
-}
-
-void    Think(EntPtr entity)
-{
-    if (entity->Think != NULL) {
-        entity->Think(entity);
-    }
-}
-
-void    Blocked(EntPtr entity, EntPtr by)
-{
-    if (entity->Blocked != NULL) {
-        entity->Blocked(entity, by);
-    }
-}
-
 void    Destroy()
 {
 }

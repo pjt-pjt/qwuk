@@ -41,10 +41,6 @@ extern Interface i;
 typedef int         (*InitProc)(Interface* interface, Variables* variables);
 typedef void        (*RunProc)(const char* startMap);
 typedef void        (*ChangeMapProc)(void);
-typedef void        (*TouchProc)(EntPtr entity, EntPtr other);
-typedef void        (*UseProc)(EntPtr entity, EntPtr other);
-typedef void        (*ThinkProc)(EntPtr entity);
-typedef void        (*BlockedProc)(EntPtr entity, EntPtr by);
 typedef void        (*DestroyProc)(void);
 typedef Variables*  (*GetVariablesProc)(void);
 
