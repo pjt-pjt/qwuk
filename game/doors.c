@@ -71,17 +71,19 @@ void    LinkDoors(EntPtr self)
         return;
     }
     EntPtr prev = NULL;
-    EntPtr ent = i.SearchEntity(NULL, self->className, NULL, NULL);
-    while (ent != NULL) {
-        if (ent != self && Touching(self, ent)) {
-            ent->owner = self;
-            ent->link = prev;
-            ent->Use = UseDoor;
-            ent->sleep = -1;
-            ent->Think = NULL;
-            prev = ent;
+    if (i.EntityValueStr(self, "targetname") == NULL) {
+        EntPtr ent = i.SearchEntity(NULL, self->className, NULL, NULL);
+        while (ent != NULL) {
+            if (ent != self && i.EntityValueStr(ent, "targetname") == NULL && Touching(self, ent)) {
+                ent->owner = self;
+                ent->link = prev;
+                ent->Use = UseDoor;
+                ent->sleep = -1;
+                ent->Think = NULL;
+                prev = ent;
+            }
+            ent = i.SearchEntity(ent, self->className, NULL, NULL);
         }
-        ent = i.SearchEntity(ent, self->className, NULL, NULL);
     }
     self->owner = self;
     self->link = prev;
