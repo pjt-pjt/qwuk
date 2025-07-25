@@ -292,6 +292,23 @@ void    Quake::GUI()
         ImGui::Text("%s", player.onGround ? "On ground" : "In air");
     ImGui::End();
 
+    bool    open = true;
+    if (ImGui::Begin("Entity", &open)) {
+        if (playerMove.lookAtEnt == nullptr) {
+            ImGui::Text("None");
+        } else if (StrEq(playerMove.lookAtEnt->className, "worldspawn")) {
+            ImGui::Text("Worldspawn");
+        } else {
+            ImGui::Text(playerMove.lookAtEnt->className);
+            const Edict*  ed = playerMove.lookAtEnt->first;
+            while (ed != nullptr) {
+                ImGui::Text("%s\t%s", ed->key, ed->value);
+                ed = ed->next;
+            }
+        }
+    }
+    ImGui::End();
+
     if (status == Menu) {
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));

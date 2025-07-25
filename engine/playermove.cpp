@@ -467,7 +467,7 @@ void	PlayerMove::CategorizePosition (void)
     glm::vec3   end = origin + dir * 128.0f;
     Trace       trace = bsp.TraceLine(origin, end);
     if (trace.fraction < 1) {
-        lookAtEnt = (trace.entity != &bsp.actEntities[0]) ? trace.entity : nullptr;
+        lookAtEnt = trace.entity;
     } else {
         lookAtEnt = nullptr;
     }
