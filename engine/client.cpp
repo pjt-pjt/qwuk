@@ -287,20 +287,21 @@ void    Quake::GUI()
         ImGui::Text("Binds          %5u", stats.binds);
         ImGui::Text("Primitives     %5u", stats.primitives);
         ImGui::Separator();
-        ImGui::Text("Look at: %s", (playerMove.lookAtEnt != nullptr) ? playerMove.lookAtEnt->className : "");
-        ImGui::Text("Player: %6.2f %6.2f %6.2f", player.Position().x, player.Position().y, player.Position().z);
+        ImGui::Text("Look at:  %s", (bsp.lookAtEnt != nullptr) ? bsp.lookAtEnt->className : "");
+        ImGui::Text("Player:   %6.2f %6.2f %6.2f", player.Position().x, player.Position().y, player.Position().z);
+        ImGui::Text("Velocity: %6.2f %6.2f %6.2f", playerMove.Velocity().x, playerMove.Velocity().y, playerMove.Velocity().z);
         ImGui::Text("%s", player.onGround ? "On ground" : "In air");
     ImGui::End();
 
     bool    open = true;
     if (ImGui::Begin("Entity", &open)) {
-        if (playerMove.lookAtEnt == nullptr) {
+        if (bsp.lookAtEnt == nullptr) {
             ImGui::Text("None");
-        } else if (StrEq(playerMove.lookAtEnt->className, "worldspawn")) {
+        } else if (StrEq(bsp.lookAtEnt->className, "worldspawn")) {
             ImGui::Text("Worldspawn");
         } else {
-            ImGui::Text(playerMove.lookAtEnt->className);
-            const Edict*  ed = playerMove.lookAtEnt->first;
+            ImGui::Text(bsp.lookAtEnt->className);
+            const Edict*  ed = bsp.lookAtEnt->first;
             while (ed != nullptr) {
                 ImGui::Text("%s\t%s", ed->key, ed->value);
                 ed = ed->next;
@@ -428,6 +429,7 @@ void    Quake::MovePlayer(float elapsed)
             jump = true;
         }
     }
+
     player.SetYaw(player.Yaw() + yawDelta);
     player.SetPitch(player.Pitch() + pitchDelta);
     pitchDelta = yawDelta = 0;
@@ -449,10 +451,10 @@ void    Quake::MovePlayer(float elapsed)
         if (playerMove.useEnt != nullptr) {
             game.Use(playerMove.useEnt, player.entity);
         }
-        if (playerMove.numTouch > 0) {
+        if (bsp.numTouch > 0) {
             //TODO Not public members
-            for (int i = 0; i < playerMove.numTouch; ++i) {
-                game.Touch(playerMove.touchEnts[i], player.entity);
+            for (int i = 0; i < bsp.numTouch; ++i) {
+                game.Touch(bsp.touchEnts[i], player.entity);
             }
         }
     }

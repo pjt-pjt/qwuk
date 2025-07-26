@@ -17,7 +17,7 @@ void    PlayerMove::Use()
         if (useKey) {
             return;
         }
-        useEnt = lookAtEnt;
+        useEnt = bsp.lookAtEnt;
         useKey = true;
     } else {
         useKey = false;
@@ -31,7 +31,7 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
     glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
     glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
 
-	numTouch = 0;
+	bsp.numTouch = 0;
 	// if (pmove.spectator)
 	// {
 	// 	SpectatorMove ();
@@ -137,7 +137,7 @@ void	PlayerMove::FlyMove()
 
 		if (trace.startSolid || trace.allSolid) {
 			// Entity is trapped in another solid
-			velocity = {0,0,0};
+			velocity = {0, 0, 0};
 			return/*  3 */;
 		}
 		if (trace.fraction > 0) {
@@ -234,14 +234,14 @@ void	PlayerMove::GroundMove()
 	if (trace.fraction == 1) {
 		origin = trace.end;
 		return;
-	}
+    }
 
 	// Try sliding forward both on ground and up 16 pixels
 	// Take the move that goes farthest
 	glm::vec3	original = origin;
 	glm::vec3	originalVel = velocity;
 	// Slide move
-	FlyMove ();
+	FlyMove();
 
 	glm::vec3	down = origin;
 	glm::vec3	downVel = velocity;
@@ -467,9 +467,9 @@ void	PlayerMove::CategorizePosition (void)
     glm::vec3   end = origin + dir * 128.0f;
     Trace       trace = bsp.TraceLine(origin, end);
     if (trace.fraction < 1) {
-        lookAtEnt = trace.entity;
+        bsp.lookAtEnt = trace.entity;
     } else {
-        lookAtEnt = nullptr;
+        bsp.lookAtEnt = nullptr;
     }
 }
 
@@ -523,10 +523,5 @@ void    PlayerMove::TouchEnt(EntPtr entity)
         // Don't care for wolrdspawn
         return;
     }
-    for (int te = 0; te < numTouch; ++te) {
-        if (touchEnts[te] == entity) {
-            return;
-        }
-    }
-    touchEnts[numTouch++] = entity;
+    bsp.TouchEnt(entity);
 }

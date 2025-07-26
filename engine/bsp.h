@@ -168,6 +168,7 @@ public:
     Content     PointContent(const glm::vec3& point);
     Trace       PlayerMove(const glm::vec3& start, const glm::vec3& end);
     Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
+    void        TouchEnt(EntPtr entity);
 
     struct Leaf;
     struct Node
@@ -228,6 +229,11 @@ private:
 private:
     Entities                entities;
     std::vector<Entity>     actEntities;
+
+    int		                numTouch;
+    static constexpr int MAX_TOUCHENTS = 32;
+	EntPtr                  touchEnts[MAX_TOUCHENTS];
+    EntPtr                  lookAtEnt = nullptr;
 
     std::vector<Vertex>     vertices;
     std::vector<Face>       faces;

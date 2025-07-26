@@ -58,9 +58,5 @@ private:
     bool        useKey = false;
 public:
     EntPtr      onground = nullptr;
-    int		    numTouch;
-    static constexpr int MAX_TOUCHENTS = 32;
-	EntPtr      touchEnts[MAX_TOUCHENTS];
-    EntPtr      lookAtEnt = nullptr;
     EntPtr      useEnt = nullptr;
 };

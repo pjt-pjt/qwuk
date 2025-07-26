@@ -319,6 +319,16 @@ Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end)
     return TraceLine<0>(start, end);
 }
 
+void    BSP::TouchEnt(EntPtr entity)
+{
+    for (int te = 0; te < numTouch; ++te) {
+        if (touchEnts[te] == entity) {
+            return;
+        }
+    }
+    touchEnts[numTouch++] = entity;
+}
+
 bool    BSP::CreateEntities()
 {
     bool ok = entities.Init(bspFile.entities, bspFile.entitiesSize);
