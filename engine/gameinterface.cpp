@@ -176,7 +176,7 @@ void    GameInterface::SetOrigin(EntPtr entity, const Vec3 origin)
         } else {
             glm::mat4   mm(1);
             model.transform = glm::translate(mm, vOrigin);
-            if (game->bsp.TracePoint(game->quake.player.Position()).content != EMPTY) {
+            if (game->bsp.TracePoint(game->quake.player.Position()) != EMPTY) {
                 set = false;
             }
         }

@@ -103,13 +103,6 @@ struct Trace
     bool        allSolid = false;
 };
 
-struct Content
-{
-    LeafType    content;
-    EntPtr      entity = nullptr;
-};
-
-
 struct Face
 {
     int     vertexIdx;
@@ -164,8 +157,8 @@ public:
     void        Draw(const glm::vec3& camera);
     void        EndDraw();
 
-    Content     TracePoint(const glm::vec3& point);
-    Content     PointContent(const glm::vec3& point);
+    LeafType    TracePoint(const glm::vec3& point);
+    LeafType    PointContent(const glm::vec3& point);
     Trace       PlayerMove(const glm::vec3& start, const glm::vec3& end);
     Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
     void        TouchEnt(EntPtr entity);
@@ -223,7 +216,7 @@ private:
         glm::mat4&                      transform;
         short                           firstNode;
     };
-    Content     TracePoint(const HullInfo& hull, short node, const glm::vec3& point);
+    LeafType    TracePoint(const HullInfo& hull, short node, const glm::vec3& point);
     bool        TraceLine(const HullInfo& hull, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 
 private:

@@ -215,9 +215,9 @@ void    BSP::EndDraw()
     stats.binds = graphics.GetBindsCount();
 }
 
-Content    BSP::TracePoint(const glm::vec3& point)
+LeafType    BSP::TracePoint(const glm::vec3& point)
 {
-    Content content;
+    LeafType leafType;
     for (auto& entity : actEntities) {
         if (entity.model != -1) {
             if (!config.showAll) {
@@ -241,21 +241,19 @@ Content    BSP::TracePoint(const glm::vec3& point)
                 }
             }
             HullInfo    hull = { hulls[1], models[entity.model].transform, models[entity.model].firstNode[1]};
-            content = TracePoint(hull, hull.firstNode, point);
-            if (content.content != EMPTY && &entity != &actEntities[0]) {
-                content.entity = &entity;
-                break;
+            leafType = TracePoint(hull, hull.firstNode, point);
+            if (leafType != EMPTY && &entity != &actEntities[0]) {
+                TouchEnt(&entity);
             }
         }
     }
 
-    return content;
+    return leafType;
 }
 
-Content     BSP::PointContent(const glm::vec3& point)
+LeafType    BSP::PointContent(const glm::vec3& point)
 {
-    Content content = TracePoint(point);
-    return content;
+    return TracePoint(point);
 }
 
 template<int hullIndex>
@@ -621,7 +619,7 @@ void    BSP::Draw(const Leaf& leaf)
     }
 }
 
-Content    BSP::TracePoint(const HullInfo& hull, short node, const glm::vec3& point)
+LeafType    BSP::TracePoint(const HullInfo& hull, short node, const glm::vec3& point)
 {
     while (node >= 0) {
         const ClipNode& cnode = hull.hull[node];
@@ -633,9 +631,7 @@ Content    BSP::TracePoint(const HullInfo& hull, short node, const glm::vec3& po
             node = cnode.back;
         }
     }
-    Content content;
-    content.content = LeafType(node);
-    return content;
+    return LeafType(node);
 }
 
 bool    BSP::TraceLine(const HullInfo& hull, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace)
@@ -695,7 +691,7 @@ bool    BSP::TraceLine(const HullInfo& hull, short node, const glm::vec3& start,
         return false;
     }
 
-    if (TracePoint(hull, back, mid).content == EMPTY) {
+    if (TracePoint(hull, back, mid) == EMPTY) {
         return TraceLine(hull, back, mid, end, fmid, fend, trace);
     }
 
@@ -709,7 +705,7 @@ bool    BSP::TraceLine(const HullInfo& hull, short node, const glm::vec3& start,
         trace.plane = BSPPlane(-plane.Normal(), -plane.Distance(), plane.GetOrientation());
     }
 
-	while (TracePoint(hull, hull.firstNode, mid).content == SOLID) {
+	while (TracePoint(hull, hull.firstNode, mid) == SOLID) {
         // Shouldn't really happen, but does occasionally
 		frac -= 0.1;
 		if (frac < 0) {
