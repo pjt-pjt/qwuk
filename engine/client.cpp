@@ -173,6 +173,8 @@ void    Quake::NextFrame(uint64_t elapsed)
             config.noclip = !config.noclip;
         } else if (lastKey == SDL_SCANCODE_F) {
             player.flying = !player.flying;
+        } else if (lastKey == SDL_SCANCODE_I) {
+            config.showEntityInfo = !config.showEntityInfo;
         }
         lastKey = SDL_SCANCODE_UNKNOWN;
     }
@@ -293,22 +295,23 @@ void    Quake::GUI()
         ImGui::Text("%s", player.onGround ? "On ground" : "In air");
     ImGui::End();
 
-    bool    open = true;
-    if (ImGui::Begin("Entity", &open)) {
-        if (bsp.lookAtEnt == nullptr) {
-            ImGui::Text("None");
-        } else if (StrEq(bsp.lookAtEnt->className, "worldspawn")) {
-            ImGui::Text("Worldspawn");
-        } else {
-            ImGui::Text(bsp.lookAtEnt->className);
-            const Edict*  ed = bsp.lookAtEnt->first;
-            while (ed != nullptr) {
-                ImGui::Text("%s\t%s", ed->key, ed->value);
-                ed = ed->next;
+    if (config.showEntityInfo) {
+        if (ImGui::Begin("Entity Info", &config.showEntityInfo)) {
+            if (bsp.lookAtEnt == nullptr) {
+                ImGui::Text("None");
+            } else if (StrEq(bsp.lookAtEnt->className, "worldspawn")) {
+                ImGui::Text("Worldspawn");
+            } else {
+                ImGui::Text(bsp.lookAtEnt->className);
+                const Edict*  ed = bsp.lookAtEnt->first;
+                while (ed != nullptr) {
+                    ImGui::Text("%s\t%s", ed->key, ed->value);
+                    ed = ed->next;
+                }
             }
         }
+        ImGui::End();
     }
-    ImGui::End();
 
     if (status == Menu) {
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();

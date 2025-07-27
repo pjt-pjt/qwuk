@@ -30,6 +30,7 @@ struct Config
     bool    showFuncEpisodeGate = false;
     bool    showFuncBossGate = true;
     bool    smoothTextures = false;
+    bool    showEntityInfo = false;
     bool    noclip = false;
 };
 
