@@ -3,24 +3,43 @@
 #include "entities.h"
 
 
-//---- TriggerTeleport ---------------------------------------------------------
+void    UseTargets(EntPtr self)
+{
+    const char* target = i.EntityValueStr(self, "target");
+    if (target != NULL) {
+        EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
+        while (ent != NULL) {
+            if (ent != self && ent->Use != NULL) {
+                ent->Use(ent, self);
+            }
+            ent = i.SearchEntity(ent, NULL, "targetname", target);
+        }
+    }
+}
 
+
+//---- TriggerCounter ----------------------------------------------------------
+void    TouchTriggerOnce(EntPtr self, EntPtr other)
+{
+    UNUSED(other);
+    UseTargets(self);
+    self->Touch = NULL;
+}
+
+void    TriggerOnce(EntPtr ent)
+{
+    EntPtr self = i.Spawn(ent);
+    self->Touch = TouchTriggerOnce;
+}
+
+//---- TriggerCounter ----------------------------------------------------------
 void    UseCounter(EntPtr self, EntPtr other)
 {
     UNUSED(other);
     ++self->f->counter;
     if (self->f->counter == self->f->count) {
         // Use targets
-        const char* target = i.EntityValueStr(self, "target");
-        if (target != NULL) {
-            EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
-            while (ent != NULL) {
-                if (ent->Use != NULL) {
-                    ent->Use(ent, self);
-                }
-                ent = i.SearchEntity(ent, NULL, "targetname", target);
-            }
-        }
+        UseTargets(self);
     }
 }
 
@@ -38,7 +57,6 @@ void    TriggerCounter(EntPtr ent)
 
 
 //---- TriggerTeleport ---------------------------------------------------------
-
 void    TouchTeleport(EntPtr self, EntPtr other)
 {
     const char* target = i.EntityValueStr(self, "target");
@@ -66,7 +84,6 @@ void    TriggerTeleport(EntPtr ent)
 
 
 //---- TriggerChangelevel ------------------------------------------------------
-
 void    TouchChangelevel(EntPtr self, EntPtr other)
 {
     UNUSED(other);

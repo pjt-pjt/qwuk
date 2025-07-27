@@ -10,6 +10,7 @@ int     numFields;
 
 
 void    InfoPlayerStart(EntPtr ent);
+void    TriggerOnce(EntPtr ent);
 void    TriggerCounter(EntPtr ent);
 void    TriggerTeleport(EntPtr ent);
 void    TriggerChangelevel(EntPtr ent);
@@ -36,6 +37,7 @@ void    Construct(EntPtr entity)
         "worldspawn",
         "info_player_start",
         "info_player_start2",
+        "trigger_once",
         "trigger_counter",
         "trigger_teleport",
         "trigger_changelevel",
@@ -48,6 +50,7 @@ void    Construct(EntPtr entity)
         Spawn,
         InfoPlayerStart,
         InfoPlayerStart,
+        TriggerOnce,
         TriggerCounter,
         TriggerTeleport,
         TriggerChangelevel,
