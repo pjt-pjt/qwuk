@@ -100,7 +100,6 @@ int     Touching(EntPtr ent1, EntPtr ent2)
     return 1;
 }
 
-
 void    Spawn(EntPtr entity)
 {
     i.Spawn(entity);
@@ -121,4 +120,19 @@ void    InfoPlayerStart(EntPtr ent)
     self->eyePos = 22;
     ++self->origin[2];
     i.SpawnPlayer(self);
+}
+
+
+void    UseTargets(EntPtr self)
+{
+    const char* target = i.EntityValueStr(self, "target");
+    if (target != NULL) {
+        EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
+        while (ent != NULL) {
+            if (ent != self && ent->Use != NULL) {
+                ent->Use(ent, self);
+            }
+            ent = i.SearchEntity(ent, NULL, "targetname", target);
+        }
+    }
 }

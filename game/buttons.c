@@ -29,16 +29,7 @@ void    RunButton(EntPtr self)
                 self->Think = NULL;
             }
             // Use targets
-            const char* target = i.EntityValueStr(self, "target");
-            if (target != NULL) {
-                EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
-                while (ent != NULL) {
-                    if (ent->Use != NULL) {
-                        ent->Use(ent, self);
-                    }
-                    ent = i.SearchEntity(ent, NULL, "targetname", target);
-                }
-            }
+            UseTargets(self);
         } else {
             self->Think = NULL;
             if (self->f->wait != -1) {

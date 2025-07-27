@@ -3,21 +3,6 @@
 #include "entities.h"
 
 
-void    UseTargets(EntPtr self)
-{
-    const char* target = i.EntityValueStr(self, "target");
-    if (target != NULL) {
-        EntPtr  ent = i.SearchEntity(NULL, NULL, "targetname", target);
-        while (ent != NULL) {
-            if (ent != self && ent->Use != NULL) {
-                ent->Use(ent, self);
-            }
-            ent = i.SearchEntity(ent, NULL, "targetname", target);
-        }
-    }
-}
-
-
 //---- TriggerCounter ----------------------------------------------------------
 void    TouchTriggerOnce(EntPtr self, EntPtr other)
 {
