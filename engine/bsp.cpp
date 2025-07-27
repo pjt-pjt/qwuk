@@ -226,14 +226,14 @@ LeafType    BSP::PointContent(const glm::vec3& point)
 }
 
 template<int hullIndex>
-Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end)
+Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, bool triggers)
 {
     Trace total;
     total.end = end;
     // Draw models for entities, except for triggers
     for (auto& entity : actEntities) {
         if (entity.model != -1) {
-            if (StrPrefix(entity.className, "trigger")) {
+            if (!triggers && StrPrefix(entity.className, "trigger")) {
                 continue;
             }
             if (!config.showAll) {
@@ -283,7 +283,7 @@ Trace    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end)
 
 Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end)
 {
-    return TraceLine<0>(start, end);
+    return TraceLine<0>(start, end, config.showTriggers);
 }
 
 void    BSP::TouchEnt(EntPtr entity)

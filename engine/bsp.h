@@ -209,7 +209,7 @@ private:
     void        Draw(const Leaf& leaf);
 
     template<int hullIndex>
-    Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
+    Trace       TraceLine(const glm::vec3& start, const glm::vec3& end, bool triggers = false);
     struct HullInfo
     {
         const std::vector<ClipNode>&    hull;
