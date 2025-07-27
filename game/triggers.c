@@ -3,6 +3,20 @@
 #include "entities.h"
 
 
+//---- TriggerOnlyRegistered ---------------------------------------------------
+void    TouchTriggerOnlyRegistered(EntPtr self, EntPtr other)
+{
+    UNUSED(other);
+    UseTargets(self);
+    self->Touch = NULL;
+}
+
+void    TriggerOnlyRegistered(EntPtr ent)
+{
+    EntPtr self = i.Spawn(ent);
+    self->Touch = TouchTriggerOnlyRegistered;
+}
+
 //---- TriggerCounter ----------------------------------------------------------
 void    TouchTriggerOnce(EntPtr self, EntPtr other)
 {

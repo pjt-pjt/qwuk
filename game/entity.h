@@ -66,6 +66,7 @@ typedef struct Entity
     Fields*         f;
     int             flags;
     float           sleep;
+    int             playerUse;
     struct Entity*  owner;
     struct Entity*  link;
 } Entity;

@@ -14,6 +14,7 @@ void    TriggerOnce(EntPtr ent);
 void    TriggerCounter(EntPtr ent);
 void    TriggerTeleport(EntPtr ent);
 void    TriggerChangelevel(EntPtr ent);
+void    TriggerOnlyRegistered(EntPtr ent);
 void    FuncDoor(EntPtr ent);
 void    FuncButton(EntPtr ent);
 
@@ -54,7 +55,7 @@ void    Construct(EntPtr entity)
         TriggerCounter,
         TriggerTeleport,
         TriggerChangelevel,
-        NULL,
+        TriggerOnlyRegistered,
         FuncDoor,
         FuncButton
     };

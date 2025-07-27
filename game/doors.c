@@ -64,31 +64,55 @@ void    BlockedDoor(EntPtr self, EntPtr by)
     self->Think = RunDoor;
 }
 
+int     CanLink(EntPtr self)
+{
+    const char* target = i.EntityValueStr(self, "targetname");
+    if (target == NULL) {
+        return 1;
+    }
+    EntPtr  targetter = i.SearchEntity(NULL, "trigger_onlyregistered", "target", target);
+    if (targetter == NULL) {
+        return 0;
+    }
+    targetter->Touch = NULL;
+    return 1;
+}
+
 void    LinkDoors(EntPtr self)
 {
     if (self->owner != NULL) {
         // Already linked
         return;
     }
-    EntPtr prev = NULL;
-    if (i.EntityValueStr(self, "targetname") == NULL) {
-        EntPtr ent = i.SearchEntity(NULL, self->className, NULL, NULL);
-        while (ent != NULL) {
-            if (ent != self && i.EntityValueStr(ent, "targetname") == NULL && Touching(self, ent)) {
+    int     canLink = CanLink(self);
+    EntPtr  prev = NULL;
+    if (canLink) {
+        EntPtr next = i.SearchEntity(NULL, self->className, NULL, NULL);
+        while (next != NULL) {
+            EntPtr ent = next;
+            next = i.SearchEntity(next, self->className, NULL, NULL);
+            if (ent == self) {
+                continue;
+            }
+            if (!CanLink(ent)) {
+                continue;
+            }
+            if (Touching(self, ent)) {
                 ent->owner = self;
                 ent->link = prev;
                 ent->Use = UseDoor;
                 ent->sleep = -1;
+                ent->playerUse = 1;
                 ent->Think = NULL;
                 prev = ent;
             }
-            ent = i.SearchEntity(ent, self->className, NULL, NULL);
         }
     }
     self->owner = self;
     self->link = prev;
     self->Use = UseDoor;
     self->sleep = -1;
+    self->playerUse = canLink;
     self->Think = NULL;
 }
 

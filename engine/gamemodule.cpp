@@ -38,7 +38,7 @@ void    GameModule::Touch(EntPtr entity, EntPtr other)
 
 void    GameModule::Use(EntPtr entity, EntPtr other)
 {
-    if (entity->Use != NULL && interface.EntityValueStr(entity, "targetname") == NULL) {
+    if (entity->Use != NULL && entity->playerUse) {
         entity->Use(entity, other);
     }
 }

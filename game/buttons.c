@@ -89,5 +89,6 @@ void    FuncButton(EntPtr ent)
         wait = 1;
     }
     self->f->wait = wait;
+    self->playerUse = 1;
     self->Use = UseButton;
 }
