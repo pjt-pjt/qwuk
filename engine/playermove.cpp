@@ -459,7 +459,7 @@ void	PlayerMove::CategorizePosition (void)
 	// 			waterlevel = 3;
 	// 	}
 	// }
-    bsp.PointContent(point);
+    bsp.PlayerTouchEnts(point);
 
     // Look at entity
     glm::vec3   origin = player.EyePosition();
@@ -511,7 +511,7 @@ Trace	PlayerMove::MovePlayer(const glm::vec3& start, const glm::vec3& end)
 
 bool	PlayerMove::TestPlayerPosition(const glm::vec3& pos)
 {
-	return bsp.TracePoint(pos) != SOLID;
+	return bsp.PlayerTouchEnts(pos) != SOLID;
 }
 
 void    PlayerMove::TouchEnt(EntPtr entity)

@@ -157,7 +157,7 @@ public:
     void        Draw(const glm::vec3& camera);
     void        EndDraw();
 
-    LeafType    TracePoint(const glm::vec3& point);
+    LeafType    PlayerTouchEnts(const glm::vec3& point);
     LeafType    PointContent(const glm::vec3& point);
     Trace       PlayerMove(const glm::vec3& start, const glm::vec3& end);
     Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
@@ -216,6 +216,8 @@ private:
         glm::mat4&                      transform;
         short                           firstNode;
     };
+    template<int hullIndex>
+    LeafType    TracePoint(const glm::vec3& point, bool checkTouchEnts);
     LeafType    TracePoint(const HullInfo& hull, short node, const glm::vec3& point);
     bool        TraceLine(const HullInfo& hull, short node, const glm::vec3& start, const glm::vec3& end, float fstart, float fend, Trace& trace);
 

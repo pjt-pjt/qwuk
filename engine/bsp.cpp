@@ -215,45 +215,14 @@ void    BSP::EndDraw()
     stats.binds = graphics.GetBindsCount();
 }
 
-LeafType    BSP::TracePoint(const glm::vec3& point)
+LeafType    BSP::PlayerTouchEnts(const glm::vec3& point)
 {
-    LeafType leafType;
-    for (auto& entity : actEntities) {
-        if (entity.model != -1) {
-            if (!config.showAll) {
-                if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
-                    continue;
-                }
-                if (!config.showFuncPlats && StrPrefix(entity.className, "func_plat")) {
-                    continue;
-                }
-                if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
-                    continue;
-                }
-                if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
-                    continue;
-                }
-                if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
-                    continue;
-                }
-                if (StrPrefix(entity.className, "func_illusionary")) {
-                    continue;
-                }
-            }
-            HullInfo    hull = { hulls[1], models[entity.model].transform, models[entity.model].firstNode[1]};
-            leafType = TracePoint(hull, hull.firstNode, point);
-            if (leafType != EMPTY && &entity != &actEntities[0]) {
-                TouchEnt(&entity);
-            }
-        }
-    }
-
-    return leafType;
+    return TracePoint<1>(point, true);
 }
 
 LeafType    BSP::PointContent(const glm::vec3& point)
 {
-    return TracePoint(point);
+    return TracePoint<0>(point, false);
 }
 
 template<int hullIndex>
@@ -617,6 +586,43 @@ void    BSP::Draw(const Leaf& leaf)
         graphics.DrawTrangles(Graphics::TrinangleFan, face.vertexIdx, face.numVertices);
         ++stats.primitives;
     }
+}
+
+template<int hullIndex>
+LeafType    BSP::TracePoint(const glm::vec3& point, bool checkTouchEnts)
+{
+    LeafType leafType;
+    for (auto& entity : actEntities) {
+        if (entity.model != -1) {
+            if (!config.showAll) {
+                if (!config.showFuncDoors && StrPrefix(entity.className, "func_door")) {
+                    continue;
+                }
+                if (!config.showFuncPlats && StrPrefix(entity.className, "func_plat")) {
+                    continue;
+                }
+                if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
+                    continue;
+                }
+                if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
+                    continue;
+                }
+                if (!config.showFuncBossGate && StrPrefix(entity.className, "func_bossgate")) {
+                    continue;
+                }
+                if (StrPrefix(entity.className, "func_illusionary")) {
+                    continue;
+                }
+            }
+            HullInfo    hull = { hulls[hullIndex], models[entity.model].transform, models[entity.model].firstNode[hullIndex]};
+            leafType = TracePoint(hull, hull.firstNode, point);
+            if (checkTouchEnts && leafType != EMPTY && &entity != &actEntities[0]) {
+                TouchEnt(&entity);
+            }
+        }
+    }
+
+    return leafType;
 }
 
 LeafType    BSP::TracePoint(const HullInfo& hull, short node, const glm::vec3& point)
