@@ -42,11 +42,13 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 	// Set onground, watertype, and waterlevel
 	CategorizePosition ();
 
-	// if (waterlevel == 2)
-	// 	CheckWaterJump ();
+	if (waterlevel == 2) {
+		CheckWaterJump ();
+    }
 
-	// if (pmove.velocity[2] < 0)
-	// 	pmove.waterjumptime = 0;
+	if (velocity[2] < 0) {
+		waterjumptime = 0;
+    }
 
 	if (jumpKeyDown)
 		Jump();
@@ -54,13 +56,13 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 		jumpKey = false;
 
 	Friction ();
-	/* if (waterlevel >= 2)
-		PM_WaterMove ();
-	else */
+	// if (waterlevel >= 2)
+	// 	WaterMove(wishVelocity);
+	// else
 		AirMove (wishVelocity);
 
 	// Set onground, watertype, and waterlevel for final spot
-	CategorizePosition ();
+	 CategorizePosition ();
 }
 
 void    PlayerMove::Fly(const glm::vec3& velocityBase, float elapsed)
@@ -77,6 +79,8 @@ void    PlayerMove::Fly(const glm::vec3& velocityBase, float elapsed)
 	}
     velocity = wishVelocity;
     FlyMove();
+    CategorizePosition();
+
 }
 
 void    PlayerMove::SetVelocity(const glm::vec3& velocityBase)
@@ -89,6 +93,41 @@ void    PlayerMove::SetKeys(bool jumpKeyDown_, bool useKeyDown_)
     jumpKeyDown = jumpKeyDown_;
     useKeyDown = useKeyDown_;
 }
+
+void    PlayerMove::WaterMove(const glm::vec3& wishVelocity)
+{
+    // User intentions
+    glm::vec3   wishvel = wishVelocity;
+    float upmove = 0;
+	if (glm::length(wishVelocity) < SMALL_EPS && !upmove)
+		wishvel[2] -= 60;		// Drift towards bottom
+	else
+		wishvel[2] += upmove;
+
+	float       wishspeed = glm::length(wishvel);
+    glm::vec3   wishdir = glm::normalize(wishdir);
+
+	if (wishspeed > 320/* movevars.maxspeed */)
+	{
+		wishspeed = 320/* movevars.maxspeed */;
+	}
+	wishspeed *= 0.7;
+
+    // Water acceleration
+	Accelerate (OnGround, wishdir, wishspeed, 10/* movevars.wateraccelerate */);
+
+    // Assume it is a stair or a slope, so press down from stepheight above
+    glm::vec3   dest = origin + velocity * frameTime;
+    glm::vec3   start = dest;
+	start[2] += 18/* STEPSIZE */ + 1;
+	Trace trace = bsp.PlayerMove(start, dest);
+	if (!trace.startSolid && !trace.allSolid) {
+        // Walked up the step
+        origin = trace.end;
+		return;
+	}
+	FlyMove();
+}    
 
 void    PlayerMove::AirMove(const glm::vec3& wishVelocity)
 {
@@ -329,6 +368,43 @@ void    PlayerMove::Jump()
 	jumpKey = true;	// don't jump again until released
 }
 
+void    PlayerMove::CheckWaterJump()
+{
+	// vec3_t	spot;
+	// int		cont;
+	// vec3_t	flatforward;
+	// if (waterjumptime) {
+	// 	return;
+    // }
+
+	// // ZOID, don't hop out if we just jumped in
+	// if (velocity[2] < -180) {
+    //     // Only hop out if we are moving up
+	// 	return;
+    // }
+	// // See if near an edge
+    // glm::vec3   flatforward = 
+	// flatforward[0] = forward[0];
+	// flatforward[1] = forward[1];
+	// flatforward[2] = 0;
+	// VectorNormalize (flatforward);
+
+	// VectorMA (pmove.origin, 24, flatforward, spot);
+	// spot[2] += 8;
+	// cont = PM_PointContents (spot);
+	// if (cont != CONTENTS_SOLID)
+	// 	return;
+	// spot[2] += 24;
+	// cont = PM_PointContents (spot);
+	// if (cont != CONTENTS_EMPTY)
+	// 	return;
+	// // jump out of water
+	// VectorScale (flatforward, 50, pmove.velocity);
+	// pmove.velocity[2] = 310;
+	// pmove.waterjumptime = 2;	// safety net
+	// pmove.oldbuttons |= BUTTON_JUMP;	// don't jump again until released    
+}
+
 void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel)
 {
 	// if (pmove.dead)
@@ -427,7 +503,7 @@ void	PlayerMove::CategorizePosition (void)
 			onground = tr.entity;
 		}
 		if (onground != nullptr) {
-			//pmove.waterjumptime = 0;
+			waterjumptime = 0;
 			if (!tr.startSolid && !tr.allSolid) {
 				origin = tr.end;
 			}
@@ -438,27 +514,27 @@ void	PlayerMove::CategorizePosition (void)
 	}
 
 	// Get waterlevel
-	// waterlevel = 0;
-	// watertype = CONTENTS_EMPTY;
+	waterlevel = 0;
+	watertype = EMPTY;
 
-	// point[2] = pmove.origin[2] + player_mins[2] + 1;	
-	// cont = PM_PointContents (point);
+	point[2] = origin[2] + player.mins[2] + 1;	
+	LeafType cont = bsp.PointContent(point);
 
-	// if (cont <= CONTENTS_WATER)
-	// {
-	// 	watertype = cont;
-	// 	waterlevel = 1;
-	// 	point[2] = pmove.origin[2] + (player_mins[2] + player_maxs[2])*0.5;
-	// 	cont = PM_PointContents (point);
-	// 	if (cont <= CONTENTS_WATER)
-	// 	{
-	// 		waterlevel = 2;
-	// 		point[2] = pmove.origin[2] + 22;
-	// 		cont = PM_PointContents (point);
-	// 		if (cont <= CONTENTS_WATER)
-	// 			waterlevel = 3;
-	// 	}
-	// }
+	if (cont <= WATER) {
+		watertype = cont;
+		waterlevel = 1;
+		point[2] = origin[2] + (player.mins[2] + player.maxs[2]) / 2;
+		cont = bsp.PointContent(point);
+		if (cont <= WATER) {
+			waterlevel = 2;
+			point[2] = origin[2] + 22;
+			cont = bsp.PointContent(point);
+			if (cont <= WATER) {
+				waterlevel = 3;
+            }
+		}
+	}
+
     bsp.PlayerTouchEnts(point);
 
     // Look at entity

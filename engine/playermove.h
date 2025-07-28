@@ -28,10 +28,12 @@ public:
     }
 
 private:
+    void    WaterMove(const glm::vec3& wishVelocity);
     void    AirMove(const glm::vec3& wishVelocity);
     void    FlyMove();
     void    GroundMove();
     void    Jump();
+    void    CheckWaterJump();
 
     enum AccelerateMode { OnGround, InAir };
     void    Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel);
@@ -59,4 +61,7 @@ private:
 public:
     EntPtr      onground = nullptr;
     EntPtr      useEnt = nullptr;
+    int         waterlevel = 0;
+    float       waterjumptime = 0;;
+    LeafType    watertype = EMPTY;
 };
