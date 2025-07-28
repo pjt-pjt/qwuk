@@ -41,6 +41,13 @@ typedef union Fields
         #define BUTTON_PRESSED  1
         int         buttonStatus;
     };
+    struct PlatFields
+    {
+        struct Common commonPlat;
+        #define PLAT_TOP        0
+        #define PLAT_BOTTOM     1
+        int         platStatus;
+    };
     struct CounterFields
     {
         int         counter;

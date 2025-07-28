@@ -28,7 +28,7 @@ list(TRANSFORM  BACKEND_SRC PREPEND "${BACKEND_DIR}/")
 list(TRANSFORM  BACKEND_HDR PREPEND "${BACKEND_DIR}/")
 
 set(GAME_HDR game.h entity.h tools.h)
-set(GAME_SRC quake.c entities.c doors.c buttons.c triggers.c entities.h)
+set(GAME_SRC quake.c entities.c doors.c buttons.c plats.c triggers.c entities.h)
 list(TRANSFORM GAME_HDR PREPEND "${GAME_DIR}/")
 list(TRANSFORM GAME_SRC PREPEND "${GAME_DIR}/")
 

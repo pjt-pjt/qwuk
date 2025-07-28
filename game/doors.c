@@ -59,6 +59,9 @@ void    BlockedDoor(EntPtr self, EntPtr by)
     if (self->f->doorStatus == DOOR_CLOSED) {
         return;
     }
+    if (self->f->wait == -1) {
+        return;
+    }
     self->f->doorStatus = !self->f->doorStatus;
     self->sleep = .5;
     self->Think = RunDoor;
