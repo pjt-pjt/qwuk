@@ -181,6 +181,9 @@ void    BSP::Draw(const glm::vec3& camera)
                 if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
                     continue;
                 }
+                if (!config.showFuncTrains && StrPrefix(entity.className, "func_train")) {
+                    continue;
+                }
                 if (!config.showFuncIllusionary && StrPrefix(entity.className, "func_illusionary")) {
                     continue;
                 }
@@ -244,6 +247,9 @@ Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end, bool trigg
                     continue;
                 }
                 if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
+                    continue;
+                }
+                if (!config.showFuncTrains && StrPrefix(entity.className, "func_train")) {
                     continue;
                 }
                 if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {
@@ -602,6 +608,9 @@ LeafType    BSP::TracePoint(const glm::vec3& point, bool checkTouchEnts)
                     continue;
                 }
                 if (!config.showFuncWalls && StrPrefix(entity.className, "func_wall")) {
+                    continue;
+                }
+                if (!config.showFuncTrains && StrPrefix(entity.className, "func_train")) {
                     continue;
                 }
                 if (!config.showFuncEpisodeGate && StrPrefix(entity.className, "func_episodegate")) {

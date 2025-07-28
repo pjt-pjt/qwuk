@@ -139,12 +139,12 @@ void    FuncDoor(EntPtr ent)
         self->f->direction[2] = -1;
     }
     float lip = 8;
-    if (ent->flags == 1) {
+    if ((ent->flags & 1) == 1) {
         lip = 0; //TODO Hack for "elevator" or "slab" doors that start "open"
     }
     float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
-    if (ent->flags == 1) {
+    if ((ent->flags & 1) == 1) {
         i.SetOrigin(self, self->f->pos2);
         self->f->doorStatus = DOOR_OPEN;
     } else {

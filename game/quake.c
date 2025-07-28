@@ -45,7 +45,9 @@ void    ChangeMap(void)
     ResetFields();
     EntPtr entity = i.EnumerateEntites(NULL);
     while (entity != NULL) {
-        Construct(entity);
+        if ((entity->flags & (1024 | 512 | 256)) == 0) {
+            Construct(entity);
+        }
         entity = i.EnumerateEntites(entity);
     }
 }
