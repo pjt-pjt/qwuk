@@ -3,6 +3,8 @@
 #include "entities.h"
 
 
+//---- FuncDoor ----------------------------------------------------------------
+
 void    UseDoor(EntPtr self, EntPtr other);
 
 void    RunDoor(EntPtr self)
@@ -163,4 +165,107 @@ void    FuncDoor(EntPtr ent)
     }
     self->f->wait = wait;
     self->Blocked = BlockedDoor;
+}
+
+
+//---- FuncDoorSecret ----------------------------------------------------------
+void    UseDoorSecret(EntPtr self, EntPtr other);
+
+void    RunDoorSecret(EntPtr self)
+{
+    Vec3Ref target;
+    Vec3    direction;
+    if (self->f->doorStatus == DOOR_CLOSED) {
+        target = self->f->pos2;
+        Vec3Copy(direction, self->f->direction);
+    } else {
+        target = self->f->pos1;
+        Vec3Sub(direction, Origin_Vec3, self->f->direction);
+    }
+    Vec3    velocity;
+    Vec3Mul(velocity, direction, self->f->speed * globals->frameTime);
+    if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
+        i.SetOrigin(self, target);
+        self->f->doorStatus = !self->f->doorStatus;
+        self->sleep = -1;
+        self->Think = NULL;
+        if (self->f->doorStatus == DOOR_OPEN) {
+            if ((self->flags & 1) != 1) {
+                self->sleep = self->f->wait;
+                self->Think = RunDoorSecret;
+            }
+        } else {
+            //if (self->f->wait != -1) {
+                self->Use = UseDoorSecret;
+            //}
+        }
+        return;
+    }
+    Vec3    origin;
+    Vec3Add(origin, self->origin, velocity);
+    i.SetOrigin(self, origin);
+    self->sleep = 0;
+}
+
+void    UseDoorSecret(EntPtr self, EntPtr other)
+{
+    UNUSED(other);
+    EntPtr  ent = self->owner;
+    while (ent != NULL) {
+        ent->Use = NULL;
+        ent->sleep = 0;
+        ent->Think = RunDoorSecret;
+        ent = ent->link;
+    }
+}
+
+void    FuncDoorSecret(EntPtr ent)
+{
+    EntPtr self = i.Spawn(ent);
+    self->f = NewFields();
+    Vec3Sub(self->f->size, self->maxs, self->mins);
+    Vec3Copy(self->f->pos1, self->origin);
+    // if (self->angle == 0) {
+    //     self->f->direction[0] =  1;
+    // } else if (self->angle == 180) {
+    //     self->f->direction[0] = -1;
+    // } else if (self->angle == 90) {
+    //     self->f->direction[1] =  1;
+    // } else if (self->angle == 270) {
+    //     self->f->direction[1] = -1;
+    // } else if (self->angle == -1) {
+    //     self->f->direction[2] =  1;
+    // } else if (self->angle == -2) {
+    //     self->f->direction[2] = -1;
+    // }
+    self->f->direction[2] =  1; //TODO
+
+    float lip = 8;
+    // if ((ent->flags & 1) == 1) {
+    //     lip = 0; //TODO Hack for "elevator" or "slab" doors that start "open"
+    // }
+    float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
+    Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
+    // if ((ent->flags & 1) == 1) {
+    //     i.SetOrigin(self, self->f->pos2);
+    //     self->f->doorStatus = DOOR_OPEN;
+    // } else {
+        self->f->doorStatus = DOOR_CLOSED;
+    // }
+    float speed;
+    if (!i.EntityValueFloat(self, "speed", &speed)) {
+        speed = 100;
+    }
+    self->f->speed = speed;
+    float wait;
+    if (!i.EntityValueFloat(self, "wait", &wait)) {
+        wait = 3;
+    }
+    self->f->wait = wait;
+    //TODO self->Blocked = BlockedDoorSecret;
+    if (i.EntityValueStr(self, "targetname") == NULL || (self->flags & 16) != 0) {
+        self->playerUse = 1;
+    }
+    self->owner = self;
+    self->Use = UseDoorSecret;
 }

@@ -16,6 +16,7 @@ void    TriggerTeleport(EntPtr ent);
 void    TriggerChangelevel(EntPtr ent);
 void    TriggerOnlyRegistered(EntPtr ent);
 void    FuncDoor(EntPtr ent);
+void    FuncDoorSecret(EntPtr ent);
 void    FuncButton(EntPtr ent);
 void    FuncPlat(EntPtr ent);
 
@@ -45,6 +46,7 @@ void    Construct(EntPtr entity)
         "trigger_changelevel",
         "trigger_onlyregistered",
         "func_door",
+        "func_door_secret",
         "func_button",
         "func_plat",
         NULL
@@ -59,6 +61,7 @@ void    Construct(EntPtr entity)
         TriggerChangelevel,
         TriggerOnlyRegistered,
         FuncDoor,
+        FuncDoorSecret,
         FuncButton,
         FuncPlat
     };
