@@ -40,6 +40,15 @@ void    RunPlat(EntPtr self)
     self->sleep = 0;
 }
 
+void    BlockedPlat(EntPtr self, EntPtr by)
+{
+    UNUSED(by);
+    self->f->platStatus = !self->f->platStatus;
+    self->sleep = .5;
+    self->Think = RunPlat;
+}
+
+
 void    UsePlat(EntPtr self, EntPtr other)
 {
     UNUSED(other);
@@ -84,4 +93,5 @@ void    FuncPlat(EntPtr ent)
         self->f->platStatus = PLAT_BOTTOM;
         self->Touch = TouchPlat;
     }
+    self->Blocked = BlockedPlat;
 }
