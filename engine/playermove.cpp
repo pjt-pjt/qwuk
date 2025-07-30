@@ -235,7 +235,6 @@ void	PlayerMove::FlyMove()
 		} else {
 			// Go along the crease
 			if (numplanes != 2) {
-//				Con_Printf ("clip velocity, numplanes == %i\n",numplanes);
 				velocity = {0, 0, 0};
 				break;
 			}
@@ -374,9 +373,6 @@ void    PlayerMove::Jump()
 
 void    PlayerMove::CheckWaterJump()
 {
-	// vec3_t	spot;
-	// int		cont;
-	// vec3_t	flatforward;
 	if (waterjumptime > 0) {
 		return;
     }
