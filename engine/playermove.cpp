@@ -21,6 +21,9 @@ void    PlayerMove::NextFrame(const glm::vec3& velocityBase_, bool jumpKeyDown_,
     wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
     forward = {velocityBase.x, 0, 0};
     forward = glm::vec3(mat * glm::vec4(forward, 0));
+
+    bsp.numTouch = 0;
+    bsp.lookAtEnt = nullptr;
 }
 
 void    PlayerMove::Use()
@@ -41,7 +44,6 @@ void    PlayerMove::Move()
 {
 	origin = player.Position();
 
-    bsp.numTouch = 0;
 	// if (pmove.spectator)
 	// {
 	// 	SpectatorMove ();
@@ -75,18 +77,21 @@ void    PlayerMove::Move()
 	 CategorizePosition ();
 }
 
-void    PlayerMove::Fly()
+void    PlayerMove::Fly(bool noclip)
 {
-    origin = player.Position();
-    float       wishSpeed = glm::length(wishVelocity);
-    glm::vec3   wishDir(0);
-	if (wishSpeed > SMALL_EPS) {
-		wishDir = glm::normalize(wishVelocity);
-	}
-    velocity = wishVelocity;
-    FlyMove();
-    CategorizePosition();
-
+    if (noclip) {
+        origin = player.Position() + wishVelocity * frameTime;
+    } else {
+        origin = player.Position();
+        float       wishSpeed = glm::length(wishVelocity);
+        glm::vec3   wishDir(0);
+        if (wishSpeed > SMALL_EPS) {
+            wishDir = glm::normalize(wishVelocity);
+        }
+        velocity = wishVelocity;
+        FlyMove();
+        CategorizePosition();
+    }
 }
 
 void    PlayerMove::SetVelocity(const glm::vec3& velocity_)

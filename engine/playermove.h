@@ -16,7 +16,7 @@ public:
     void    NextFrame(const glm::vec3& velocityBase, bool jumpKeyDown, bool useKeyDown, float elapsed);
     void    Use();
     void    Move();
-    void    Fly();
+    void    Fly(bool noclip);
     void    SetVelocity(const glm::vec3& velocity);
     const glm::vec3& Origin() const
     {

@@ -446,31 +446,20 @@ void    Quake::MovePlayer(float elapsed)
     pitchDelta = yawDelta = 0;
 
     playerMove.NextFrame(velocity, jump, keyMatrix[SDL_SCANCODE_E], elapsed);
-    if (config.noclip) {
-        if (glm::length(velocity) > SMALL_EPS) {
-            glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-            glm::vec3 end = player.Position() + glm::vec3(mat * glm::vec4(velocity, 0) * elapsed);
-            player.SetPosition(end); 
-        }
-    } else if (player.flying) {
-        playerMove.Fly();
-        playerMove.Use();
-        player.SetPosition(playerMove.Origin());
-        if (playerMove.useEnt != nullptr) {
-            game.Use(playerMove.useEnt, player.entity);
-        }
+    if (config.noclip || player.flying) {
+        playerMove.Fly(config.noclip);
     } else {
         playerMove.Move();
-        playerMove.Use();
-        player.SetPosition(playerMove.Origin());
-        if (playerMove.useEnt != nullptr) {
-            game.Use(playerMove.useEnt, player.entity);
-        }
-        if (bsp.numTouch > 0) {
-            //TODO Not public members
-            for (int i = 0; i < bsp.numTouch; ++i) {
-                game.Touch(bsp.touchEnts[i], player.entity);
-            }
+    }
+    playerMove.Use();
+    player.SetPosition(playerMove.Origin());
+    if (playerMove.useEnt != nullptr) {
+        game.Use(playerMove.useEnt, player.entity);
+    }
+    if (bsp.numTouch > 0) {
+        //TODO Not public members
+        for (int i = 0; i < bsp.numTouch; ++i) {
+            game.Touch(bsp.touchEnts[i], player.entity);
         }
     }
 }
