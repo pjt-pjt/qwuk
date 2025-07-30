@@ -11,6 +11,7 @@ int     numFields;
 
 void    InfoPlayerStart(EntPtr ent);
 void    TriggerOnce(EntPtr ent);
+void    TriggerMultiple(EntPtr ent);
 void    TriggerCounter(EntPtr ent);
 void    TriggerTeleport(EntPtr ent);
 void    TriggerChangelevel(EntPtr ent);
@@ -41,6 +42,7 @@ void    Construct(EntPtr entity)
         "info_player_start",
         "info_player_start2",
         "trigger_once",
+        "trigger_multiple",
         "trigger_counter",
         "trigger_teleport",
         "trigger_changelevel",
@@ -56,6 +58,7 @@ void    Construct(EntPtr entity)
         InfoPlayerStart,
         InfoPlayerStart,
         TriggerOnce,
+        TriggerMultiple,
         TriggerCounter,
         TriggerTeleport,
         TriggerChangelevel,

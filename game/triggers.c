@@ -17,7 +17,7 @@ void    TriggerOnlyRegistered(EntPtr ent)
     self->Touch = TouchTriggerOnlyRegistered;
 }
 
-//---- TriggerCounter ----------------------------------------------------------
+//---- TouchTriggerOnce --------------------------------------------------------
 void    TouchTriggerOnce(EntPtr self, EntPtr other)
 {
     UNUSED(other);
@@ -29,6 +29,54 @@ void    TriggerOnce(EntPtr ent)
 {
     EntPtr self = i.Spawn(ent);
     self->Touch = TouchTriggerOnce;
+}
+
+//---- TouchTriggerMultiple ----------------------------------------------------
+void    TouchTriggerMultiple(EntPtr self, EntPtr other);
+
+void    ResetTriggerMultiple(EntPtr self)
+{
+    if (self->playerUse) {
+        self->Use = TouchTriggerMultiple;
+    } else {
+        self->Touch = TouchTriggerMultiple;
+    }
+    self->Think = NULL;
+}
+
+void    RunTriggerMultiple(EntPtr self)
+{
+    UseTargets(self);
+    self->sleep = self->f->wait;
+    self->Think = ResetTriggerMultiple;
+}
+
+void    TouchTriggerMultiple(EntPtr self, EntPtr other)
+{
+    UNUSED(other);
+    self->Touch = NULL;
+    self->Use = NULL;
+    self->sleep = 0;
+    self->Think = RunTriggerMultiple;
+}
+
+void    TriggerMultiple(EntPtr ent)
+{
+    EntPtr self = i.Spawn(ent);
+    self->f = NewFields();
+    float health;
+    int   playerUse = i.EntityValueFloat(self, "health", &health);
+    self->playerUse = playerUse;
+    if (playerUse) {
+        self->Use = TouchTriggerMultiple;
+    } else {
+        self->Touch = TouchTriggerMultiple;
+    }
+    float wait;
+    if (!i.EntityValueFloat(self, "wait", &wait)) {
+        wait = .2;
+    }
+    self->f->wait = wait;
 }
 
 //---- TriggerCounter ----------------------------------------------------------
