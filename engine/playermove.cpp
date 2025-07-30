@@ -26,6 +26,9 @@ void    PlayerMove::Use()
 
 void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 {
+    //TODO Hack
+    baseVelocity = velocityBase;
+    //
 	origin = player.Position();
     frameTime = elapsed;
     glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
@@ -56,9 +59,9 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 		jumpKey = false;
 
 	Friction ();
-	// if (waterlevel >= 2)
-	// 	WaterMove(wishVelocity);
-	// else
+	if (waterlevel >= 2)
+		WaterMove(wishVelocity);
+	else
 		AirMove (wishVelocity);
 
 	// Set onground, watertype, and waterlevel for final spot
@@ -98,17 +101,16 @@ void    PlayerMove::WaterMove(const glm::vec3& wishVelocity)
 {
     // User intentions
     glm::vec3   wishvel = wishVelocity;
-    float upmove = 0;
-	if (glm::length(wishVelocity) < SMALL_EPS && !upmove)
+	if (glm::length(wishVelocity) < SMALL_EPS)
 		wishvel[2] -= 60;		// Drift towards bottom
-	else
-		wishvel[2] += upmove;
 
 	float       wishspeed = glm::length(wishvel);
-    glm::vec3   wishdir = glm::normalize(wishdir);
+    glm::vec3   wishdir = wishvel;
+    if (wishspeed > SMALL_EPS) {
+        wishdir = glm::normalize(wishdir);
+    }
 
-	if (wishspeed > 320/* movevars.maxspeed */)
-	{
+	if (wishspeed > 320/* movevars.maxspeed */) {
 		wishspeed = 320/* movevars.maxspeed */;
 	}
 	wishspeed *= 0.7;
@@ -248,10 +250,9 @@ void	PlayerMove::FlyMove()
 		}
 	}
 
-	// if (pmove.waterjumptime)
-	// {
-	// 	VectorCopy (primal_velocity, pmove.velocity);
-	// }
+	if (waterjumptime) {
+        velocity = primalVelocity;
+	}
 	return /* blocked */;
 }
 
@@ -334,26 +335,27 @@ void    PlayerMove::Jump()
 	// 	return;
 	// }
 
-	// if (pmove.waterjumptime)
-	// {
-	// 	pmove.waterjumptime -= frametime;
-	// 	if (pmove.waterjumptime < 0)
-	// 		pmove.waterjumptime = 0;
-	// 	return;
-	// }
+	if (waterjumptime > 0) {
+		waterjumptime -= frameTime;
+		if (waterjumptime < 0) {
+			waterjumptime = 0;
+        }
+		return;
+	}
 
-	// if (waterlevel >= 2)
-	// {	// swimming, not jumping
-	// 	onground = -1;
+	if (waterlevel >= 2) {
+        // Swimming, not jumping
+		onground = nullptr;
 
-	// 	if (watertype == CONTENTS_WATER)
-	// 		pmove.velocity[2] = 100;
-	// 	else if (watertype == CONTENTS_SLIME)
-	// 		pmove.velocity[2] = 80;
-	// 	else
-	// 		pmove.velocity[2] = 50;
-	// 	return;
-	// }
+		if (watertype == WATER) {
+			velocity[2] = 100;
+        } else if (watertype == SLIME) {
+			velocity[2] = 80;
+        } else {
+			velocity[2] = 50;
+        }
+		return;
+	}
 
 	if (onground == nullptr) {
 		return;		// in air, so no effect
@@ -373,44 +375,47 @@ void    PlayerMove::CheckWaterJump()
 	// vec3_t	spot;
 	// int		cont;
 	// vec3_t	flatforward;
-	// if (waterjumptime) {
-	// 	return;
-    // }
+	if (waterjumptime > 0) {
+		return;
+    }
 
-	// // ZOID, don't hop out if we just jumped in
-	// if (velocity[2] < -180) {
-    //     // Only hop out if we are moving up
-	// 	return;
-    // }
-	// // See if near an edge
-    // glm::vec3   flatforward = 
-	// flatforward[0] = forward[0];
-	// flatforward[1] = forward[1];
-	// flatforward[2] = 0;
-	// VectorNormalize (flatforward);
+	// ZOID, don't hop out if we just jumped in
+	if (velocity[2] < -180) {
+        // Only hop out if we are moving up
+		return;
+    }
 
-	// VectorMA (pmove.origin, 24, flatforward, spot);
-	// spot[2] += 8;
-	// cont = PM_PointContents (spot);
-	// if (cont != CONTENTS_SOLID)
-	// 	return;
-	// spot[2] += 24;
-	// cont = PM_PointContents (spot);
-	// if (cont != CONTENTS_EMPTY)
-	// 	return;
-	// // jump out of water
-	// VectorScale (flatforward, 50, pmove.velocity);
-	// pmove.velocity[2] = 310;
-	// pmove.waterjumptime = 2;	// safety net
-	// pmove.oldbuttons |= BUTTON_JUMP;	// don't jump again until released    
+	// See if near an edge
+    glm::vec3   flatforward(baseVelocity[0], 0, 0);
+    glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+    flatforward = glm::normalize(glm::vec3(mat * glm::vec4(flatforward, 0)));
+
+    glm::vec3   spot = origin + flatforward * 24.0f;
+	spot[2] += 8;
+	LeafType    cont = bsp.PointContent(spot);
+	if (cont != SOLID) {
+		return;
+    }
+	spot[2] += 24;
+	cont = bsp.PointContent(spot);
+	if (cont != EMPTY) {
+		return;
+    }
+
+	// Jump out of water
+    velocity = flatforward * 50.0f;
+	velocity[2] = 310;
+	waterjumptime = 2;	// safety net
+	jumpKey = true;
 }
 
 void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, float wishSpeed, float accel)
 {
 	// if (pmove.dead)
 	// 	return;
-	// if (pmove.waterjumptime)
-	// 	return;
+	if (waterjumptime > 0) {
+		return;
+    }
     float wishSpd = wishSpeed;
     if (mode == InAir && wishSpd > 30) {
         wishSpd = 30;
@@ -429,9 +434,9 @@ void    PlayerMove::Accelerate(AccelerateMode mode, const glm::vec3& wishDir, fl
 
 void    PlayerMove::Friction()
 {
-	// if (pmove.waterjumptime) {
-	// 	return;
-    // }
+	if (waterjumptime > 0) {
+		return;
+    }
 
     float speed = glm::length(velocity);
 	if (speed < 1) {
@@ -458,9 +463,10 @@ void    PlayerMove::Friction()
 
     float drop = 0;
 
-	/* if (waterlevel >= 2) // apply water friction
-		drop += speed*movevars.waterfriction*waterlevel*frametime;
-	else  */if (onground != nullptr) {
+	if (waterlevel >= 2) {
+        // Apply water friction
+		drop += speed* 4/* movevars.waterfriction */ * waterlevel * frameTime;
+    } else if (onground != nullptr) {
         // Apply ground friction
 		float control = (speed < 100/* movevars.stopspeed */) ? 100/* movevars.stopspeed */ : speed;
 		drop += control * friction * frameTime;
@@ -512,6 +518,7 @@ void	PlayerMove::CategorizePosition (void)
 		// Standing on an entity other than the world
         TouchEnt(tr.entity);
 	}
+    bsp.PlayerTouchEnts(point);
 
 	// Get waterlevel
 	waterlevel = 0;
@@ -535,13 +542,11 @@ void	PlayerMove::CategorizePosition (void)
 		}
 	}
 
-    bsp.PlayerTouchEnts(point);
-
     // Look at entity
-    glm::vec3   origin = player.EyePosition();
+    glm::vec3   eye = player.EyePosition();
     glm::vec3   dir = player.Direction();
-    glm::vec3   end = origin + dir * 128.0f;
-    Trace       trace = bsp.TraceLine(origin, end);
+    glm::vec3   end = eye + dir * 128.0f;
+    Trace       trace = bsp.TraceLine(eye, end);
     if (trace.fraction < 1) {
         bsp.lookAtEnt = trace.entity;
     } else {
@@ -552,20 +557,14 @@ void	PlayerMove::CategorizePosition (void)
 void	PlayerMove::NudgePosition()
 {
 	glm::vec3	base = origin;
-	for (int i = 0; i<3 ; i++) {
-		origin[i] = int(origin[i] * 8) * 0.125;
-	}
-	//	pmove.origin[2] += 0.124;
-
-	//	if (pmove.dead)
-	//		return;		// might be a squished point, so don'y bother
-	//	if (PM_TestPlayerPosition (pmove.origin) )
-	//		return;
 	glm::vec3	sign = {0, -1, 1};
 
-	for (int z = 0; z <= 2; z++) {
-		for (int x = 0; x <= 2; x++) {
-			for (int y = 0; y <= 2; y++) {
+    static int x;
+    static int y;
+    static int z;
+	for (z = 0; z <= 2; z++) {
+		for (x = 0; x <= 2; x++) {
+			for (y = 0; y <= 2; y++) {
 				origin[0] = base[0] + (sign[x] * 1.0/8);
 				origin[1] = base[1] + (sign[y] * 1.0/8);
 				origin[2] = base[2] + (sign[z] * 1.0/8);

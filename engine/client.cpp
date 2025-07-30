@@ -420,17 +420,23 @@ void    Quake::MovePlayer(float elapsed)
 
     bool flyMode = player.flying || config.noclip;
     bool jump = false;
+    velocity.z =  0;
     if (flyMode) {
         if (keyMatrix[SDL_SCANCODE_SPACE]) {
             velocity.z =  speed;
         } else if (keyMatrix[SDL_SCANCODE_C]) {
             velocity.z = -speed;
-        } else {
-            velocity.z =  0;
         }
     } else {
         if (keyMatrix[SDL_SCANCODE_SPACE]) {
             jump = true;
+        }
+        if (playerMove.waterlevel > 1) { //TODO Hack
+            if (keyMatrix[SDL_SCANCODE_SPACE]) {
+                velocity.z =  walkSpeed;
+            } else if (keyMatrix[SDL_SCANCODE_C]) {
+                velocity.z = -walkSpeed;
+            }
         }
     }
 

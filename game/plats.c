@@ -78,12 +78,12 @@ void    FuncPlat(EntPtr ent)
     self->f->speed = speed;
     float height;
     if (!i.EntityValueFloat(self, "height", &height)) {
-        height = self->f->size[2];
+        height = self->f->size[2] - 8;
     }
 
     Vec3Copy(self->f->pos1, self->origin);
     Vec3Copy(self->f->pos2, self->origin);
-    self->f->pos2[2] = self->f->pos2[2] - height + 8;
+    self->f->pos2[2] = self->f->pos2[2] - height;
 
     if (i.EntityValueStr(self, "targetname") != NULL) {
         self->f->platStatus = PLAT_TOP;

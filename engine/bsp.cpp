@@ -627,6 +627,9 @@ LeafType    BSP::TracePoint(const glm::vec3& point, bool checkTouchEnts)
             leafType = TracePoint(hull, hull.firstNode, point);
             if (checkTouchEnts && leafType != EMPTY && &entity != &actEntities[0]) {
                 TouchEnt(&entity);
+            } else if (!checkTouchEnts && leafType != EMPTY) {
+                //TODO Hack
+                break;
             }
         }
     }

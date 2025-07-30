@@ -62,6 +62,8 @@ public:
     EntPtr      onground = nullptr;
     EntPtr      useEnt = nullptr;
     int         waterlevel = 0;
-    float       waterjumptime = 0;;
+    float       waterjumptime = 0;
     LeafType    watertype = EMPTY;
+    //TODO
+    glm::vec3   baseVelocity;
 };

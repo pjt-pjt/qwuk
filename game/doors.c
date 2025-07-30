@@ -225,26 +225,21 @@ void    FuncDoorSecret(EntPtr ent)
     self->f = NewFields();
     Vec3Sub(self->f->size, self->maxs, self->mins);
     Vec3Copy(self->f->pos1, self->origin);
-    // if (self->angle == 0) {
-    //     self->f->direction[0] =  1;
-    // } else if (self->angle == 180) {
-    //     self->f->direction[0] = -1;
-    // } else if (self->angle == 90) {
-    //     self->f->direction[1] =  1;
-    // } else if (self->angle == 270) {
-    //     self->f->direction[1] = -1;
-    // } else if (self->angle == -1) {
-    //     self->f->direction[2] =  1;
-    // } else if (self->angle == -2) {
-    //     self->f->direction[2] = -1;
-    // }
-    self->f->direction[2] =  1; //TODO
+    if (self->angle == 0) {
+        self->f->direction[0] =  1;
+    } else if (self->angle == 180) {
+        self->f->direction[0] = -1;
+    } else if (self->angle == 90) {
+        self->f->direction[1] =  1;
+    } else if (self->angle == 270) {
+        self->f->direction[1] = -1;
+    } else if (self->angle == -1) {
+        self->f->direction[2] =  1;
+    } else if (self->angle == -2) {
+        self->f->direction[2] = -1;
+    }
 
-    float lip = 8;
-    // if ((ent->flags & 1) == 1) {
-    //     lip = 0; //TODO Hack for "elevator" or "slab" doors that start "open"
-    // }
-    float dot = fabs(Vec3Dot(self->f->direction, self->f->size)) - lip;
+    float dot = fabs(Vec3Dot(self->f->direction, self->f->size));
     Vec3AddMul(self->f->pos2, self->f->pos1, self->f->direction, dot);
     // if ((ent->flags & 1) == 1) {
     //     i.SetOrigin(self, self->f->pos2);
