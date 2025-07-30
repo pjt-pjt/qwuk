@@ -10,6 +10,19 @@ PlayerMove::PlayerMove(BSP& bsp, Actor& player) :
     velocity(0)
 {}
 
+void    PlayerMove::NextFrame(const glm::vec3& velocityBase_, bool jumpKeyDown_, bool useKeyDown_, float elapsed_)
+{
+    velocityBase = velocityBase_;
+    jumpKeyDown = jumpKeyDown_;
+    useKeyDown = useKeyDown_;
+    frameTime = elapsed_;
+
+    glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+    wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
+    forward = {velocityBase.x, 0, 0};
+    forward = glm::vec3(mat * glm::vec4(forward, 0));
+}
+
 void    PlayerMove::Use()
 {
     useEnt = nullptr;
@@ -24,17 +37,11 @@ void    PlayerMove::Use()
     }
 }
 
-void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
+void    PlayerMove::Move()
 {
-    //TODO Hack
-    baseVelocity = velocityBase;
-    //
 	origin = player.Position();
-    frameTime = elapsed;
-    glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-    glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
 
-	bsp.numTouch = 0;
+    bsp.numTouch = 0;
 	// if (pmove.spectator)
 	// {
 	// 	SpectatorMove ();
@@ -68,13 +75,9 @@ void    PlayerMove::Move(const glm::vec3& velocityBase, float elapsed)
 	 CategorizePosition ();
 }
 
-void    PlayerMove::Fly(const glm::vec3& velocityBase, float elapsed)
+void    PlayerMove::Fly()
 {
     origin = player.Position();
-    frameTime = elapsed;
-    glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-    glm::vec3   wishVelocity = glm::vec3(mat * glm::vec4(velocityBase, 0));
-
     float       wishSpeed = glm::length(wishVelocity);
     glm::vec3   wishDir(0);
 	if (wishSpeed > SMALL_EPS) {
@@ -86,15 +89,9 @@ void    PlayerMove::Fly(const glm::vec3& velocityBase, float elapsed)
 
 }
 
-void    PlayerMove::SetVelocity(const glm::vec3& velocityBase)
+void    PlayerMove::SetVelocity(const glm::vec3& velocity_)
 {
-    velocity = velocityBase;
-}
-
-void    PlayerMove::SetKeys(bool jumpKeyDown_, bool useKeyDown_)
-{
-    jumpKeyDown = jumpKeyDown_;
-    useKeyDown = useKeyDown_;
+    velocity = velocity_;
 }
 
 void    PlayerMove::WaterMove(const glm::vec3& wishVelocity)
@@ -386,10 +383,7 @@ void    PlayerMove::CheckWaterJump()
     }
 
 	// See if near an edge
-    glm::vec3   flatforward(baseVelocity[0], 0, 0);
-    glm::mat4   mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
-    flatforward = glm::normalize(glm::vec3(mat * glm::vec4(flatforward, 0)));
-
+    glm::vec3   flatforward = glm::normalize(forward);
     glm::vec3   spot = origin + flatforward * 24.0f;
 	spot[2] += 8;
 	LeafType    cont = bsp.PointContent(spot);

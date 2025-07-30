@@ -131,7 +131,6 @@ private:
     SDL_Scancode    lastKey = SDL_SCANCODE_UNKNOWN;
     float           yawDelta = 0;
     float           pitchDelta = 0;
-    glm::vec3       velocity;
 
     GameModule      game;
     GameInterface   interface;

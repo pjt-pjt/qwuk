@@ -79,7 +79,6 @@ void    Actor::Init(Entity& ent)
 Quake::Quake() :
     bsp(config, stats, test),
     playerMove(bsp, player),
-    velocity(0),
     interface(*this)
 {
     for (auto& key : keyMatrix) {
@@ -398,10 +397,12 @@ void    Quake::MovePlayer(float elapsed)
     if (status != Running) {
         return;
     }
-    float walkSpeed = 200;
-    float runSpeed = 400;
-    bool running = keyMatrix[SDL_SCANCODE_LSHIFT] || config.alwaysRun;
-    float speed = (running ? runSpeed : walkSpeed);
+    float       walkSpeed = 200;
+    float       runSpeed = 400;
+    bool        running = keyMatrix[SDL_SCANCODE_LSHIFT] || config.alwaysRun;
+    float       speed = (running ? runSpeed : walkSpeed);
+    float       waterSpeed = walkSpeed;
+    glm::vec3   velocity(0);
     if (keyMatrix[SDL_SCANCODE_W]) {
         velocity.x =  speed;
     } else if (keyMatrix[SDL_SCANCODE_S]) {
@@ -433,9 +434,9 @@ void    Quake::MovePlayer(float elapsed)
         }
         if (playerMove.waterlevel > 1) { //TODO Hack
             if (keyMatrix[SDL_SCANCODE_SPACE]) {
-                velocity.z =  walkSpeed;
+                velocity.z =  waterSpeed;
             } else if (keyMatrix[SDL_SCANCODE_C]) {
-                velocity.z = -walkSpeed;
+                velocity.z = -waterSpeed;
             }
         }
     }
@@ -444,8 +445,7 @@ void    Quake::MovePlayer(float elapsed)
     player.SetPitch(player.Pitch() + pitchDelta);
     pitchDelta = yawDelta = 0;
 
-    playerMove.SetKeys(jump, keyMatrix[SDL_SCANCODE_E]);
-    playerMove.Use();
+    playerMove.NextFrame(velocity, jump, keyMatrix[SDL_SCANCODE_E], elapsed);
     if (config.noclip) {
         if (glm::length(velocity) > SMALL_EPS) {
             glm::mat4 mat = glm::rotate(glm::mat4(1), player.Yaw() * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
@@ -453,10 +453,15 @@ void    Quake::MovePlayer(float elapsed)
             player.SetPosition(end); 
         }
     } else if (player.flying) {
-        playerMove.Fly(velocity, elapsed);
+        playerMove.Fly();
+        playerMove.Use();
         player.SetPosition(playerMove.Origin());
+        if (playerMove.useEnt != nullptr) {
+            game.Use(playerMove.useEnt, player.entity);
+        }
     } else {
-        playerMove.Move(velocity, elapsed);
+        playerMove.Move();
+        playerMove.Use();
         player.SetPosition(playerMove.Origin());
         if (playerMove.useEnt != nullptr) {
             game.Use(playerMove.useEnt, player.entity);

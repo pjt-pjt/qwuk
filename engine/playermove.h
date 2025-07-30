@@ -13,11 +13,11 @@ class PlayerMove
 public: 
     PlayerMove(BSP& bsp, Actor& player);
 
+    void    NextFrame(const glm::vec3& velocityBase, bool jumpKeyDown, bool useKeyDown, float elapsed);
     void    Use();
-    void    Move(const glm::vec3& velocityBase, float elapsed);
-    void    Fly(const glm::vec3& velocityBase, float elapsed);
-    void    SetVelocity(const glm::vec3& velocityBase);
-    void    SetKeys(bool jumpKeyDown, bool useKeyDown);
+    void    Move();
+    void    Fly();
+    void    SetVelocity(const glm::vec3& velocity);
     const glm::vec3& Origin() const
     {
         return origin;
@@ -51,11 +51,15 @@ private:
     BSP&        bsp;
     Actor&      player;
     glm::vec3   origin;
-    float       frameTime;
 
-    glm::vec3   velocity;
+    glm::vec3   velocityBase;
     bool        jumpKeyDown = false;
     bool        useKeyDown = false;
+    float       frameTime;
+    glm::vec3   wishVelocity;
+    glm::vec3   forward;
+
+    glm::vec3   velocity;
     bool        jumpKey = false;
     bool        useKey = false;
 public:
@@ -64,6 +68,4 @@ public:
     int         waterlevel = 0;
     float       waterjumptime = 0;
     LeafType    watertype = EMPTY;
-    //TODO
-    glm::vec3   baseVelocity;
 };
