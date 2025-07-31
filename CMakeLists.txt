@@ -18,8 +18,8 @@ set(ENGINE_DIR engine)
 set(BACKEND_DIR opengl)
 set(GAME_DIR game)
 
-set(ENGINE_SRC application.cpp client.cpp bsp.cpp bspfile.cpp entities.cpp playermove.cpp filebuffer.cpp gameinterface.cpp gamemodule.cpp
-               application.h client.h bsp.h bspfile.h entities.h playermove.h filebuffer.h gameinterface.h gamemodule.h vertex.h plane.h math.h)
+set(ENGINE_SRC application.cpp client.cpp bsp.cpp bspfile.cpp entities.cpp playermove.cpp filebuffer.cpp gameinterface.cpp gamemodule.cpp physics.cpp
+               application.h client.h bsp.h bspfile.h entities.h playermove.h filebuffer.h gameinterface.h gamemodule.h physics.h vertex.h plane.h math.h)
 list(TRANSFORM ENGINE_SRC PREPEND "${ENGINE_DIR}/")
 
 set(BACKEND_SRC pipeline.cpp program.cpp storagebuffer.cpp graphics.cpp application_opengl.cpp)
