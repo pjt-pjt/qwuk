@@ -4,16 +4,24 @@
 
 
 class BSP;
+class Quake;
 
 
 class Physics
 {
 public:
-    Physics(BSP& bsp);
-    
+    Physics(BSP& bsp, Quake& quake) : bsp(bsp), quake(quake)
+    {}
 
-    void    PushMove(EntPtr entity, Vec3 move);
+    void    NextFrame(float fameTime);
+    bool    PushMove(EntPtr entity, Vec3 move);
+
+private:
+    bool    Collide(EntPtr entity1, EntPtr entity2);
 
 private:
     BSP&        bsp;
+    Quake&      quake;
+    EntPtr      pushedEntities[128];
+    int         numPushed = 0;
 };

@@ -87,27 +87,7 @@ void    Construct(EntPtr entity)
 
 int     Touching(EntPtr ent1, EntPtr ent2)
 {
-    if (ent1->maxs[0] < ent2->mins[0]) {
-        return 0;
-    }
-    if (ent1->mins[0] > ent2->maxs[0]) {
-        return 0;
-    }
-
-    if (ent1->maxs[1] < ent2->mins[1]) {
-        return 0;
-    }
-    if (ent1->mins[1] > ent2->maxs[1]) {
-        return 0;
-    }
-
-    if (ent1->maxs[2] < ent2->mins[2]) {
-        return 0;
-    }
-    if (ent1->mins[2] > ent2->maxs[2]) {
-        return 0;
-    }
-    return 1;
+    return BoxesCollide(ent1->mins, ent1->maxs, ent2->mins, ent2->maxs);
 }
 
 void    Spawn(EntPtr entity)

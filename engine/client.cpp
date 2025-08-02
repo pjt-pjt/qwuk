@@ -2,6 +2,7 @@
 #include "application.h"
 #include "graphics.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
 #include "game.h"
 #include "tools.h"
@@ -75,10 +76,23 @@ void    Actor::Init(Entity& ent)
     }
 }
 
+void    Actor::SetPosition(const glm::vec3& pos)
+{
+    Camera::SetPosition(pos);
+    Vec3Copy(entity->origin, glm::value_ptr(pos));
+}
+
+void    Actor::SetYaw(float yaw)
+{
+    Camera::SetYaw(yaw);
+    entity->angle = yaw;
+}
+
 
 Quake::Quake() :
     bsp(config, stats, test),
     playerMove(bsp, player),
+    physics(bsp, *this),
     interface(*this)
 {
     for (auto& key : keyMatrix) {
@@ -177,12 +191,13 @@ void    Quake::NextFrame(uint64_t elapsed)
         }
         lastKey = SDL_SCANCODE_UNKNOWN;
     }
-    float secondsElapsed = elapsed / 1000.f;
+    float frameTime = elapsed / 1000.f;
     Variables*  globals = game.GetVariables();
-    globals->frameTime = secondsElapsed;
-    DoCommands(secondsElapsed);
-    DoEntities(secondsElapsed);
-    MovePlayer(secondsElapsed);
+    globals->frameTime = frameTime;
+    physics.NextFrame(frameTime);
+    DoCommands(frameTime);
+    DoEntities(frameTime);
+    MovePlayer(frameTime);
 }
 
 void    Quake::Render()

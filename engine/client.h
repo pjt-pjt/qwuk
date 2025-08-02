@@ -4,6 +4,7 @@
 #include "gameinterface.h"
 #include "gamemodule.h"
 #include "playermove.h"
+#include "physics.h"
 #include "SDL2/SDL.h"
 #include <string>
 #include <queue>
@@ -21,10 +22,10 @@ public:
         eyePosition(0, 0, eyeHeight),
         eyeHeight(0)
     {}
-    void        SetPosition(const glm::vec3& pos);
-    void        SetYaw(float yaw);
-    void        SetPitch(float pitch);
-    void        SetEyeHeight(float height);
+    virtual void    SetPosition(const glm::vec3& pos);
+    virtual void    SetYaw(float yaw);
+    void            SetPitch(float pitch);
+    void            SetEyeHeight(float height);
 
     const glm::vec3&   Position() const
     {
@@ -56,7 +57,9 @@ private:
 class Actor : public Camera
 {
 public:
-    void Init(Entity& entity);
+    void            Init(Entity& entity);
+    virtual void    SetPosition(const glm::vec3& pos) override;
+    virtual void    SetYaw(float yaw) override;
     
 public:
     glm::vec3   mins;
@@ -132,6 +135,8 @@ private:
     float           yawDelta = 0;
     float           pitchDelta = 0;
 
+    Physics         physics;
+
     GameModule      game;
     GameInterface   interface;
     std::queue<Command> commands;
@@ -140,4 +145,5 @@ public:
     Stats           stats;
 
     friend class GameInterface;
+    friend class Physics;
 };

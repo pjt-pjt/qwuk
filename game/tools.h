@@ -28,6 +28,8 @@ float   Vec3LengthSq(const Vec3 v);
 
 extern  Vec3    Origin_Vec3;
 
+int     BoxesCollide(Vec3 mins1, Vec3 maxs1, Vec3 mins2, Vec3 maxs2);
+
 #if defined(TOOLS_IMPL)
 
     int    StrEq(const char* left, const char* right)
@@ -89,6 +91,32 @@ extern  Vec3    Origin_Vec3;
     }
 
     Vec3    Origin_Vec3 = {0, 0, 0};
+
+    int     BoxesCollide(Vec3 mins1, Vec3 maxs1, Vec3 mins2, Vec3 maxs2)
+    {
+        if (maxs1[0] < mins2[0]) {
+            return 0;
+        }
+        if (mins1[0] > maxs2[0]) {
+            return 0;
+        }
+
+        if (maxs1[1] < mins2[1]) {
+            return 0;
+        }
+        if (mins1[1] > maxs2[1]) {
+            return 0;
+        }
+
+        if (maxs1[2] < mins2[2]) {
+            return 0;
+        }
+        if (mins1[2] > maxs2[2]) {
+            return 0;
+        }
+        return 1;
+    }
+
 #endif
 
 
