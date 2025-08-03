@@ -151,51 +151,15 @@ void    GameInterface::SetOrigin(EntPtr entity, const Vec3 origin)
     if (entity == NULL) {
         return;
     }
-    Vec3        prevOrigin;
-    Vec3Copy(prevOrigin, entity->origin);
-    glm::vec3   vPrevOrigin = {prevOrigin[0], prevOrigin[1], prevOrigin[2]};
-    glm::vec3   vOrigin = {origin[0], origin[1], origin[2]};
-    Vec3        offset;
-    Vec3Sub(offset, origin, entity->origin);
-    glm::vec3   vOffset(offset[0], offset[1], offset[2]);
-
-    Vec3Copy(entity->origin, origin);
-    bool        set = true;
+    if (entity->model == -1) {
+        // Has no model, just set origin
+        Vec3Copy(entity->origin, origin);
+    }
     if (entity->model != -1) {
         // Check collision
-        //TODO Do it properly in the future
-        BSP::Model& model = game->bsp.models[entity->model];
-        if (game->quake.playerMove.onground == entity) {
-            // Move player too
-            Trace       tr = game->bsp.PlayerMove(game->quake.player.Position(), game->quake.player.Position() + vOffset);
-            glm::mat4   mm(1);
-            model.transform = glm::translate(mm, vOrigin);
-            if (tr.startSolid || tr.allSolid || tr.fraction < 1) {
-                tr = game->bsp.PlayerMove(game->quake.player.Position(), game->quake.player.Position() + vOffset);
-                if (tr.allSolid || tr.fraction < 1) {
-                    set = false;
-                }
-            }
-            if (set) {
-                game->quake.player.SetPosition(game->quake.player.Position() + vOffset);
-            }
-        } else {
-            glm::mat4   mm(1);
-            model.transform = glm::translate(mm, vOrigin);
-            if (!game->quake.physics.PushMove(entity, offset)) {
-                set = false;
-            }
+        if (!game->quake.physics.Move(entity, origin) && entity->Blocked != NULL) {
+            entity->Blocked(entity, game->quake.player.entity);
         }
-        if (!set) {
-            glm::mat4   mm(1);
-            model.transform = glm::translate(mm, vPrevOrigin);
-            game->quake.game.Blocked(entity, game->quake.player.entity);
-        }
-    }
-    if (set) {
-        Vec3Copy(entity->prevOrigin, prevOrigin);
-    } else {
-        Vec3Copy(entity->origin, prevOrigin);
     }
 }
 

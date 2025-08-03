@@ -302,6 +302,16 @@ void    BSP::TouchEnt(EntPtr entity)
     touchEnts[numTouch++] = entity;
 }
 
+void    BSP::SetOrigin(EntPtr entity, const glm::vec3& origin)
+{
+    Vec3Copy(entity->origin, glm::value_ptr(origin));
+    if (entity->model != -1) {
+        Model&      model = models[entity->model];
+        glm::mat4   mm(1);
+        model.transform = glm::translate(mm, origin);
+    }
+}
+
 bool    BSP::CreateEntities()
 {
     bool ok = entities.Init(bspFile.entities, bspFile.entitiesSize);

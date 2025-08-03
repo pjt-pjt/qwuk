@@ -14,10 +14,12 @@ public:
     {}
 
     void    NextFrame(float fameTime);
-    bool    PushMove(EntPtr entity, Vec3 move);
+    bool    Move(EntPtr entity, const Vec3 origin);
 
 private:
-    bool    Collide(EntPtr entity1, EntPtr entity2);
+    bool    TrainMove(EntPtr entity, const Vec3 origin);
+    bool    PushMove(EntPtr entity, const Vec3 origin);
+    bool    Collide(EntPtr entity1, const Vec3 origin1, EntPtr entity2);
 
 private:
     BSP&        bsp;

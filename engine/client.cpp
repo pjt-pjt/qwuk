@@ -67,9 +67,9 @@ glm::vec3   Camera::Direction() const
 void    Actor::Init(Entity& ent)
 {
     if (StrPrefix(ent.className,"info_player_start")) {
-        SetPosition({ent.origin[0], ent.origin[1], ent.origin[2]});
-        SetYaw(ent.angle);
         SetEyeHeight(ent.eyePos);
+        SetYaw(ent.angle);
+        SetPosition({ent.origin[0], ent.origin[1], ent.origin[2]});
         mins = {ent.mins[0], ent.mins[1], ent.mins[2]};
         maxs = {ent.maxs[0], ent.maxs[1], ent.maxs[2]};
         entity = &ent;
@@ -194,10 +194,12 @@ void    Quake::NextFrame(uint64_t elapsed)
     float frameTime = elapsed / 1000.f;
     Variables*  globals = game.GetVariables();
     globals->frameTime = frameTime;
-    physics.NextFrame(frameTime);
-    DoCommands(frameTime);
-    DoEntities(frameTime);
-    MovePlayer(frameTime);
+    if (status < Paused_) {
+        physics.NextFrame(frameTime);
+        DoCommands(frameTime);
+        DoEntities(frameTime);
+        MovePlayer(frameTime);
+    }
 }
 
 void    Quake::Render()

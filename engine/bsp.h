@@ -164,6 +164,7 @@ public:
     Trace       PlayerMove(const glm::vec3& start, const glm::vec3& end);
     Trace       TraceLine(const glm::vec3& start, const glm::vec3& end);
     void        TouchEnt(EntPtr entity);
+    void        SetOrigin(EntPtr entity, const glm::vec3& origin);
 
     struct Leaf;
     struct Node
