@@ -76,18 +76,6 @@ void    Actor::Init(Entity& ent)
     }
 }
 
-void    Actor::SetPosition(const glm::vec3& pos)
-{
-    Camera::SetPosition(pos);
-    Vec3Copy(entity->origin, glm::value_ptr(pos));
-}
-
-void    Actor::SetYaw(float yaw)
-{
-    Camera::SetYaw(yaw);
-    entity->angle = yaw;
-}
-
 
 Quake::Quake() :
     bsp(config, stats, test),
@@ -469,7 +457,7 @@ void    Quake::MovePlayer(float elapsed)
         playerMove.Move();
     }
     playerMove.Use();
-    player.SetPosition(playerMove.Origin());
+    SetPlayerOrigin(playerMove.Origin());
     if (playerMove.useEnt != nullptr) {
         game.Use(playerMove.useEnt, player.entity);
     }
@@ -483,10 +471,18 @@ void    Quake::MovePlayer(float elapsed)
 
 void    Quake::SetYaw(float yaw)
 {
-    float rotate = yaw - player.Yaw();
+    float       rotate = yaw - player.Yaw();
     player.SetYaw(yaw);
     glm::vec3   velocity = playerMove.Velocity();
-    glm::mat4 mat = glm::rotate(glm::mat4(1), rotate * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
+    glm::mat4   mat = glm::rotate(glm::mat4(1), rotate * glm::pi<float>() / 180.0f, {0, 0, 1.0f});
     velocity = glm::vec3(mat * glm::vec4(velocity, 0));
     playerMove.SetVelocity(velocity);
+}
+
+void    Quake::SetPlayerOrigin(const glm::vec3& origin)
+{
+    // Synchronize camera and player entity
+    player.SetPosition(origin);
+    Vec3Copy(player.entity->prevOrigin, player.entity->origin);
+    Vec3Copy(player.entity->origin, glm::value_ptr(origin));
 }

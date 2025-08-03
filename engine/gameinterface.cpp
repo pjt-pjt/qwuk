@@ -179,7 +179,7 @@ void    GameInterface::SetAngle(EntPtr entity, float angle)
 
 void    GameInterface::SetPlayerOrigin(const Vec3 origin)
 {
-    game->quake.player.SetPosition({origin[0], origin[1], origin[2]});
+    game->quake.SetPlayerOrigin({origin[0], origin[1], origin[2]});
 }
 
 void    GameInterface::SetPlayerAngle(float angle)

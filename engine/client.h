@@ -22,8 +22,8 @@ public:
         eyePosition(0, 0, eyeHeight),
         eyeHeight(0)
     {}
-    virtual void    SetPosition(const glm::vec3& pos);
-    virtual void    SetYaw(float yaw);
+    void            SetPosition(const glm::vec3& pos);
+    void            SetYaw(float yaw);
     void            SetPitch(float pitch);
     void            SetEyeHeight(float height);
 
@@ -58,8 +58,6 @@ class Actor : public Camera
 {
 public:
     void            Init(Entity& entity);
-    virtual void    SetPosition(const glm::vec3& pos) override;
-    virtual void    SetYaw(float yaw) override;
     
 public:
     glm::vec3   mins;
@@ -114,6 +112,8 @@ private:
 
     void MovePlayer(float elapsed);
     void SetYaw(float yaw);
+
+    void SetPlayerOrigin(const glm::vec3& origin);
 
 private:
     Config          config;

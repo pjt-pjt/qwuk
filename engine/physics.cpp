@@ -36,7 +36,7 @@ bool    Physics::TrainMove(EntPtr entity, const Vec3 origin)
         }
     }
     if (moved) {
-        quake.player.SetPosition(quake.player.Position() + vMove);
+        quake.SetPlayerOrigin(quake.player.Position() + vMove);
     } else {
         bsp.SetOrigin(entity, vPrevOrigin);
     }
@@ -60,7 +60,7 @@ bool    Physics::PushMove(EntPtr entity, const Vec3 origin)
         }
         pushedEntities[numPushed++] = entity;
         if (moved) {
-            quake.player.SetPosition(quake.player.Position() + vMove);
+            quake.SetPlayerOrigin(quake.player.Position() + vMove);
         }
     }
     if (moved) {
