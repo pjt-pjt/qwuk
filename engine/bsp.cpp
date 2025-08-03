@@ -289,7 +289,7 @@ Trace    BSP::PlayerMove(const glm::vec3& start, const glm::vec3& end)
 
 Trace    BSP::TraceLine(const glm::vec3& start, const glm::vec3& end)
 {
-    return TraceLine<0>(start, end, config.showTriggers);
+    return TraceLine<0>(start, end, true);
 }
 
 void    BSP::TouchEnt(EntPtr entity)

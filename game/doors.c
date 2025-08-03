@@ -75,11 +75,10 @@ int     CanLink(EntPtr self)
     if (target == NULL) {
         return 1;
     }
-    EntPtr  targetter = i.SearchEntity(NULL, "trigger_onlyregistered", "target", target);
-    if (targetter == NULL) {
+    EntPtr  targetter = i.SearchEntity(NULL, NULL, "target", target);
+    if (targetter != NULL) {
         return 0;
     }
-    targetter->Touch = NULL;
     return 1;
 }
 

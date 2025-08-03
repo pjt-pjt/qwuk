@@ -13,8 +13,7 @@ void    TouchTriggerOnlyRegistered(EntPtr self, EntPtr other)
 
 void    TriggerOnlyRegistered(EntPtr ent)
 {
-    EntPtr self = i.Spawn(ent);
-    self->Touch = TouchTriggerOnlyRegistered;
+    UNUSED(ent);
 }
 
 //---- TouchTriggerOnce --------------------------------------------------------
