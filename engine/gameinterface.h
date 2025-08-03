@@ -29,6 +29,7 @@ private:
     static EntPtr       Spawn(EntPtr entity);
     static void         SpawnPlayer(EntPtr entity);
     static void         SetOrigin(EntPtr entity, const Vec3 origin);
+    static void         MoveTo(EntPtr entity, const Vec3 origin);
     static void         SetAngle(EntPtr entity, float angle);
     static void         SetPlayerOrigin(const Vec3 origin);
     static void         SetPlayerAngle(float angle);

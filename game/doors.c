@@ -21,7 +21,7 @@ void    RunDoor(EntPtr self)
     Vec3    velocity;
     Vec3Mul(velocity, direction, self->f->speed * globals->frameTime);
     if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
-        i.SetOrigin(self, target);
+        i.MoveTo(self, target);
         self->f->doorStatus = !self->f->doorStatus;
         self->sleep = -1;
         self->Think = NULL;
@@ -39,7 +39,7 @@ void    RunDoor(EntPtr self)
     }
     Vec3    origin;
     Vec3Add(origin, self->origin, velocity);
-    i.SetOrigin(self, origin);
+    i.MoveTo(self, origin);
     self->sleep = 0;
 }
 
@@ -185,7 +185,7 @@ void    RunDoorSecret(EntPtr self)
     Vec3    velocity;
     Vec3Mul(velocity, direction, self->f->speed * globals->frameTime);
     if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
-        i.SetOrigin(self, target);
+        i.MoveTo(self, target);
         self->f->doorStatus = !self->f->doorStatus;
         self->sleep = -1;
         self->Think = NULL;
@@ -203,7 +203,7 @@ void    RunDoorSecret(EntPtr self)
     }
     Vec3    origin;
     Vec3Add(origin, self->origin, velocity);
-    i.SetOrigin(self, origin);
+    i.MoveTo(self, origin);
     self->sleep = 0;
 }
 

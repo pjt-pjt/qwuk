@@ -36,6 +36,7 @@ void    GameInterface::Init(Interface* interface)
     interface->Spawn = Spawn;
     interface->SpawnPlayer = SpawnPlayer;
     interface->SetOrigin = SetOrigin;
+    interface->MoveTo = MoveTo;
     interface->SetAngle = SetAngle;
     interface->SetPlayerOrigin = SetPlayerOrigin;
     interface->SetPlayerAngle = SetPlayerAngle;
@@ -147,6 +148,11 @@ void    GameInterface::SpawnPlayer(EntPtr entity)
 }
 
 void    GameInterface::SetOrigin(EntPtr entity, const Vec3 origin)
+{
+    game->bsp.SetOrigin(entity, glm::vec3(origin[0], origin[1], origin[2]));
+}
+
+void    GameInterface::MoveTo(EntPtr entity, const Vec3 origin)
 {
     if (entity == NULL) {
         return;

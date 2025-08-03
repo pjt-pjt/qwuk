@@ -19,7 +19,7 @@ void    RunButton(EntPtr self)
     Vec3    velocity;
     Vec3Mul(velocity, direction, self->f->speed * globals->frameTime);
     if (Vec3LengthSq(velocity) >= Vec3DistanceSq(target, self->origin)) {
-        i.SetOrigin(self, target);
+        i.MoveTo(self, target);
         self->f->buttonStatus = !self->f->buttonStatus;
         if (self->f->buttonStatus == BUTTON_PRESSED) {
             if (self->f->wait != -1) {
@@ -40,7 +40,7 @@ void    RunButton(EntPtr self)
     }
     Vec3    origin;
     Vec3Add(origin, self->origin, velocity);
-    i.SetOrigin(self, origin);
+    i.MoveTo(self, origin);
     self->sleep = 0;
 }
 

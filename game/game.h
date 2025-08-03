@@ -30,6 +30,7 @@ typedef struct Interface
     EntPtr      (*Spawn)(EntPtr entity);
     void        (*SpawnPlayer)(EntPtr entity);
     void        (*SetOrigin)(EntPtr entity, const Vec3 origin);
+    void        (*MoveTo)(EntPtr entity, const Vec3 origin);
     void        (*SetAngle)(EntPtr entity, float angle);
     void        (*SetPlayerOrigin)(const Vec3 origin);
     void        (*SetPlayerAngle)(float angle);
